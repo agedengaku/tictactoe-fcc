@@ -2,7 +2,10 @@
 
 var playerSelect = document.getElementsByClassName("player-select");
 var boardSquares = document.getElementsByClassName("board-square");
+var xScore = document.getElementById("x-score");
+var oScore = document.getElementById("o-score");
 //declare global variables for game world objects
+var gameStarted = false;
 var currentGameState = {};
 var human = {};
 var computerAI = {};
@@ -26,23 +29,26 @@ var openSquares = [];
 init();  
 function init() {
   currentGameState = new GameState();  
-  human = new Player('X');
-  computerAI = new Computer('O');
+  if (gameStarted === false) {
+    human = new Player('X');
+    computerAI = new Computer('O');
+  }
+  gameStarted = true;
+  console.log(openSquares);
   //set action to clicking of boxes and setting initial board state
   for(var i = 0; i < boardSquares.length; i++) {
     boardSquares[i].onclick = setClicked; 
     openSquares.push(boardSquares[i].id);
     currentGameState.boardState[boardSquares[i].id] = [false, undefined];
   }
+  console.log(openSquares);
   human.turnActive = true;
 }
 //click action logic
 function setClicked(){
+  //computerAI.turnActive is set to false to prevent player from clicking a square before computer makes a move
   if (computerAI.turnActive === false && currentGameState.winCounter === 0) {
-
     var squareId = this.id;
-    //removes used square
-    console.log(openSquares);
     // if (currentGameState.boardState[squareId][0] === false){
     if (openSquares.indexOf(squareId) !== -1){
       removeFromOpen(squareId);
@@ -73,23 +79,28 @@ function GameState() {
   this.turnsTaken = 0;
   this.boardState = {};
   this.checkForWinner = function(data, char) {
-    alert("check");
+
     if (data !== "draw") {
       var message;
       if (message = winCombination(data, char)) {
         if (char == "X") {
           alert(message +" Human wins");
+          human.wins++;
+          xScore.innerHTML = human.wins;
         } else {
           alert(message +" Computer wins");
+          computerAI.wins++;
+          oScore.innerHTML = computerAI.wins;
         }
         this.winCounter++;
+        setTimeout(resetBoard, 2000);
       }
     } else {
       alert("draw");
     }
   }
   this.gameOver = function() {
-    alert("Test");
+
   }
 }
 
@@ -101,12 +112,12 @@ function winCombination (data, char) {
   }
   if (data === 'b1' || data === 'b2' || data === 'b3') {
     if (horizontal2(char)) {
-      return "horizontal1";
+      return "horizontal2";
     } 
   }
   if (data === 'c1' || data === 'c2' || data === 'c3') {
     if (horizontal3(char)) {
-      return "horizontal1";
+      return "horizontal3";
     } 
   }     
   if (data === 'a1' || data === 'b1' || data === 'c1') {
@@ -213,7 +224,6 @@ function Computer(char) {
     //runs only if there are still open squares
     if(openSquares.length > 0) {
       var squareId = openSquares[squareNum];
-      console.log(squareId);
       removeFromOpen(squareId);
       currentGameState.boardState[squareId][0] = true;
       currentGameState.boardState[squareId][1] = computerAI.char;
@@ -240,6 +250,19 @@ function removeFromOpen (squareId) {
       var index = openSquares.indexOf(squareId);
       openSquares.splice(index, 1);
     }
+}
+
+function resetBoard() {
+  for(var i = 0; i < boardSquares.length; i++) {
+    boardSquares[i].innerHTML = '';
+  }
+  currentGameState = {};
+  human.turnActive = false;
+  computerAI.turnActive = false;
+  //tracks squares that are still open
+  openSquares = [];
+  init();
+  console.log(currentGameState);
 }
 //number of wins
 //X or O
