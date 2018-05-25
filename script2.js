@@ -34,40 +34,55 @@ function init() {
     openSquares.push(boardSquares[i].id);
     currentGameState.boardState[boardSquares[i].id] = [false, undefined];
   }
+  human.turnActive = true;
 }
 //click action logic
 function setClicked(){
-  var squareId = this.id;
-  //removes used square
-  console.log(openSquares);
-  // if (currentGameState.boardState[squareId][0] === false){
-  if (openSquares.indexOf(squareId) !== -1){
-    removeFromOpen(squareId);
-    currentGameState.boardState[squareId][0] = true;
-    currentGameState.boardState[squareId][1] = human.char;
-    this.innerHTML = human.char;
-    currentGameState.turnsTaken++;
-    //if turns taken reaches 3, check for a winner
-    if (currentGameState.turnsTaken > 4) {
-      currentGameState.checkForWinner(squareId, human.char);
+  if (computerAI.turnActive === false && currentGameState.winCounter === 0) {
+
+    var squareId = this.id;
+    //removes used square
+    console.log(openSquares);
+    // if (currentGameState.boardState[squareId][0] === false){
+    if (openSquares.indexOf(squareId) !== -1){
+      removeFromOpen(squareId);
+      currentGameState.boardState[squareId][0] = true;
+      currentGameState.boardState[squareId][1] = human.char;
+      this.innerHTML = human.char;
+      currentGameState.turnsTaken++;
+      //if turns taken reaches 3, check for a winner
+      if (currentGameState.turnsTaken > 4) {
+        currentGameState.checkForWinner(squareId, human.char);
+      }
+      if (currentGameState.winCounter === 0) {
+        //if turns taken reaches 9, declare a draw
+        if (currentGameState.turnsTaken === 9) {
+          currentGameState.checkForWinner("draw");
+        }
+        computerAI.turnActive = true;
+        human.turnActive = false;
+        setTimeout(computerAI.easyAI, 2000);
+      }
+
     }
-    //if turns taken reaches 9, declare a draw THIS IS BROKEN 
-    if (currentGameState.turnsTaken === 9) {
-      currentGameState.checkForWinner("draw");
-    }
-    setTimeout(computerAI.easyAI, 2000);
   }
 }
 
 function GameState() {
-  this.winCounter;
+  this.winCounter = 0;
   this.turnsTaken = 0;
   this.boardState = {};
   this.checkForWinner = function(data, char) {
+    alert("check");
     if (data !== "draw") {
       var message;
       if (message = winCombination(data, char)) {
-        alert(message);
+        if (char == "X") {
+          alert(message +" Human wins");
+        } else {
+          alert(message +" Computer wins");
+        }
+        this.winCounter++;
       }
     } else {
       alert("draw");
@@ -79,7 +94,6 @@ function GameState() {
 }
 
 function winCombination (data, char) {
-  alert('check');
   if (data === 'a1' || data === 'a2' || data === 'a3') {
     if (horizontal1(char)) {
       return "horizontal1";
@@ -87,12 +101,12 @@ function winCombination (data, char) {
   }
   if (data === 'b1' || data === 'b2' || data === 'b3') {
     if (horizontal2(char)) {
-      return "horizontal2";
+      return "horizontal1";
     } 
   }
   if (data === 'c1' || data === 'c2' || data === 'c3') {
     if (horizontal3(char)) {
-      return "horizontal3";
+      return "horizontal1";
     } 
   }     
   if (data === 'a1' || data === 'b1' || data === 'c1') {
@@ -137,7 +151,7 @@ function horizontal2(char) {
   }
 }
 function horizontal3(char) {
-  if (char === currentGameState.boardState.c1[1] && currentGameState.boardState.a1[1] === currentGameState.boardState.c2[1] && currentGameState.boardState.c2[1] === currentGameState.boardState.c3[1]) {
+  if (char === currentGameState.boardState.c1[1] && currentGameState.boardState.c1[1] === currentGameState.boardState.c2[1] && currentGameState.boardState.c2[1] === currentGameState.boardState.c3[1]) {
     return true;
   } else {
     return false;
@@ -204,7 +218,11 @@ function Computer(char) {
       currentGameState.boardState[squareId][0] = true;
       currentGameState.boardState[squareId][1] = computerAI.char;
       document.getElementById(squareId).innerHTML = computerAI.char;
+      if (currentGameState.turnsTaken > 4) {
+        currentGameState.checkForWinner(squareId, computerAI.char);
+      }
       currentGameState.turnsTaken++;
+      computerAI.turnActive = false;
     }
   }
   this.hardAI = function(){
