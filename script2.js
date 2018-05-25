@@ -36,23 +36,22 @@ function init() {
     computerAI = new Computer('O');
   }
   gameStarted = true;
-  console.log(openSquares);
   //set action to clicking of boxes and setting initial board state
   for(var i = 0; i < boardSquares.length; i++) {
     boardSquares[i].onclick = setClicked; 
     openSquares.push(boardSquares[i].id);
     currentGameState.boardState[boardSquares[i].id] = [false, undefined];
   }
-  console.log(openSquares);
   human.turnActive = true;
 }
 //click action logic
 function setClicked(){
   //computerAI.turnActive is set to false to prevent player from clicking a square before computer makes a move
-  if (computerAI.turnActive === false && currentGameState.winCounter === 0) {
+  if (computerAI.turnActive === false) {
     var squareId = this.id;
     // if (currentGameState.boardState[squareId][0] === false){
     if (openSquares.indexOf(squareId) !== -1){
+      var winner;
       removeFromOpen(squareId);
       currentGameState.boardState[squareId][0] = true;
       currentGameState.boardState[squareId][1] = human.char;
@@ -60,9 +59,9 @@ function setClicked(){
       currentGameState.turnsTaken++;
       //if turns taken reaches 3, check for a winner
       if (currentGameState.turnsTaken > 4) {
-        currentGameState.checkForWinner(squareId, human.char);
+        winner = currentGameState.checkForWinner(squareId, human.char);
       }
-      if (currentGameState.winCounter === 0) {
+      if (!winner) {
         //if turns taken reaches 9, declare a draw
         if (currentGameState.turnsTaken === 9) {
           currentGameState.checkForWinner("draw");
@@ -77,11 +76,9 @@ function setClicked(){
 }
 
 function GameState() {
-  this.winCounter = 0;
   this.turnsTaken = 0;
   this.boardState = {};
   this.checkForWinner = function(data, char) {
-
     if (data !== "draw") {
       var message;
       if (message = winCombination(data, char)) {
@@ -94,8 +91,10 @@ function GameState() {
           computerAI.wins++;
           oScore.innerHTML = computerAI.wins;
         }
-        this.winCounter++;
         setTimeout(reset("round"), 2000);
+        return true;
+      } else {
+        return false;
       }
     } else {
       alert("draw");
