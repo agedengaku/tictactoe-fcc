@@ -4,6 +4,8 @@ var playerSelect = document.getElementsByClassName("player-select");
 var boardSquares = document.getElementsByClassName("board-square");
 var xScore = document.getElementById("x-score");
 var oScore = document.getElementById("o-score");
+var resetBtn = document.getElementById("reset");
+resetBtn.onclick = reset;
 //declare global variables for game world objects
 var gameStarted = false;
 var currentGameState = {};
@@ -93,7 +95,7 @@ function GameState() {
           oScore.innerHTML = computerAI.wins;
         }
         this.winCounter++;
-        setTimeout(resetBoard, 2000);
+        setTimeout(reset("round"), 2000);
       }
     } else {
       alert("draw");
@@ -252,13 +254,18 @@ function removeFromOpen (squareId) {
     }
 }
 
-function resetBoard() {
+function reset(str) {
+  alert('clicked');
   for(var i = 0; i < boardSquares.length; i++) {
     boardSquares[i].innerHTML = '';
   }
   currentGameState = {};
-  human.turnActive = false;
-  computerAI.turnActive = false;
+  if (str === "round") {
+    human.turnActive = false;
+    computerAI.turnActive = false;
+  } else {
+    gameStarted = false;
+  }
   //tracks squares that are still open
   openSquares = [];
   init();
