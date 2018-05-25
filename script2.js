@@ -7,6 +7,7 @@ var oScore = document.getElementById("o-score");
 var resetBtn = document.getElementById("reset");
 resetBtn.onclick = reset;
 //declare global variables for game world objects
+var computerTurn;
 var gameStarted = false;
 var currentGameState = {};
 var human = {};
@@ -68,7 +69,7 @@ function setClicked(){
         }
         computerAI.turnActive = true;
         human.turnActive = false;
-        setTimeout(computerAI.easyAI, 2000);
+        computerTurn = setTimeout(computerAI.easyAI, 2000);
       }
 
     }
@@ -254,6 +255,10 @@ function removeFromOpen (squareId) {
 }
 
 function reset(str) {
+  //turns off computer's move in case it was already started
+  if (computerTurn) {
+    clearTimeout(computerTurn);
+  }
   alert('clicked');
   for(var i = 0; i < boardSquares.length; i++) {
     boardSquares[i].innerHTML = '';
