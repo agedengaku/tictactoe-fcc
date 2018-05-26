@@ -9,34 +9,26 @@ resetBtn.onclick = reset;
 //declare global variables for game world objects
 var computerTurn;
 var gameStarted = false;
+console.log(gameStarted);
 var currentGameState = {};
 var human = {};
 var computerAI = {};
 //tracks squares that are still open
 var openSquares = [];
-  // for(var i = 0; i < playerSelect.length; i++) {
-  //   playerSelect[i].addEventListener("click", function(){
-  //     alert("You selected: " + this.innerHTML);
-  //     var one = new Human();
-  //     var two = new Computer();
-  //     one.char = this.innerHTML;
-  //     if (one.char === "X") { 
-  //       two.char = "Y"; 
-  //     } else {
-  //       two.char = "X"; 
-  //     }
-  //     alert("One: " + one.char);
-  //     alert("Two: " + two.char)
-  //   });
-  // }
-init();  
+
+init();
+ 
 function init() {
   currentGameState = new GameState();  
   if (gameStarted === false) {
-    human = new Player('X');
-    computerAI = new Computer('O');
+    human = {};
+    computerAI = {};
+    for(var i = 0; i < playerSelect.length; i++) {
+      playerSelect[i].addEventListener("click", restartCharSelect);
+    }
+    gameStarted = true;
+    console.log(gameStarted);
   }
-  gameStarted = true;
   //set action to clicking of boxes and setting initial board state
   for(var i = 0; i < boardSquares.length; i++) {
     boardSquares[i].onclick = setClicked; 
@@ -45,6 +37,20 @@ function init() {
   }
   human.turnActive = true;
 }
+
+function restartCharSelect() {
+  alert("You selected: " + this.innerHTML);
+  human = new Player(this.innerHTML);
+  if (this.innerHTML === "X") { 
+    computerAI = new Computer("O");
+  } else {
+    computerAI = new Computer("X");
+  }
+  for(var i = 0; i < playerSelect.length; i++) {
+    playerSelect[i].removeEventListener("click", restartCharSelect);
+  }
+}
+
 //click action logic
 function setClicked(){
   //computerAI.turnActive is set to false to prevent player from clicking a square before computer makes a move
@@ -62,8 +68,10 @@ function setClicked(){
       if (currentGameState.turnsTaken > 4) {
         winner = currentGameState.checkForWinner(squareId, human.char);
       }
-      if (!winner) {
-        //if turns taken reaches 9, declare a draw
+      if (winner) {
+        setTimeout(reset("round"), 2000);
+      } else {
+        //if turns taken reaches 9 and no winner, declare a draw
         if (currentGameState.turnsTaken === 9) {
           currentGameState.checkForWinner("draw");
         }
@@ -71,7 +79,6 @@ function setClicked(){
         human.turnActive = false;
         computerTurn = setTimeout(computerAI.easyAI, 2000);
       }
-
     }
   }
 }
@@ -83,16 +90,23 @@ function GameState() {
     if (data !== "draw") {
       var message;
       if (message = winCombination(data, char)) {
-        if (char == "X") {
-          alert(message +" Human wins");
+        if (char === human.char){
+          alert(char + " Human wins!")
           human.wins++;
-          xScore.innerHTML = human.wins;
+          if (char === 'X') {
+            xScore.innerHTML = human.wins;
+          } else {
+            oScore.innerHTML = human.wins;
+          }
         } else {
-          alert(message +" Computer wins");
+          alert(char + " Computer wins!")
           computerAI.wins++;
-          oScore.innerHTML = computerAI.wins;
+          if (char === 'X') {
+            xScore.innerHTML = computerAI.wins;
+          } else {
+            oScore.innerHTML = computerAI.wins;
+          }
         }
-        setTimeout(reset("round"), 2000);
         return true;
       } else {
         return false;
@@ -100,10 +114,7 @@ function GameState() {
     } else {
       alert("draw");
     }
-  }
-  this.gameOver = function() {
-
-  }
+  }    
 }
 
 function winCombination (data, char) {
@@ -259,7 +270,6 @@ function reset(str) {
   if (computerTurn) {
     clearTimeout(computerTurn);
   }
-  alert('clicked');
   for(var i = 0; i < boardSquares.length; i++) {
     boardSquares[i].innerHTML = '';
   }
@@ -269,11 +279,12 @@ function reset(str) {
     computerAI.turnActive = false;
   } else {
     gameStarted = false;
+    console.log(gameStarted);
   }
   //tracks squares that are still open
   openSquares = [];
   init();
-  console.log(currentGameState);
+  // console.log(gameStarted);
 }
 //number of wins
 //X or O
