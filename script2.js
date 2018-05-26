@@ -93,19 +93,11 @@ function GameState() {
         if (char === human.char){
           alert(char + " Human wins!")
           human.wins++;
-          if (char === 'X') {
-            xScore.innerHTML = human.wins;
-          } else {
-            oScore.innerHTML = human.wins;
-          }
+          human.scoreHolder.innerHTML = human.wins;
         } else {
           alert(char + " Computer wins!")
           computerAI.wins++;
-          if (char === 'X') {
-            xScore.innerHTML = computerAI.wins;
-          } else {
-            oScore.innerHTML = computerAI.wins;
-          }
+          computerAI.scoreHolder.innerHTML = computerAI.wins;
         }
         return true;
       } else {
@@ -226,6 +218,11 @@ function diagonal2(char) {
 function Player(char) {
   this.char = char;
   this.wins = 0;
+  if (char === "X") {
+  this.scoreHolder = xScore;
+  } else {
+  this.scoreHolder = oScore;
+  }
   this.turnActive = false;
 }
 
