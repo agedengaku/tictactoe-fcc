@@ -26,6 +26,8 @@ function init() {
     for(var i = 0; i < playerSelect.length; i++) {
       playerSelect[i].addEventListener("click", restartCharSelect);
     }
+    xScore.innerHTML = '';
+    oScore.innerHTML = '';
     gameStarted = true;
     console.log(gameStarted);
   }
@@ -74,10 +76,12 @@ function setClicked(){
         //if turns taken reaches 9 and no winner, declare a draw
         if (currentGameState.turnsTaken === 9) {
           currentGameState.checkForWinner("draw");
-        }
+          setTimeout(reset("round"), 2000);
+        } else {
         computerAI.turnActive = true;
         human.turnActive = false;
         computerTurn = setTimeout(computerAI.easyAI, 2000);
+        }
       }
     }
   }
@@ -87,6 +91,7 @@ function GameState() {
   this.turnsTaken = 0;
   this.boardState = {};
   this.checkForWinner = function(data, char) {
+    console.log(data, char);
     if (data !== "draw") {
       var message;
       if (message = winCombination(data, char)) {
@@ -104,7 +109,7 @@ function GameState() {
         return false;
       }
     } else {
-      alert("draw");
+      alert("It's a draw!");
     }
   }    
 }
@@ -229,6 +234,7 @@ function Player(char) {
 function Computer(char) {
   Player.call(this, char);
   this.easyAI = function(){
+    var winner;
     //select random num from 0 to 8 incluside (dependent on number of squares)
     var squareNum = getRandomNum();
     //runs only if there are still open squares
@@ -239,10 +245,19 @@ function Computer(char) {
       currentGameState.boardState[squareId][1] = computerAI.char;
       document.getElementById(squareId).innerHTML = computerAI.char;
       if (currentGameState.turnsTaken > 4) {
-        currentGameState.checkForWinner(squareId, computerAI.char);
+        winner = currentGameState.checkForWinner(squareId, computerAI.char);
+      }    
+      if (winner) {
+        setTimeout(reset("round"), 2000);
+      } else {
+        if (currentGameState.turnsTaken === 9) {
+          currentGameState.checkForWinner("draw");
+          setTimeout(reset("round"), 2000);
+        } else {
+          currentGameState.turnsTaken++;
+          computerAI.turnActive = false;
+        }
       }
-      currentGameState.turnsTaken++;
-      computerAI.turnActive = false;
     }
   }
   this.hardAI = function(){
