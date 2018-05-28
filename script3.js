@@ -69,6 +69,7 @@ function moveLogic(squareId, char){
       if (currentGameState.turnsTaken === 9) {
         alert("Draw");
         setTimeout(reset("round"), 2000);
+        return false;
       } else {
         return true;
       }
