@@ -13,7 +13,7 @@ var currentGameState = {};
 var human = {};
 var computerAI = {};
 //tracks squares that are still open
-var openSquares = [];
+var openSquares = ["0", "1", "2", "3", "4", "5", "6", "7", "8"];
 
 init();
  
@@ -32,8 +32,8 @@ function init() {
   //set action to clicking of boxes and setting initial board state
   for(var i = 0; i < boardSquares.length; i++) {
     boardSquares[i].onclick = humanMove; 
-    openSquares.push(boardSquares[i].id);
-    currentGameState.boardState[boardSquares[i].id] = [false, undefined];
+    // openSquares.push(boardSquares[i].id);
+    // currentGameState.boardState[boardSquares[i].id] = [false, undefined];
   }
   human.turnActive = true;
 }
@@ -58,12 +58,12 @@ function humanMove(){
 function moveLogic(squareId, char){
   var result;
   removeFromOpen(squareId);
-  currentGameState.boardState[squareId][0] = true;
-  currentGameState.boardState[squareId][1] = char;
+  // currentGameState.boardState[squareId][0] = true;
+  currentGameState.boardState[squareId] = char;
   document.getElementById(squareId).innerHTML = char;
   currentGameState.turnsTaken++;
   if (currentGameState.turnsTaken > 4) {
-    result = checkForWinner(squareId, char);
+    result = checkForWinner(char);
     if (result) {
       setTimeout(reset("round"), 2000);
       return false;
@@ -80,8 +80,8 @@ function moveLogic(squareId, char){
   return true;
 }
 
-function checkForWinner(data, char) {
-    if (winCombination(data, char)) {
+function checkForWinner(char) {
+    if (winCombination(char)) {
       winScore(char);
       return true;
     } else {
@@ -103,108 +103,25 @@ function winScore(char) {
 
 function GameState() {
   this.turnsTaken = 0;
-  this.boardState = {};
+  this.boardState = ["0", "1", "2", "3", "4", "5", "6", "7", "8"];
 }
 
-function winCombination (data, char) {
-  if (data === 'a1' || data === 'a2' || data === 'a3') {
-    if (horizontal1(char)) {
+function winCombination (char) {
+  if (
+    (char === currentGameState.boardState[0] && currentGameState.boardState[0] === currentGameState.boardState[1] && currentGameState.boardState[2]) ||
+    (char === currentGameState.boardState[3] && currentGameState.boardState[3] === currentGameState.boardState[4] && currentGameState.boardState[5]) ||
+    (char === currentGameState.boardState[6] && currentGameState.boardState[6] === currentGameState.boardState[7] && currentGameState.boardState[8]) ||
+    (char === currentGameState.boardState[0] && currentGameState.boardState[0] === currentGameState.boardState[3] && currentGameState.boardState[6]) ||
+    (char === currentGameState.boardState[1] && currentGameState.boardState[1] === currentGameState.boardState[4] && currentGameState.boardState[7]) ||
+    (char === currentGameState.boardState[2] && currentGameState.boardState[2] === currentGameState.boardState[5] && currentGameState.boardState[8]) ||
+    (char === currentGameState.boardState[0] && currentGameState.boardState[0] === currentGameState.boardState[4] && currentGameState.boardState[8]) ||
+    (char === currentGameState.boardState[2] && currentGameState.boardState[2] === currentGameState.boardState[4] && currentGameState.boardState[6])       
+    ) {
       return true;
-    } 
-  }
-  if (data === 'b1' || data === 'b2' || data === 'b3') {
-    if (horizontal2(char)) {
-      return true;
-    } 
-  }
-  if (data === 'c1' || data === 'c2' || data === 'c3') {
-    if (horizontal3(char)) {
-      return true;
-    } 
-  }     
-  if (data === 'a1' || data === 'b1' || data === 'c1') {
-    if (vertical1(char)) {
-      return true;
-    } 
-  }    
-  if (data === 'a2' || data === 'b2' || data === 'c2') {
-    if (vertical2(char)) {
-      return true;
-    } 
-  }    
-  if (data === 'a3' || data === 'b3' || data === 'c3') {
-    if (vertical3(char)) {
-      return true;
-    } 
-  }    
-  if (data === 'a1' || data === 'b2' || data === 'c3') {
-    if (diagonal1(char)) {
-      return true;
-    } 
-  }    
-  if (data === 'a3' || data === 'b2' || data === 'c1') {
-    if (diagonal2(char)) {
-      return true;
-    } 
-  }
+    } else {
+      return false;
+    }
 }   
-//winning combination logic
-function horizontal1(char) {
-  if (char === currentGameState.boardState.a1[1] && currentGameState.boardState.a1[1] === currentGameState.boardState.a2[1] && currentGameState.boardState.a2[1] === currentGameState.boardState.a3[1]) {
-    return true;
-  } else {
-    return false;
-  }
-}
-function horizontal2(char) {
-  if (char === currentGameState.boardState.b1[1] && currentGameState.boardState.b1[1] === currentGameState.boardState.b2[1] && currentGameState.boardState.b2[1] === currentGameState.boardState.b3[1]) {
-    return true;
-  } else {
-    return false;
-  }
-}
-function horizontal3(char) {
-  if (char === currentGameState.boardState.c1[1] && currentGameState.boardState.c1[1] === currentGameState.boardState.c2[1] && currentGameState.boardState.c2[1] === currentGameState.boardState.c3[1]) {
-    return true;
-  } else {
-    return false;
-  }
-}
-function vertical1(char) {
-  if (char === currentGameState.boardState.a1[1] && currentGameState.boardState.a1[1] === currentGameState.boardState.b1[1] && currentGameState.boardState.b1[1] === currentGameState.boardState.c1[1]) {
-    return true;
-  } else {
-    return false;
-  }
-}        
-function vertical2(char) {
-  if (char === currentGameState.boardState.a2[1] && currentGameState.boardState.a2[1] === currentGameState.boardState.b2[1] && currentGameState.boardState.b2[1] === currentGameState.boardState.c2[1]) {
-    return true;
-  } else {
-    return false;
-  }
-}    
-function vertical3(char) {
-  if (char === currentGameState.boardState.a3[1] && currentGameState.boardState.a3[1] === currentGameState.boardState.b3[1] && currentGameState.boardState.b3[1] === currentGameState.boardState.c3[1]) {
-    return true;
-  } else {
-    return false;
-  }
-}
-function diagonal1(char) {
-  if (char === currentGameState.boardState.a1[1] && currentGameState.boardState.a1[1] === currentGameState.boardState.b2[1] && currentGameState.boardState.b2[1] === currentGameState.boardState.c3[1]) {
-    return true;
-  } else {
-    return false;
-  }      
-}    
-function diagonal2(char) {
-  if (char === currentGameState.boardState.a3[1] && currentGameState.boardState.a3[1] === currentGameState.boardState.b2[1] && currentGameState.boardState.b2[1] === currentGameState.boardState.c1[1]) {
-    return true;
-  } else {
-    return false;
-  }      
-}
 
 function Player(char) {
   this.char = char;
@@ -223,10 +140,10 @@ function Computer(char) {
   this.easyAI = function(){
     var noWinner;
     //select random num from 0 to 8 incluside (dependent on number of squares)
-    if(openSquares.length > 0) {
+    if(openSquares.length !== 0) {
       var squareNum = getRandomNum();
-      var squareId = openSquares[squareNum];
-      noWinner = moveLogic(squareId, $that.char);
+      squareNum = squareNum.toString();
+      noWinner = moveLogic(squareNum, $that.char);
       if (noWinner) {
         computerAI.turnActive = false;
       }
@@ -319,7 +236,7 @@ function reset(str) {
     gameStarted = false;
   }
   //tracks squares that are still open
-  openSquares = [];
+  openSquares = ["1", "2", "3", "4", "5", "6", "7", "8"];
   init();
 }
 
