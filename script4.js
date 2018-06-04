@@ -1,4 +1,3 @@
-(function() {
 "use strict";
 
 var playerSelect = document.getElementsByClassName("player-select");
@@ -58,6 +57,7 @@ function humanMove(){
 function moveLogic(squareId, char){
   var result;
   removeFromOpen(squareId);
+  console.log(openSquares);
   // currentGameState.boardState[squareId][0] = true;
   currentGameState.boardState[squareId] = char;
   document.getElementById(squareId).innerHTML = char;
@@ -108,14 +108,14 @@ function GameState() {
 
 function winCombination (char) {
   if (
-    (char === currentGameState.boardState[0] && currentGameState.boardState[0] === currentGameState.boardState[1] && currentGameState.boardState[2]) ||
-    (char === currentGameState.boardState[3] && currentGameState.boardState[3] === currentGameState.boardState[4] && currentGameState.boardState[5]) ||
-    (char === currentGameState.boardState[6] && currentGameState.boardState[6] === currentGameState.boardState[7] && currentGameState.boardState[8]) ||
-    (char === currentGameState.boardState[0] && currentGameState.boardState[0] === currentGameState.boardState[3] && currentGameState.boardState[6]) ||
-    (char === currentGameState.boardState[1] && currentGameState.boardState[1] === currentGameState.boardState[4] && currentGameState.boardState[7]) ||
-    (char === currentGameState.boardState[2] && currentGameState.boardState[2] === currentGameState.boardState[5] && currentGameState.boardState[8]) ||
-    (char === currentGameState.boardState[0] && currentGameState.boardState[0] === currentGameState.boardState[4] && currentGameState.boardState[8]) ||
-    (char === currentGameState.boardState[2] && currentGameState.boardState[2] === currentGameState.boardState[4] && currentGameState.boardState[6])       
+    (char === currentGameState.boardState[0] && currentGameState.boardState[0] === currentGameState.boardState[1] && currentGameState.boardState[1] === currentGameState.boardState[2]) ||
+    (char === currentGameState.boardState[3] && currentGameState.boardState[3] === currentGameState.boardState[4] && currentGameState.boardState[4] === currentGameState.boardState[5]) ||
+    (char === currentGameState.boardState[6] && currentGameState.boardState[6] === currentGameState.boardState[7] && currentGameState.boardState[7] === currentGameState.boardState[8]) ||
+    (char === currentGameState.boardState[0] && currentGameState.boardState[0] === currentGameState.boardState[3] && currentGameState.boardState[3] === currentGameState.boardState[6]) ||
+    (char === currentGameState.boardState[1] && currentGameState.boardState[1] === currentGameState.boardState[4] && currentGameState.boardState[4] === currentGameState.boardState[7]) ||
+    (char === currentGameState.boardState[2] && currentGameState.boardState[2] === currentGameState.boardState[5] && currentGameState.boardState[5] === currentGameState.boardState[8]) ||
+    (char === currentGameState.boardState[0] && currentGameState.boardState[0] === currentGameState.boardState[4] && currentGameState.boardState[4] === currentGameState.boardState[8]) ||
+    (char === currentGameState.boardState[2] && currentGameState.boardState[2] === currentGameState.boardState[4] && currentGameState.boardState[4] === currentGameState.boardState[6])       
     ) {
       return true;
     } else {
@@ -142,8 +142,8 @@ function Computer(char) {
     //select random num from 0 to 8 incluside (dependent on number of squares)
     if(openSquares.length !== 0) {
       var squareNum = getRandomNum();
-      squareNum = squareNum.toString();
-      noWinner = moveLogic(squareNum, $that.char);
+      var squareId = openSquares[squareNum];
+      noWinner = moveLogic(squareId, $that.char);
       if (noWinner) {
         computerAI.turnActive = false;
       }
@@ -236,7 +236,7 @@ function reset(str) {
     gameStarted = false;
   }
   //tracks squares that are still open
-  openSquares = ["1", "2", "3", "4", "5", "6", "7", "8"];
+  openSquares = ["0", "1", "2", "3", "4", "5", "6", "7", "8"];
   init();
 }
 
@@ -251,4 +251,4 @@ function restartCharSelect() {
   for(var i = 0; i < playerSelect.length; i++) {
     playerSelect[i].removeEventListener("click", restartCharSelect);
   }
-}})();
+}
