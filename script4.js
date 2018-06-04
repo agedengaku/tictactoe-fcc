@@ -2,6 +2,7 @@
 
 var playerSelect = document.getElementsByClassName("player-select");
 var boardSquares = document.getElementsByClassName("board-square");
+var difficultyMode = document.getElementsByClassName("difficulty-mode");
 var xScore = document.getElementById("x-score");
 var oScore = document.getElementById("o-score");
 var resetBtn = document.getElementById("reset");
@@ -11,7 +12,6 @@ var gameStarted = false;
 var currentGameState = {};
 var human = {};
 var computerAI = {};
-//tracks squares that are still open
 var openSquares = ["0", "1", "2", "3", "4", "5", "6", "7", "8"];
 
 init();
@@ -22,24 +22,26 @@ function init() {
     human = {};
     computerAI = {};
     for(var i = 0; i < playerSelect.length; i++) {
-      playerSelect[i].addEventListener("click", restartCharSelect);
+      playerSelect[i].addEventListener("click", charSelect);
     }
     xScore.innerHTML = '';
     oScore.innerHTML = '';
     gameStarted = true;
+    for(var i = 0; i < difficultyMode.length; i++) {
+      difficultyMode[i].addEventListener("click", difficultyModeSelect);
+    }
   }
   //set action to clicking of boxes and setting initial board state
   for(var i = 0; i < boardSquares.length; i++) {
     boardSquares[i].onclick = humanMove; 
-    // openSquares.push(boardSquares[i].id);
-    // currentGameState.boardState[boardSquares[i].id] = [false, undefined];
   }
   human.turnActive = true;
 }
 
 function humanMove(){
   //computerAI.turnActive is set to false to prevent player from clicking a square before computer makes a move
-  if (computerAI.turnActive === false) {
+  //also ensures computerAI has been instantiated and difficulty setting selected before a move can be placed
+  if (computerAI.turnActive === false && computerAI.difficulty) {
     var noWinner;
     var squareId = this.id;
     if (openSquares.indexOf(squareId) !== -1){
@@ -47,9 +49,7 @@ function humanMove(){
       if (noWinner) {
           computerAI.turnActive = true;
           human.turnActive = false;
-          // computerTurnId = setTimeout(computerAI.easyAI, 2000);
-          // computerTurnId = setTimeout(computerAI.hardAI, 2000);
-          computerTurnId = setTimeout(computerAI.normalAI, 2000);
+          computerTurnId = setTimeout(computerAI.move, 2000);
       }
     }
   }
@@ -58,7 +58,6 @@ function humanMove(){
 function moveLogic(squareId, char){
   var result;
   removeFromOpen(squareId);
-  // currentGameState.boardState[squareId][0] = true;
   currentGameState.boardState[squareId] = char;
   document.getElementById(squareId).innerHTML = char;
   currentGameState.turnsTaken++;
@@ -127,9 +126,9 @@ function Player(char) {
   this.char = char;
   this.wins = 0;
   if (char === "X") {
-  this.scoreHolder = xScore;
+    this.scoreHolder = xScore;
   } else {
-  this.scoreHolder = oScore;
+    this.scoreHolder = oScore;
   }
   this.turnActive = false;
 }
@@ -137,6 +136,16 @@ function Player(char) {
 function Computer(char) {
   Player.call(this, char);
   var $that = this;  
+  this.difficulty;
+  this.move = function(){
+    if ($that.difficulty === "Easy") {
+      $that.easyAI();
+    } else if ($that.difficulty === "Normal") {
+      $that.normalAI();
+    } else {
+      $that.hardAI();
+    }
+  }
   this.easyAI = function(){
     var noWinner;
     //select random num from 0 to 8 incluside (dependent on number of squares)
@@ -149,6 +158,16 @@ function Computer(char) {
       }
     }
   }
+  //normal mode selects randomly selects easy or hard mode on each move
+  this.normalAI = function(){
+    var modeSelector = getRandomNum(2);
+    if (modeSelector === 0) {
+      $that.easyAI();
+    } else {
+      $that.hardAI();
+    }
+  }
+  //hard mode uses minimax function to ensure human never wins
   this.hardAI = function(){
     var noWinner;
     var result = minimax(currentGameState.boardState, computerAI.char).index;
@@ -158,20 +177,9 @@ function Computer(char) {
         computerAI.turnActive = false;
     }
   }
-  this.normalAI = function(){
-    var modeSelector = getRandomNum(2);
-    if (modeSelector === 0) {
-      console.log("EASY");
-      $that.easyAI();
-    } else {
-      console.log("HARD");
-      $that.hardAI();
-    }
-  }
 }
-
+//minimax function taken from ...
 function minimax(reboard, player) {
-  // iter++;
   let array = availableSquares(reboard);
   if (winCombination(reboard, human.char)) {
     return {
@@ -194,11 +202,11 @@ function minimax(reboard, player) {
     reboard[array[i]] = player;
 
     if (player == computerAI.char) {
-      var g = minimax(reboard, human.char);
-      move.score = g.score;
+      var result = minimax(reboard, human.char);
+      move.score = result.score;
     } else {
-      var g = minimax(reboard, computerAI.char);
-      move.score = g.score;
+      var result = minimax(reboard, computerAI.char);
+      move.score = result.score;
     }
     reboard[array[i]] = move.index;
     moves.push(move);
@@ -259,7 +267,7 @@ function reset(str) {
   init();
 }
 
-function restartCharSelect() {
+function charSelect() {
   alert("You selected: " + this.innerHTML);
   human = new Player(this.innerHTML);
   if (this.innerHTML === "X") { 
@@ -268,6 +276,16 @@ function restartCharSelect() {
     computerAI = new Computer("X");
   }
   for(var i = 0; i < playerSelect.length; i++) {
-    playerSelect[i].removeEventListener("click", restartCharSelect);
+    playerSelect[i].removeEventListener("click", charSelect);
+  }
+}
+
+function difficultyModeSelect() {
+  if(human.char) {
+    alert("You selected: " + this.innerHTML);
+    computerAI.difficulty = this.innerHTML;
+    for(var i = 0; i < difficultyMode.length; i++) {
+      difficultyMode[i].removeEventListener("click", difficultyModeSelect);
+    }
   }
 }
