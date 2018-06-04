@@ -47,8 +47,9 @@ function humanMove(){
       if (noWinner) {
           computerAI.turnActive = true;
           human.turnActive = false;
-          computerTurnId = setTimeout(computerAI.easyAI, 2000);
+          // computerTurnId = setTimeout(computerAI.easyAI, 2000);
           // computerTurnId = setTimeout(computerAI.hardAI, 2000);
+          computerTurnId = setTimeout(computerAI.normalAI, 2000);
       }
     }
   }
@@ -57,7 +58,6 @@ function humanMove(){
 function moveLogic(squareId, char){
   var result;
   removeFromOpen(squareId);
-  console.log(openSquares);
   // currentGameState.boardState[squareId][0] = true;
   currentGameState.boardState[squareId] = char;
   document.getElementById(squareId).innerHTML = char;
@@ -81,7 +81,7 @@ function moveLogic(squareId, char){
 }
 
 function checkForWinner(char) {
-    if (winCombination(char)) {
+    if (winCombination(currentGameState.boardState, char)) {
       winScore(char);
       return true;
     } else {
@@ -106,16 +106,16 @@ function GameState() {
   this.boardState = ["0", "1", "2", "3", "4", "5", "6", "7", "8"];
 }
 
-function winCombination (char) {
+function winCombination (board, char) {
   if (
-    (char === currentGameState.boardState[0] && currentGameState.boardState[0] === currentGameState.boardState[1] && currentGameState.boardState[1] === currentGameState.boardState[2]) ||
-    (char === currentGameState.boardState[3] && currentGameState.boardState[3] === currentGameState.boardState[4] && currentGameState.boardState[4] === currentGameState.boardState[5]) ||
-    (char === currentGameState.boardState[6] && currentGameState.boardState[6] === currentGameState.boardState[7] && currentGameState.boardState[7] === currentGameState.boardState[8]) ||
-    (char === currentGameState.boardState[0] && currentGameState.boardState[0] === currentGameState.boardState[3] && currentGameState.boardState[3] === currentGameState.boardState[6]) ||
-    (char === currentGameState.boardState[1] && currentGameState.boardState[1] === currentGameState.boardState[4] && currentGameState.boardState[4] === currentGameState.boardState[7]) ||
-    (char === currentGameState.boardState[2] && currentGameState.boardState[2] === currentGameState.boardState[5] && currentGameState.boardState[5] === currentGameState.boardState[8]) ||
-    (char === currentGameState.boardState[0] && currentGameState.boardState[0] === currentGameState.boardState[4] && currentGameState.boardState[4] === currentGameState.boardState[8]) ||
-    (char === currentGameState.boardState[2] && currentGameState.boardState[2] === currentGameState.boardState[4] && currentGameState.boardState[4] === currentGameState.boardState[6])       
+    (char === board[0] && board[0] === board[1] && board[1] === board[2]) ||
+    (char === board[3] && board[3] === board[4] && board[4] === board[5]) ||
+    (char === board[6] && board[6] === board[7] && board[7] === board[8]) ||
+    (char === board[0] && board[0] === board[3] && board[3] === board[6]) ||
+    (char === board[1] && board[1] === board[4] && board[4] === board[7]) ||
+    (char === board[2] && board[2] === board[5] && board[5] === board[8]) ||
+    (char === board[0] && board[0] === board[4] && board[4] === board[8]) ||
+    (char === board[2] && board[2] === board[4] && board[4] === board[6])       
     ) {
       return true;
     } else {
@@ -141,7 +141,7 @@ function Computer(char) {
     var noWinner;
     //select random num from 0 to 8 incluside (dependent on number of squares)
     if(openSquares.length !== 0) {
-      var squareNum = getRandomNum();
+      var squareNum = getRandomNum(openSquares.length);
       var squareId = openSquares[squareNum];
       noWinner = moveLogic(squareId, $that.char);
       if (noWinner) {
@@ -150,70 +150,89 @@ function Computer(char) {
     }
   }
   this.hardAI = function(){
-    // minimax(openSquares);
+    var noWinner;
+    var result = minimax(currentGameState.boardState, computerAI.char).index;
+    var squareId = currentGameState.boardState[result];
+    noWinner = moveLogic(squareId, $that.char);
+    if (noWinner) {
+        computerAI.turnActive = false;
+    }
   }
   this.normalAI = function(){
+    var modeSelector = getRandomNum(2);
+    if (modeSelector === 0) {
+      console.log("EASY");
+      $that.easyAI();
+    } else {
+      console.log("HARD");
+      $that.hardAI();
+    }
   }
 }
 
-// function minimax(reboard, player) {
-//   iter++;
-//   let array = avail(reboard);
-//   if (winning(reboard, huPlayer)) {
-//     return {
-//       score: -10
-//     };
-//   } else if (winning(reboard, aiPlayer)) {
-//     return {
-//       score: 10
-//     };
-//   } else if (array.length === 0) {
-//     return {
-//       score: 0
-//     };
-//   }
+function minimax(reboard, player) {
+  // iter++;
+  let array = availableSquares(reboard);
+  if (winCombination(reboard, human.char)) {
+    return {
+      score: -10
+    };
+  } else if (winCombination(reboard, computerAI.char)) {
+    return {
+      score: 10
+    };
+  } else if (array.length === 0) {
+    return {
+      score: 0
+    };
+  }
 
-//   var moves = [];
-//   for (var i = 0; i < array.length; i++) {
-//     var move = {};
-//     move.index = reboard[array[i]];
-//     reboard[array[i]] = player;
+  var moves = [];
+  for (var i = 0; i < array.length; i++) {
+    var move = {};
+    move.index = reboard[array[i]];
+    reboard[array[i]] = player;
 
-//     if (player == aiPlayer) {
-//       var g = minimax(reboard, huPlayer);
-//       move.score = g.score;
-//     } else {
-//       var g = minimax(reboard, aiPlayer);
-//       move.score = g.score;
-//     }
-//     reboard[array[i]] = move.index;
-//     moves.push(move);
-//   }
+    if (player == computerAI.char) {
+      var g = minimax(reboard, human.char);
+      move.score = g.score;
+    } else {
+      var g = minimax(reboard, computerAI.char);
+      move.score = g.score;
+    }
+    reboard[array[i]] = move.index;
+    moves.push(move);
+  }
 
-//   var bestMove;
-//   if (player === aiPlayer) {
-//     var bestScore = -10000;
-//     for (var i = 0; i < moves.length; i++) {
-//       if (moves[i].score > bestScore) {
-//         bestScore = moves[i].score;
-//         bestMove = i;
-//       }
-//     }
-//   } else {
-//     var bestScore = 10000;
-//     for (var i = 0; i < moves.length; i++) {
-//       if (moves[i].score < bestScore) {
-//         bestScore = moves[i].score;
-//         bestMove = i;
-//       }
-//     }
-//   }
-//   return moves[bestMove];
-// }
+  var bestMove;
+  if (player === computerAI.char) {
+    var bestScore = -10000;
+    for (var i = 0; i < moves.length; i++) {
+      if (moves[i].score > bestScore) {
+        bestScore = moves[i].score;
+        bestMove = i;
+      }
+    }
+  } else {
+    var bestScore = 10000;
+    for (var i = 0; i < moves.length; i++) {
+      if (moves[i].score < bestScore) {
+        bestScore = moves[i].score;
+        bestMove = i;
+      }
+    }
+  }
+  return moves[bestMove];
+
+  function availableSquares(board) {
+    var result = board.filter(square => square !== "X" && square !=="O");
+    return result;
+  }
+}
 
 
-function getRandomNum() {
-  return Math.floor(Math.random() * Math.floor(openSquares.length));
+function getRandomNum(value) {
+  return Math.floor(Math.random() * Math.floor(value));
 }
 
 function removeFromOpen (squareId) {
