@@ -2,6 +2,12 @@ body {
 	margin: 0;
 	padding: 0;
 }
+.board {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translateX(-50%) translateY(-50%);
+}
 .board-row {
 	/*height: 52px;*/
 }
@@ -27,31 +33,31 @@ body {
 .player-select-row {
 	clear: both;
 }
-#a1 {
+.row-1 > :first-child  {
 	border-top: none; 
 	border-left: none;
 }
-#a2 {
+.row-1 > :nth-child(2) {
 	border-top: none;
 }
-#a3 {
+.row-1 > :last-child {
 	border-top: none; 
 	border-right: none;	
 }
-#b1 {
+.row-2 > :first-child {
 	border-left: none;
 }
-#b3 {
+.row-2 > :last-child {
 	border-right: none;
 }
-#c1 {
+.row-3 > :first-child {
 	border-bottom: none; 
 	border-left: none;
 }
-#c2 {
+.row-3 > :nth-child(2) {
 	border-bottom: none;
 }
-#c3 {
+.row-3 > :last-child {
 	border-bottom: none; 
 	border-right: none;	
 }

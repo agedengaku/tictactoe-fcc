@@ -1,202 +1,291 @@
+"use strict";
+
 var playerSelect = document.getElementsByClassName("player-select");
-var boardSquare = document.getElementsByClassName("board-square");
+var boardSquares = document.getElementsByClassName("board-square");
+var difficultyMode = document.getElementsByClassName("difficulty-mode");
+var xScore = document.getElementById("x-score");
+var oScore = document.getElementById("o-score");
+var resetBtn = document.getElementById("reset");
+resetBtn.onclick = reset;
+var computerTurnId;
+var gameStarted = false;
+var currentGameState = {};
+var human = {};
+var computerAI = {};
+var openSquares = ["0", "1", "2", "3", "4", "5", "6", "7", "8"];
 
-var newBoard = new Board();
-var newGameState = new GameState();
-var human = new Player;
-human.char = 'X';
-var computer = new Player;
-computer.char = 'O'; 
-  // for(var i = 0; i < playerSelect.length; i++) {
-  //   playerSelect[i].addEventListener("click", function(){
-  //     alert("You selected: " + this.innerHTML);
-  //     var one = new Human();
-  //     var two = new Computer();
-  //     one.char = this.innerHTML;
-  //     if (one.char === "X") { 
-  //       two.char = "Y"; 
-  //     } else {
-  //       two.char = "X"; 
-  //     }
-  //     alert("One: " + one.char);
-  //     alert("Two: " + two.char)
-  //   });
-  // }
-
-for(var i = 0; i < boardSquare.length; i++) {
-  boardSquare[i].onclick = setClicked; 
+init();
+ 
+function init() {
+  currentGameState = new GameState();  
+  if (gameStarted === false) {
+    human = {};
+    computerAI = {};
+    for(var i = 0; i < playerSelect.length; i++) {
+      playerSelect[i].addEventListener("click", charSelect);
+    }
+    xScore.innerHTML = '';
+    oScore.innerHTML = '';
+    gameStarted = true;
+    for(var i = 0; i < difficultyMode.length; i++) {
+      difficultyMode[i].addEventListener("click", difficultyModeSelect);
+    }
+  }
+  //set action to clicking of boxes and setting initial board state
+  for(var i = 0; i < boardSquares.length; i++) {
+    boardSquares[i].onclick = humanMove; 
+  }
+  human.turnActive = true;
 }
 
-function setClicked(){
-  var squareId = this.id;
-  if (newBoard[squareId][0] === false){
-    newBoard[squareId][0] = true;
-    newBoard[squareId][1] = human.char;
-    this.innerHTML = human.char;
-    newGameState.turnsTaken++;
-    if (newGameState.turnsTaken > 2 && newGameState.turnsTaken < 9) {
-      newGameState.checkForWinner(squareId, human.char);
-      console.log(newBoard.a1 + newBoard.a2 + newBoard.a3);
+function humanMove(){
+  //computerAI.turnActive is set to false to prevent player from clicking a square before computer makes a move
+  //also ensures computerAI has been instantiated and difficulty setting selected before a move can be placed
+  if (computerAI.turnActive === false && computerAI.difficulty) {
+    var noWinner;
+    var squareId = this.id;
+    if (openSquares.indexOf(squareId) !== -1){
+      noWinner = moveLogic(squareId, human.char);
+      if (noWinner) {
+          computerAI.turnActive = true;
+          human.turnActive = false;
+          computerTurnId = setTimeout(computerAI.move, 2000);
+      }
     }
-    if (newGameState.turnsTaken === 9) {
-      newGameState.checkForWinner("draw");
+  }
+}
+
+function moveLogic(squareId, char){
+  var result;
+  removeFromOpen(squareId);
+  currentGameState.boardState[squareId] = char;
+  document.getElementById(squareId).innerHTML = char;
+  currentGameState.turnsTaken++;
+  if (currentGameState.turnsTaken > 4) {
+    result = checkForWinner(char);
+    if (result) {
+      setTimeout(reset("round"), 2000);
+      return false;
+    } else {
+      if (currentGameState.turnsTaken === 9) {
+        alert("Draw");
+        setTimeout(reset("round"), 2000);
+        return false;
+      } else {
+        return true;
+      }
     }
+  }
+  return true;
+}
+
+function checkForWinner(char) {
+    if (winCombination(currentGameState.boardState, char)) {
+      winScore(char);
+      return true;
+    } else {
+      return false;
+    }
+}    
+
+function winScore(char) {
+  if (char === human.char){
+    alert(char + " Human wins!");
+    human.wins++;
+    human.scoreHolder.innerHTML = human.wins;
+  } else {
+    alert(char + " Computer wins!")
+    computerAI.wins++;
+    computerAI.scoreHolder.innerHTML = computerAI.wins;
   }
 }
 
 function GameState() {
-  this.winCounter;
   this.turnsTaken = 0;
-  this.checkForWinner = function(data, char) {
-    if (data !== "draw") {
-      var message;
-      if (message = winCombination(data, char)) {
-        alert(message);
-      }
-    } else {
-      alert("draw");
-    }
-  }
-  this.gameOver = function() {
-  }
+  this.boardState = ["0", "1", "2", "3", "4", "5", "6", "7", "8"];
 }
 
-function winCombination (data, char) {
-  alert('check');
-  if (data === 'a1' || data === 'a2' || data === 'a3') {
-    if (horizontal1(char)) {
-      return "horizontal1";
-    } 
-  }
-  if (data === 'b1' || data === 'b2' || data === 'b3') {
-    if (horizontal2(char)) {
-      return "horizontal2";
-    } 
-  }
-  if (data === 'c1' || data === 'c2' || data === 'c3') {
-    if (horizontal3(char)) {
-      return "horizontal3";
-    } 
-  }     
-  if (data === 'a1' || data === 'b1' || data === 'c1') {
-    if (vertical1(char)) {
-      return "vertical1";
-    } 
-  }    
-  if (data === 'a2' || data === 'b2' || data === 'c2') {
-    if (vertical2(char)) {
-      return "vertical2";
-    } 
-  }    
-  if (data === 'a3' || data === 'b3' || data === 'c3') {
-    if (vertical3(char)) {
-      return "vertical3";
-    } 
-  }    
-  if (data === 'a1' || data === 'b2' || data === 'c3') {
-    if (diagonal1(char)) {
-      return "diagonal1";
-    } 
-  }    
-  if (data === 'a3' || data === 'b2' || data === 'c1') {
-    if (diagonal2(char)) {
-      return "diagonal2";
-    } 
-  }
+function winCombination (board, char) {
+  if (
+    (char === board[0] && board[0] === board[1] && board[1] === board[2]) ||
+    (char === board[3] && board[3] === board[4] && board[4] === board[5]) ||
+    (char === board[6] && board[6] === board[7] && board[7] === board[8]) ||
+    (char === board[0] && board[0] === board[3] && board[3] === board[6]) ||
+    (char === board[1] && board[1] === board[4] && board[4] === board[7]) ||
+    (char === board[2] && board[2] === board[5] && board[5] === board[8]) ||
+    (char === board[0] && board[0] === board[4] && board[4] === board[8]) ||
+    (char === board[2] && board[2] === board[4] && board[4] === board[6])       
+    ) {
+      return true;
+    } else {
+      return false;
+    }
 }   
 
-function horizontal1(char) {
-  if (char === newBoard.a1[1] && newBoard.a1[1] === newBoard.a2[1] && newBoard.a2[1] === newBoard.a3[1]) {
-    return true;
+function Player(char) {
+  this.char = char;
+  this.wins = 0;
+  if (char === "X") {
+    this.scoreHolder = xScore;
   } else {
-    return false;
+    this.scoreHolder = oScore;
+  }
+  this.turnActive = false;
+}
+
+function Computer(char) {
+  Player.call(this, char);
+  var $that = this;  
+  this.difficulty;
+  this.move = function(){
+    if ($that.difficulty === "Easy") {
+      $that.easyAI();
+    } else if ($that.difficulty === "Normal") {
+      $that.normalAI();
+    } else {
+      $that.hardAI();
+    }
+  }
+  this.easyAI = function(){
+    var noWinner;
+    //select random num from 0 to 8 incluside (dependent on number of squares)
+    if(openSquares.length !== 0) {
+      var squareNum = getRandomNum(openSquares.length);
+      var squareId = openSquares[squareNum];
+      noWinner = moveLogic(squareId, $that.char);
+      if (noWinner) {
+        computerAI.turnActive = false;
+      }
+    }
+  }
+  //normal mode selects randomly selects easy or hard mode on each move
+  this.normalAI = function(){
+    var modeSelector = getRandomNum(2);
+    if (modeSelector === 0) {
+      $that.easyAI();
+    } else {
+      $that.hardAI();
+    }
+  }
+  //hard mode uses minimax function to ensure human never wins
+  this.hardAI = function(){
+    var noWinner;
+    var result = minimax(currentGameState.boardState, computerAI.char).index;
+    var squareId = currentGameState.boardState[result];
+    noWinner = moveLogic(squareId, $that.char);
+    if (noWinner) {
+        computerAI.turnActive = false;
+    }
   }
 }
-function horizontal2(char) {
-  if (char === newBoard.b1[1] && newBoard.b1[1] === newBoard.b2[1] && newBoard.b2[1] === newBoard.b3[1]) {
-    return true;
+//minimax function taken from ...
+function minimax(reboard, player) {
+  let array = availableSquares(reboard);
+  if (winCombination(reboard, human.char)) {
+    return {
+      score: -10
+    };
+  } else if (winCombination(reboard, computerAI.char)) {
+    return {
+      score: 10
+    };
+  } else if (array.length === 0) {
+    return {
+      score: 0
+    };
+  }
+
+  var moves = [];
+  for (var i = 0; i < array.length; i++) {
+    var move = {};
+    move.index = reboard[array[i]];
+    reboard[array[i]] = player;
+
+    if (player == computerAI.char) {
+      var result = minimax(reboard, human.char);
+      move.score = result.score;
+    } else {
+      var result = minimax(reboard, computerAI.char);
+      move.score = result.score;
+    }
+    reboard[array[i]] = move.index;
+    moves.push(move);
+  }
+
+  var bestMove;
+  if (player === computerAI.char) {
+    var bestScore = -10000;
+    for (var i = 0; i < moves.length; i++) {
+      if (moves[i].score > bestScore) {
+        bestScore = moves[i].score;
+        bestMove = i;
+      }
+    }
   } else {
-    return false;
+    var bestScore = 10000;
+    for (var i = 0; i < moves.length; i++) {
+      if (moves[i].score < bestScore) {
+        bestScore = moves[i].score;
+        bestMove = i;
+      }
+    }
+  }
+  return moves[bestMove];
+
+  function availableSquares(board) {
+    var result = board.filter(square => square !== "X" && square !=="O");
+    return result;
   }
 }
-function horizontal3(char) {
-  if (char === newBoard.c1[1] && newBoard.a1[1] === newBoard.c2[1] && newBoard.c2[1] === newBoard.c3[1]) {
-    return true;
+
+
+function getRandomNum(value) {
+  return Math.floor(Math.random() * Math.floor(value));
+}
+
+function removeFromOpen (squareId) {
+    if(openSquares.indexOf(squareId) !== -1) {
+      var index = openSquares.indexOf(squareId);
+      openSquares.splice(index, 1);
+    }
+}
+
+function reset(str) {
+  //turns off computer's move in case it was already started
+  for(var i = 0; i < boardSquares.length; i++) {
+    boardSquares[i].innerHTML = '';
+  }
+  currentGameState = {};
+  if (str === "round") {
+    human.turnActive = false;
+    computerAI.turnActive = false;
   } else {
-    return false;
+    gameStarted = false;
+  }
+  //tracks squares that are still open
+  openSquares = ["0", "1", "2", "3", "4", "5", "6", "7", "8"];
+  init();
+}
+
+function charSelect() {
+  alert("You selected: " + this.innerHTML);
+  human = new Player(this.innerHTML);
+  if (this.innerHTML === "X") { 
+    computerAI = new Computer("O");
+  } else {
+    computerAI = new Computer("X");
+  }
+  for(var i = 0; i < playerSelect.length; i++) {
+    playerSelect[i].removeEventListener("click", charSelect);
   }
 }
-function vertical1(char) {
-  if (char === newBoard.a1[1] && newBoard.a1[1] === newBoard.b1[1] && newBoard.b1[1] === newBoard.c1[1]) {
-    return true;
-  } else {
-    return false;
-  }
-}        
-function vertical2(char) {
-  if (char === newBoard.a2[1] && newBoard.a2[1] === newBoard.b2[1] && newBoard.b2[1] === newBoard.c2[1]) {
-    return true;
-  } else {
-    return false;
-  }
-}    
-function vertical3(char) {
-  if (char === newBoard.a3[1] && newBoard.a3[1] === newBoard.b3[1] && newBoard.b3[1] === newBoard.c3[1]) {
-    return true;
-  } else {
-    return false;
+
+function difficultyModeSelect() {
+  if(human.char) {
+    alert("You selected: " + this.innerHTML);
+    computerAI.difficulty = this.innerHTML;
+    for(var i = 0; i < difficultyMode.length; i++) {
+      difficultyMode[i].removeEventListener("click", difficultyModeSelect);
+    }
   }
 }
-function diagonal1(char) {
-  if (char === newBoard.a1[1] && newBoard.a1[1] === newBoard.b2[1] && newBoard.b2[1] === newBoard.c3[1]) {
-    return true;
-  } else {
-    return false;
-  }      
-}    
-function diagonal2(char) {
-  if (char === newBoard.a3[1] && newBoard.a3[1] === newBoard.b2[1] && newBoard.b2[1] === newBoard.c1[1]) {
-    return true;
-  } else {
-    return false;
-  }      
-}
-
-
-
-//info of board squares
-
-function Board(squareIds) {
-//each var contains true/false (square clicked), and if clicked contains which player
- this.a1 = [false, undefined];
- this.a2 = [false, undefined];
- this.a3 = [false, undefined];
- this.b1 = [false, undefined];
- this.b2 = [false, undefined];
- this.b3 = [false, undefined];
- this.c1 = [false, undefined];
- this.c2 = [false, undefined];
- this.c3 = [false, undefined];
-}
-
-
-//number of wins
-//X or O
-function Player() {
-  this.char;
-}
-
-//number of wins
-//X or O
-//active
-// function Human() {
-//  var char;
-// }
-
-//AI
-//wins
-//X or O
-//active
-// function Computer() {
-//  var char;  
-// }
