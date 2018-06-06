@@ -13,6 +13,7 @@ var currentGameState = {};
 var human = {};
 var computerAI = {};
 var openSquares = ["0", "1", "2", "3", "4", "5", "6", "7", "8"];
+var selectedDifficulty;
 
 init();
  
@@ -21,15 +22,15 @@ function init() {
   if (gameStarted === false) {
     human = {};
     computerAI = {};
+    for(var i = 0; i < difficultyMode.length; i++) {
+      difficultyMode[i].addEventListener("click", difficultyModeSelect);
+    }
     for(var i = 0; i < playerSelect.length; i++) {
       playerSelect[i].addEventListener("click", charSelect);
     }
     xScore.innerHTML = '';
     oScore.innerHTML = '';
     gameStarted = true;
-    for(var i = 0; i < difficultyMode.length; i++) {
-      difficultyMode[i].addEventListener("click", difficultyModeSelect);
-    }
   }
   //set action to clicking of boxes and setting initial board state
   for(var i = 0; i < boardSquares.length; i++) {
@@ -52,6 +53,9 @@ function humanMove(){
           computerTurnId = setTimeout(computerAI.move, 2000);
       }
     }
+  } else {
+    console.log("Something is wrong");
+    console.log("turnActive: "+computerAI.turnActive+" difficulty: "+computerAI.difficulty);
   }
 }
 
@@ -178,9 +182,10 @@ function Computer(char) {
     }
   }
 }
-//minimax function taken from ...
+//minimax function taken from https://medium.freecodecamp.org/how-to-make-your-tic-tac-toe-game-unbeatable-by-using-the-minimax-algorithm-9d690bad4b37
+//and https://codepen.io/abdolsa/pen/vgjoMb
 function minimax(reboard, player) {
-  let array = availableSquares(reboard);
+  var array = availableSquares(reboard);
   if (winCombination(reboard, human.char)) {
     return {
       score: -10
@@ -238,7 +243,6 @@ function minimax(reboard, player) {
   }
 }
 
-
 function getRandomNum(value) {
   return Math.floor(Math.random() * Math.floor(value));
 }
@@ -262,30 +266,33 @@ function reset(str) {
   } else {
     gameStarted = false;
   }
-  //tracks squares that are still open
   openSquares = ["0", "1", "2", "3", "4", "5", "6", "7", "8"];
   init();
 }
 
 function charSelect() {
-  alert("You selected: " + this.innerHTML);
-  human = new Player(this.innerHTML);
-  if (this.innerHTML === "X") { 
-    computerAI = new Computer("O");
-  } else {
-    computerAI = new Computer("X");
-  }
-  for(var i = 0; i < playerSelect.length; i++) {
-    playerSelect[i].removeEventListener("click", charSelect);
+  if (selectedDifficulty) {
+    alert("You selected: " + this.innerHTML);
+    human = new Player(this.innerHTML);
+    if (this.innerHTML === "X") { 
+      computerAI = new Computer("O");
+    } else {
+      computerAI = new Computer("X");
+    }
+    computerAI.difficulty = selectedDifficulty;
+    for(var i = 0; i < playerSelect.length; i++) {
+      playerSelect[i].removeEventListener("click", charSelect);
+    }
   }
 }
 
 function difficultyModeSelect() {
-  if(human.char) {
+  // if(human.char) {
     alert("You selected: " + this.innerHTML);
-    computerAI.difficulty = this.innerHTML;
+    selectedDifficulty = this.innerHTML;
+    console.log(computerAI.difficulty);
     for(var i = 0; i < difficultyMode.length; i++) {
       difficultyMode[i].removeEventListener("click", difficultyModeSelect);
     }
-  }
+  // }
 }
