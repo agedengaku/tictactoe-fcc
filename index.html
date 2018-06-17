@@ -4,8 +4,62 @@
 	<meta charset="UTF-8">
 	<title>Document</title>
 	<link rel="stylesheet" type="text/css" href="styles.css">
+  <link rel="prefetch" href="http://jmotaylor.com/cdn/sf2video-test4.mp4">
 </head>
-<body>
+<body>  
+
+<div id="play-button-screen">
+    <div id="play-button">PLAY</div>
+</div>
+<audio id="click-to-start">
+  <source src="ClickToStart-edited.mp3" type="audio/mpeg">
+  Your browser does not support the audio element.
+</audio>
+<audio id="mode-select">
+  <source src="mode-select.mp3" type="audio/mpeg">
+  Your browser does not support the audio element.
+</audio>
+<audio id="char-select-intro">
+  <source src="CharSelectIntro.mp3" type="audio/mpeg">
+  Your browser does not support the audio element.
+</audio>
+<audio id="char-select-main" loop>
+  <source src="CharSelectMain.mp3" type="audio/mpeg">
+  Your browser does not support the audio element.
+</audio>
+
+<div id="title-screen">
+  <video id="title-screen-video" loop>
+  <source src="sf2ttt-intro.mp4" type="video/mp4">
+    Your browser does not support the video tag.
+  </video>
+</div>
+
+<div id="difficulty-select-screen">
+  <div class="difficulty-mode" id="easy"><img src="easy-text.png" alt=""></div>
+  <div class="difficulty-mode" id="normal"><img src="normal-text.png" alt=""></div>
+  <div class="difficulty-mode" id="hard"><img src="hard-text.png" alt=""></div>
+</div>
+
+<!-- <div id="difficulty-select">
+    <div>1) Select the difficulty mode:</div>
+    <div class="difficulty-mode">Easy</div>
+    <div class="difficulty-mode">Normal</div>
+    <div class="difficulty-mode">Hard</div>
+</div> -->
+
+<div id="select-screen">
+  <div class="player-select-row">
+<!--     <div>1) Select the difficulty mode:</div>
+    <div class="difficulty-mode">Easy</div>
+    <div class="difficulty-mode">Normal</div>
+    <div class="difficulty-mode">Hard</div> -->
+    <div>2) Select your character:</div>
+    <div class="player-select">X</div>
+    <div class="player-select">O</div>
+  </div>
+</div>
+
 <div class="board">
   <div class="board-row row-1">
     <div id="0" class="board-square"></div>
@@ -23,14 +77,8 @@
     <div id="8" class="board-square"></div>
   </div>
 </div> <!-- .board -->
+
 <div class="player-select-row">
-  <div>1) Select the difficulty mode:</div>
-  <div class="difficulty-mode">Easy</div>
-  <div class="difficulty-mode">Normal</div>
-  <div class="difficulty-mode">Hard</div>
-  <div>2) Select your character:</div>
-  <div class="player-select">X</div>
-  <div class="player-select">O</div>
   <div>Number of wins</div>
   <div class="player-score">X: <span id="x-score"></span></div>
   <div class="player-score">O: <span id="o-score"></span></div>

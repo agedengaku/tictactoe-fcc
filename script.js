@@ -1,27 +1,80 @@
 "use strict";
+//BOARD
+const playerSelect = document.getElementsByClassName("player-select");
+const boardSquares = document.getElementsByClassName("board-square");
 
-var playerSelect = document.getElementsByClassName("player-select");
-var boardSquares = document.getElementsByClassName("board-square");
-var difficultyMode = document.getElementsByClassName("difficulty-mode");
-var xScore = document.getElementById("x-score");
-var oScore = document.getElementById("o-score");
-var resetBtn = document.getElementById("reset");
-resetBtn.onclick = reset;
-var computerTurnId;
-var gameStarted = false;
-var currentGameState = {};
-var human = {};
-var computerAI = {};
-var openSquares = ["0", "1", "2", "3", "4", "5", "6", "7", "8"];
-var selectedDifficulty;
+const difficultyMode = document.getElementsByClassName("difficulty-mode");
+const modeSelect = document.getElementById("mode-select");
+// const difficultySelectScreen = document.getElementById("difficulty-select-screen");
+const titleScreen = document.getElementById("title-screen");
+const titleScreenVideo = document.getElementById("title-screen-video");
+const selectScreen = document.getElementById("select-screen");
+
+const charSelectBgm = document.getElementById("char-select-bgm");
+const charSelectIntro = document.getElementById("char-select-intro");
+const charSelectMain = document.getElementById("char-select-main");
+
+const xScore = document.getElementById("x-score");
+const oScore = document.getElementById("o-score");
+const resetBtn = document.getElementById("reset");
+const playButton = document.getElementById('play-button');
+const playButtonScreen = document.getElementById('play-button-screen');
+const vid = document.getElementById('title-screen-video');
+const clickToStart = document.getElementById('click-to-start');
+
+let computerTurnId;
+let gameStarted = false;
+let currentGameState = {};
+let human = {};
+let computerAI = {};
+let openSquares = ["0", "1", "2", "3", "4", "5", "6", "7", "8"];
+let selectedDifficulty;
+let titleScreenOn = true;
+let selectScreenOn = true;
 
 init();
- 
+resetBtn.onclick = reset;
+
+playButton.addEventListener("click", playVid);
+function playVid() {
+  vid.play();
+  playButton.remove();
+  playButtonScreen.remove();
+}
+
+titleScreenVideo.addEventListener("click", function(){
+  clickToStart.play();
+  vid.pause();
+  setTimeout(removeTitleScreen, 2500);
+  titleScreenOn = false;
+});
+for(var i = 0; i < difficultyMode.length; i++) {
+  difficultyMode[i].addEventListener("mouseenter", function(){
+    let sound = new Audio("mode-select.mp3");
+    sound.play();
+  });
+}
+
+// difficultySelectScreen.addEventListener("click", function(){
+
+// });
+
+function removeTitleScreen() {
+  titleScreen.remove();
+}
+function charSelectScreen() {
+  charSelectIntro.play();
+  charSelectIntro.addEventListener("ended", function(){
+    charSelectMain.play();
+  });
+}
+
 function init() {
   currentGameState = new GameState();  
   if (gameStarted === false) {
     human = {};
     computerAI = {};
+    selectedDifficulty = undefined;
     for(var i = 0; i < difficultyMode.length; i++) {
       difficultyMode[i].addEventListener("click", difficultyModeSelect);
     }
@@ -42,7 +95,7 @@ function init() {
 function humanMove(){
   //computerAI.turnActive is set to false to prevent player from clicking a square before computer makes a move
   //also ensures computerAI has been instantiated and difficulty setting selected before a move can be placed
-  if (computerAI.turnActive === false && computerAI.difficulty) {
+  if (computerAI.turnActive === false && computerAI.difficulty && selectScreenOn === false) {
     var noWinner;
     var squareId = this.id;
     if (openSquares.indexOf(squareId) !== -1){
@@ -142,9 +195,9 @@ function Computer(char) {
   var $that = this;  
   this.difficulty;
   this.move = function(){
-    if ($that.difficulty === "Easy") {
+    if ($that.difficulty === "easy") {
       $that.easyAI();
-    } else if ($that.difficulty === "Normal") {
+    } else if ($that.difficulty === "normal") {
       $that.normalAI();
     } else {
       $that.hardAI();
@@ -172,11 +225,13 @@ function Computer(char) {
     }
   }
   //hard mode uses minimax function to ensure human never wins
-  this.hardAI = function(){
+  // this.hardAI = function(){
+  this.hardAI = () => {
     var noWinner;
     var result = minimax(currentGameState.boardState, computerAI.char).index;
     var squareId = currentGameState.boardState[result];
-    noWinner = moveLogic(squareId, $that.char);
+    // noWinner = moveLogic(squareId, $that.char);
+    noWinner = moveLogic(squareId, this.char);
     if (noWinner) {
         computerAI.turnActive = false;
     }
@@ -265,13 +320,15 @@ function reset(str) {
     computerAI.turnActive = false;
   } else {
     gameStarted = false;
+    document.body.insertBefore(selectScreen, document.body.childNodes[0]);
+    document.body.insertBefore(titleScreen, document.body.childNodes[0]);
   }
   openSquares = ["0", "1", "2", "3", "4", "5", "6", "7", "8"];
   init();
 }
 
 function charSelect() {
-  if (selectedDifficulty) {
+  if (selectedDifficulty && titleScreenOn === false) {
     alert("You selected: " + this.innerHTML);
     human = new Player(this.innerHTML);
     if (this.innerHTML === "X") { 
@@ -283,16 +340,18 @@ function charSelect() {
     for(var i = 0; i < playerSelect.length; i++) {
       playerSelect[i].removeEventListener("click", charSelect);
     }
+    selectScreenOn = false;
+    selectScreen.remove();
   }
 }
 
 function difficultyModeSelect() {
-  // if(human.char) {
-    alert("You selected: " + this.innerHTML);
-    selectedDifficulty = this.innerHTML;
-    console.log(computerAI.difficulty);
-    for(var i = 0; i < difficultyMode.length; i++) {
-      difficultyMode[i].removeEventListener("click", difficultyModeSelect);
-    }
-  // }
+  if(titleScreenOn === false) {
+    // alert("You selected: " + this.innerHTML);
+    // selectedDifficulty = this.innerHTML;
+    selectedDifficulty = this.id;
+    // for(var i = 0; i < difficultyMode.length; i++) {
+    //   difficultyMode[i].removeEventListener("click", difficultyModeSelect);
+    // }
+  }
 }
