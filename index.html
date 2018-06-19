@@ -8,17 +8,6 @@
 </head>
 <body>  
 
-<div id="play-button-screen">
-    <div id="play-button">PLAY</div>
-</div>
-<audio id="click-to-start">
-  <source src="ClickToStart-edited.mp3" type="audio/mpeg">
-  Your browser does not support the audio element.
-</audio>
-<audio id="mode-select">
-  <source src="mode-select.mp3" type="audio/mpeg">
-  Your browser does not support the audio element.
-</audio>
 <audio id="char-select-intro">
   <source src="CharSelectIntro.mp3" type="audio/mpeg">
   Your browser does not support the audio element.
@@ -28,6 +17,10 @@
   Your browser does not support the audio element.
 </audio>
 
+<div id="play-button-screen">
+    <div id="play-button">PLAY</div>
+</div>
+
 <div id="title-screen">
   <video id="title-screen-video" loop>
   <source src="sf2ttt-intro.mp4" type="video/mp4">
@@ -36,27 +29,17 @@
 </div>
 
 <div id="difficulty-select-screen">
+  <div id="title-screen-partial"><img src="difficulty-select-screen.jpg" alt=""></div>
   <div class="difficulty-mode" id="easy"><img src="easy-text.png" alt=""></div>
   <div class="difficulty-mode" id="normal"><img src="normal-text.png" alt=""></div>
   <div class="difficulty-mode" id="hard"><img src="hard-text.png" alt=""></div>
 </div>
 
-<!-- <div id="difficulty-select">
-    <div>1) Select the difficulty mode:</div>
-    <div class="difficulty-mode">Easy</div>
-    <div class="difficulty-mode">Normal</div>
-    <div class="difficulty-mode">Hard</div>
-</div> -->
-
 <div id="select-screen">
-  <div class="player-select-row">
-<!--     <div>1) Select the difficulty mode:</div>
-    <div class="difficulty-mode">Easy</div>
-    <div class="difficulty-mode">Normal</div>
-    <div class="difficulty-mode">Hard</div> -->
-    <div>2) Select your character:</div>
-    <div class="player-select">X</div>
-    <div class="player-select">O</div>
+  <div id="map-image"><img src="sf2ttt-map.jpg" alt=""></div>
+  <div id="player-icons">
+    <div id="O" class="player-select"><img src="ryu-icon.jpg" alt=""></div>
+    <div id="X" class="player-select"><img src="guile-icon.jpg" alt=""></div>
   </div>
 </div>
 
@@ -78,14 +61,14 @@
   </div>
 </div> <!-- .board -->
 
-<div class="player-select-row">
+<!-- <div class="player-select-row">
   <div>Number of wins</div>
   <div class="player-score">X: <span id="x-score"></span></div>
   <div class="player-score">O: <span id="o-score"></span></div>
-</div>
-<div>
+</div> -->
+<!-- <div>
   <button id="reset">Reset</button>
-</div>
+</div> -->
 	<script src="script.js"></script>
 </body>
 </html>

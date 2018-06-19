@@ -1,11 +1,10 @@
 "use strict";
-//BOARD
+
 const playerSelect = document.getElementsByClassName("player-select");
 const boardSquares = document.getElementsByClassName("board-square");
 
 const difficultyMode = document.getElementsByClassName("difficulty-mode");
-const modeSelect = document.getElementById("mode-select");
-// const difficultySelectScreen = document.getElementById("difficulty-select-screen");
+const difficultySelectScreen = document.getElementById("difficulty-select-screen");
 const titleScreen = document.getElementById("title-screen");
 const titleScreenVideo = document.getElementById("title-screen-video");
 const selectScreen = document.getElementById("select-screen");
@@ -16,11 +15,11 @@ const charSelectMain = document.getElementById("char-select-main");
 
 const xScore = document.getElementById("x-score");
 const oScore = document.getElementById("o-score");
-const resetBtn = document.getElementById("reset");
+// const resetBtn = document.getElementById("reset");
 const playButton = document.getElementById('play-button');
 const playButtonScreen = document.getElementById('play-button-screen');
 const vid = document.getElementById('title-screen-video');
-const clickToStart = document.getElementById('click-to-start');
+// const clickToStart = document.getElementById('click-to-start');
 
 let computerTurnId;
 let gameStarted = false;
@@ -32,8 +31,10 @@ let selectedDifficulty;
 let titleScreenOn = true;
 let selectScreenOn = true;
 
+let clickToStart = new Audio("ClickToStart-edited.mp3");
+
 init();
-resetBtn.onclick = reset;
+// resetBtn.onclick = reset;
 
 playButton.addEventListener("click", playVid);
 function playVid() {
@@ -42,30 +43,157 @@ function playVid() {
   playButtonScreen.remove();
 }
 
-titleScreenVideo.addEventListener("click", function(){
+function titleScreenClicked(){
   clickToStart.play();
   vid.pause();
-  setTimeout(removeTitleScreen, 2500);
+  setTimeout(function(){
+    removeScreen(titleScreen);
+  }, 2500);
   titleScreenOn = false;
-});
-for(var i = 0; i < difficultyMode.length; i++) {
-  difficultyMode[i].addEventListener("mouseenter", function(){
+  titleScreenVideo.removeEventListener("click", titleScreenClicked);
+}
+  titleScreenVideo.addEventListener("click", titleScreenClicked);
+  function modeSelectAudio() {
     let sound = new Audio("mode-select.mp3");
-    sound.play();
-  });
+    sound.play();  
+  }
+
+function removeScreen(element) {
+  element.remove();
 }
 
-// difficultySelectScreen.addEventListener("click", function(){
 
-// });
-
-function removeTitleScreen() {
-  titleScreen.remove();
+function BufferLoader(context, urlList, callback) {
+  this.context = context;
+  this.urlList = urlList;
+  this.onload = callback;
+  this.bufferList = new Array();
+  this.loadCount = 0;
 }
+
+// https://stackoverflow.com/questions/17333777/uncaught-reference-error-bufferloader-is-not-defined
+BufferLoader.prototype.loadBuffer = function(url, index) {
+  // Load buffer asynchronously
+  var request = new XMLHttpRequest();
+  request.open("GET", url, true);
+  request.responseType = "arraybuffer";
+
+  var loader = this;
+
+  request.onload = function() {
+    // Asynchronously decode the audio file data in request.response
+    loader.context.decodeAudioData(
+      request.response,
+      function(buffer) {
+        if (!buffer) {
+          alert('error decoding file data: ' + url);
+          return;
+        }
+        loader.bufferList[index] = buffer;
+        if (++loader.loadCount == loader.urlList.length)
+          loader.onload(loader.bufferList);
+      },
+      function(error) {
+        console.error('decodeAudioData error', error);
+      }
+    );
+  }
+
+  request.onerror = function() {
+    alert('BufferLoader: XHR error');
+  }
+
+  request.send();
+}
+
+BufferLoader.prototype.load = function() {
+  for (var i = 0; i < this.urlList.length; ++i)
+  this.loadBuffer(this.urlList[i], i);
+}
+
+
+
+
+
 function charSelectScreen() {
-  charSelectIntro.play();
+
+// window.onload = initSound;
+initSound();
+var context;
+var bufferLoader;
+
+function initSound() {
+  // Fix up prefixing
+  window.AudioContext = window.AudioContext || window.webkitAudioContext;
+  context = new AudioContext();
+  bufferLoader = new BufferLoader(
+    context,
+    [
+      'char-select-intro.mp3',
+      'char-select-main-2.mp3',
+    ],
+    finishedLoading
+    );
+  bufferLoader.load();
+}
+
+function finishedLoading(bufferList) {
+  // Create two sources and play them both together.
+  var source1 = context.createBufferSource();
+  var source2 = context.createBufferSource();
+  source1.buffer = bufferList[0];
+  source2.buffer = bufferList[1];
+
+  source1.connect(context.destination);
+  source2.connect(context.destination);
+
+  source1.start(0);
+  source2.start(3.8);
+  source2.loop = true;  
+  
+}
+
+
+
+
+// https://stackoverflow.com/questions/29882907/how-to-seamlessly-loop-sound-with-web-audio-api
+//this is the webaudio loooooppppppp
+    //enter url in the next line
+    // var url  = 'CharSelectMain.mp3';
+
+    // /* --- set up web audio --- */
+    // //create the context
+    // window.AudioContext = window.AudioContext || window.webkitAudioContext;
+    // var context = new AudioContext();
+    // //...and the source
+    // var source = context.createBufferSource();
+    // //connect it to the destination so you can hear it.
+    // source.connect(context.destination);
+
+    // /* --- load buffer ---  */
+    // var request = new XMLHttpRequest();
+    // //open the request
+    // request.open('GET', url, true); 
+    // //webaudio paramaters
+    // request.responseType = 'arraybuffer';
+    // //Once the request has completed... do this
+    // request.onload = function() {
+    //     context.decodeAudioData(request.response, function(response) {
+    //         /* --- play the sound AFTER the buffer loaded --- */
+    //         //set the buffer to the response we just received.
+    //         source.buffer = response;
+    //         //start(0) should play asap.
+    //         source.start(0);
+    //         source.loop = true;
+    //     }, function () { console.error('The request failed.'); } );
+    // }
+    // //Now that the request has been defined, actually make the request. (send it)
+    // request.send();
+
+
+  // charSelectIntro.play();
   charSelectIntro.addEventListener("ended", function(){
-    charSelectMain.play();
+    // charSelectMain.play();
   });
 }
 
@@ -77,12 +205,13 @@ function init() {
     selectedDifficulty = undefined;
     for(var i = 0; i < difficultyMode.length; i++) {
       difficultyMode[i].addEventListener("click", difficultyModeSelect);
+      difficultyMode[i].addEventListener("mouseenter", modeSelectAudio);
     }
     for(var i = 0; i < playerSelect.length; i++) {
       playerSelect[i].addEventListener("click", charSelect);
     }
-    xScore.innerHTML = '';
-    oScore.innerHTML = '';
+    // xScore.innerHTML = '';
+    // oScore.innerHTML = '';
     gameStarted = true;
   }
   //set action to clicking of boxes and setting initial board state
@@ -329,12 +458,11 @@ function reset(str) {
 
 function charSelect() {
   if (selectedDifficulty && titleScreenOn === false) {
-    alert("You selected: " + this.innerHTML);
-    human = new Player(this.innerHTML);
-    if (this.innerHTML === "X") { 
-      computerAI = new Computer("O");
-    } else {
+    human = new Player(this.id);
+    if (this.id === "O") { 
       computerAI = new Computer("X");
+    } else {
+      computerAI = new Computer("O");
     }
     computerAI.difficulty = selectedDifficulty;
     for(var i = 0; i < playerSelect.length; i++) {
@@ -347,11 +475,15 @@ function charSelect() {
 
 function difficultyModeSelect() {
   if(titleScreenOn === false) {
-    // alert("You selected: " + this.innerHTML);
-    // selectedDifficulty = this.innerHTML;
     selectedDifficulty = this.id;
-    // for(var i = 0; i < difficultyMode.length; i++) {
-    //   difficultyMode[i].removeEventListener("click", difficultyModeSelect);
-    // }
+    clickToStart.play()
+    for(var i = 0; i < difficultyMode.length; i++) {
+      difficultyMode[i].removeEventListener("mouseenter", modeSelectAudio);
+      difficultyMode[i].removeEventListener("click", difficultyModeSelect);
+    }
+    setTimeout(function(){
+      removeScreen(difficultySelectScreen);
+      charSelectScreen();
+    }, 2500);
   }
 }
