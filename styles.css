@@ -96,15 +96,16 @@ body {
 	height: auto;
 }
 .player-select{ float: left; }
-
 #vs-screen {
 	height: 100vh;
-	width: 100vw;
 	background-color: black;
 	z-index: 400;
 	position: fixed;
 }
-
+#vs-screen-image {
+	height: 100vh;
+	width: 100vw;
+}
 .board {
 	z-index: 300;
     position: fixed;
