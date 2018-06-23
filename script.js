@@ -7,11 +7,8 @@ const difficultyMode = document.getElementsByClassName("difficulty-mode");
 const difficultySelectScreen = document.getElementById("difficulty-select-screen");
 const titleScreen = document.getElementById("title-screen");
 const titleScreenVideo = document.getElementById("title-screen-video");
-const selectScreen = document.getElementById("select-screen");
-
-const charSelectBgm = document.getElementById("char-select-bgm");
-const charSelectIntro = document.getElementById("char-select-intro");
-const charSelectMain = document.getElementById("char-select-main");
+const charSelectScreen = document.getElementById("char-select-screen");
+const mapImageFile = document.getElementById("map-image-file");
 
 const xScore = document.getElementById("x-score");
 const oScore = document.getElementById("o-score");
@@ -31,10 +28,38 @@ let selectedDifficulty;
 let titleScreenOn = true;
 let selectScreenOn = true;
 
-let clickToStart = new Audio("ClickToStart-edited.mp3");
+let clickToStartAudio = new Audio("click-to-start.mp3");
+let charSelectedAudio = new Audio("char-selected.mp3");
+let vsScreenBGM = new Audio("vs-screen-bgm.mp3");
+let airplaneAudio = new Audio("airplane-audio.mp3");
+var audioMain = null;
 
 init();
 // resetBtn.onclick = reset;
+function init() {
+  currentGameState = new GameState();  
+  if (gameStarted === false) {
+    human = {};
+    computerAI = {};
+    selectedDifficulty = undefined;
+    for(var i = 0; i < difficultyMode.length; i++) {
+      difficultyMode[i].addEventListener("click", difficultyModeSelect);
+      difficultyMode[i].addEventListener("mouseenter", modeHoverAudio);
+    }
+    for(var i = 0; i < playerSelect.length; i++) {
+      playerSelect[i].addEventListener("click", charSelect);
+      playerSelect[i].addEventListener("mouseenter", charHover);
+    }
+    // xScore.innerHTML = '';
+    // oScore.innerHTML = '';
+    gameStarted = true;
+  }
+  //set action to clicking of boxes and setting initial board state
+  for(var i = 0; i < boardSquares.length; i++) {
+    boardSquares[i].onclick = humanMove; 
+  }
+  human.turnActive = true;
+}
 
 playButton.addEventListener("click", playVid);
 function playVid() {
@@ -44,131 +69,81 @@ function playVid() {
 }
 
 function titleScreenClicked(){
-  clickToStart.play();
+  clickToStartAudio.play();
   vid.pause();
   setTimeout(function(){
-    removeScreen(titleScreen);
+    titleScreen.remove();
   }, 2500);
   titleScreenOn = false;
   titleScreenVideo.removeEventListener("click", titleScreenClicked);
 }
+
   titleScreenVideo.addEventListener("click", titleScreenClicked);
-  function modeSelectAudio() {
-    let sound = new Audio("mode-select.mp3");
-    sound.play();  
+
+function modeHoverAudio() {
+  let sound = new Audio("mode-hover.mp3");
+  sound.play();  
+}
+function charHover() {
+  let sound = new Audio("char-icon-hover.mp3");
+  sound.play();  
+  if (this.id === "O") {
+    mapImageFile.src="ryu-char-select.jpg";
+  } else {
+    mapImageFile.src="guile-char-select.jpg";
   }
+}
 
 function removeScreen(element) {
   element.remove();
 }
 
+function charSelectScreenBGM() {
+  window.onload = initSound;
+  window.onload = initSound();
+  var context;
+  var bufferLoader;
 
-function BufferLoader(context, urlList, callback) {
-  this.context = context;
-  this.urlList = urlList;
-  this.onload = callback;
-  this.bufferList = new Array();
-  this.loadCount = 0;
-}
-
-// https://stackoverflow.com/questions/17333777/uncaught-reference-error-bufferloader-is-not-defined
-BufferLoader.prototype.loadBuffer = function(url, index) {
-  // Load buffer asynchronously
-  var request = new XMLHttpRequest();
-  request.open("GET", url, true);
-  request.responseType = "arraybuffer";
-
-  var loader = this;
-
-  request.onload = function() {
-    // Asynchronously decode the audio file data in request.response
-    loader.context.decodeAudioData(
-      request.response,
-      function(buffer) {
-        if (!buffer) {
-          alert('error decoding file data: ' + url);
-          return;
-        }
-        loader.bufferList[index] = buffer;
-        if (++loader.loadCount == loader.urlList.length)
-          loader.onload(loader.bufferList);
-      },
-      function(error) {
-        console.error('decodeAudioData error', error);
-      }
-    );
+  function initSound() {
+    // Fix up prefixing
+    window.AudioContext = window.AudioContext || window.webkitAudioContext;
+    context = new AudioContext();
+    bufferLoader = new BufferLoader(
+      context,
+      [
+        'char-select-intro.mp3',
+        'char-select-main2.mp3',
+      ],
+      finishedLoading
+      );
+    bufferLoader.load();
   }
 
-  request.onerror = function() {
-    alert('BufferLoader: XHR error');
+  function finishedLoading(bufferList) {
+    // Create two sources and play them both together.
+    var source1 = context.createBufferSource();
+    audioMain = context.createBufferSource();
+    source1.buffer = bufferList[0];
+    audioMain.buffer = bufferList[1];
+
+    source1.connect(context.destination);
+    audioMain.connect(context.destination);
+
+    source1.start(0);
+    audioMain.start(3.9);
+    audioMain.loop = true;  
   }
 
-  request.send();
-}
-
-BufferLoader.prototype.load = function() {
-  for (var i = 0; i < this.urlList.length; ++i)
-  this.loadBuffer(this.urlList[i], i);
-}
-
-
-
-
-
-function charSelectScreen() {
-
-// window.onload = initSound;
-initSound();
-var context;
-var bufferLoader;
-
-function initSound() {
-  // Fix up prefixing
-  window.AudioContext = window.AudioContext || window.webkitAudioContext;
-  context = new AudioContext();
-  bufferLoader = new BufferLoader(
-    context,
-    [
-      'char-select-intro.mp3',
-      'char-select-main-2.mp3',
-    ],
-    finishedLoading
-    );
-  bufferLoader.load();
-}
-
-function finishedLoading(bufferList) {
-  // Create two sources and play them both together.
-  var source1 = context.createBufferSource();
-  var source2 = context.createBufferSource();
-  source1.buffer = bufferList[0];
-  source2.buffer = bufferList[1];
-
-  source1.connect(context.destination);
-  source2.connect(context.destination);
-
-  source1.start(0);
-  source2.start(3.8);
-  source2.loop = true;  
-  
-}
-
-
-
-
-// https://stackoverflow.com/questions/29882907/how-to-seamlessly-loop-sound-with-web-audio-api
-//this is the webaudio loooooppppppp
-    //enter url in the next line
-    // var url  = 'CharSelectMain.mp3';
-
+    // //this is the webaudio loooooppppppp
+    // //enter url in the next line
+    // var url  = 'char-select-main2.mp3';
     // /* --- set up web audio --- */
     // //create the context
-    // window.AudioContext = window.AudioContext || window.webkitAudioContext;
     // var context = new AudioContext();
     // //...and the source
-    // var source = context.createBufferSource();
+    // audioMain = context.createBufferSource();
     // //connect it to the destination so you can hear it.
-    // source.connect(context.destination);
+    // audioMain.connect(context.destination);
 
     // /* --- load buffer ---  */
     // var request = new XMLHttpRequest();
@@ -181,45 +156,16 @@ function finishedLoading(bufferList) {
     //     context.decodeAudioData(request.response, function(response) {
     //         /* --- play the sound AFTER the buffer loaded --- */
     //         //set the buffer to the response we just received.
-    //         source.buffer = response;
+    //         audioMain.buffer = response;
     //         //start(0) should play asap.
-    //         source.start(0);
-    //         source.loop = true;
+    //         audioMain.start(0);
+    //         audioMain.loop = true;
     //     }, function () { console.error('The request failed.'); } );
     // }
     // //Now that the request has been defined, actually make the request. (send it)
     // request.send();
-
-
-  // charSelectIntro.play();
-  charSelectIntro.addEventListener("ended", function(){
-    // charSelectMain.play();
-  });
 }
 
-function init() {
-  currentGameState = new GameState();  
-  if (gameStarted === false) {
-    human = {};
-    computerAI = {};
-    selectedDifficulty = undefined;
-    for(var i = 0; i < difficultyMode.length; i++) {
-      difficultyMode[i].addEventListener("click", difficultyModeSelect);
-      difficultyMode[i].addEventListener("mouseenter", modeSelectAudio);
-    }
-    for(var i = 0; i < playerSelect.length; i++) {
-      playerSelect[i].addEventListener("click", charSelect);
-    }
-    // xScore.innerHTML = '';
-    // oScore.innerHTML = '';
-    gameStarted = true;
-  }
-  //set action to clicking of boxes and setting initial board state
-  for(var i = 0; i < boardSquares.length; i++) {
-    boardSquares[i].onclick = humanMove; 
-  }
-  human.turnActive = true;
-}
 
 function humanMove(){
   //computerAI.turnActive is set to false to prevent player from clicking a square before computer makes a move
@@ -449,7 +395,7 @@ function reset(str) {
     computerAI.turnActive = false;
   } else {
     gameStarted = false;
-    document.body.insertBefore(selectScreen, document.body.childNodes[0]);
+    document.body.insertBefore(charSelectScreen, document.body.childNodes[0]);
     document.body.insertBefore(titleScreen, document.body.childNodes[0]);
   }
   openSquares = ["0", "1", "2", "3", "4", "5", "6", "7", "8"];
@@ -457,33 +403,105 @@ function reset(str) {
 }
 
 function charSelect() {
+  charSelectedAudio.play();
+  for(var i = 0; i < playerSelect.length; i++) {
+    playerSelect[i].removeEventListener("mouseenter", charHover);
+    playerSelect[i].removeEventListener("click", charSelect);
+  }
   if (selectedDifficulty && titleScreenOn === false) {
     human = new Player(this.id);
     if (this.id === "O") { 
       computerAI = new Computer("X");
+      mapImageFile.src="ryu-selected-flag.jpg";
     } else {
       computerAI = new Computer("O");
+      mapImageFile.src="guile-selected-flag.jpg";
     }
     computerAI.difficulty = selectedDifficulty;
-    for(var i = 0; i < playerSelect.length; i++) {
-      playerSelect[i].removeEventListener("click", charSelect);
-    }
+    // for(var i = 0; i < playerSelect.length; i++) {
+    //   playerSelect[i].removeEventListener("click", charSelect);
+    // }
     selectScreenOn = false;
-    selectScreen.remove();
+    setTimeout(function(){
+      airplaneAudio.play();
+      if (human.char === "O") {
+        mapImageFile.src="ryu-selected-animated.gif";
+      } else {
+        mapImageFile.src="guile-selected-animated.gif";
+      }
+    }, 1000);
+    setTimeout(function(){
+    charSelectScreen.remove();
+    audioMain.stop();
+    vsScreenBGM.play();
+    }, 4000);
+    
   }
 }
 
 function difficultyModeSelect() {
   if(titleScreenOn === false) {
     selectedDifficulty = this.id;
-    clickToStart.play()
+    clickToStartAudio.play()
     for(var i = 0; i < difficultyMode.length; i++) {
-      difficultyMode[i].removeEventListener("mouseenter", modeSelectAudio);
+      difficultyMode[i].removeEventListener("mouseenter", modeHoverAudio);
       difficultyMode[i].removeEventListener("click", difficultyModeSelect);
     }
     setTimeout(function(){
-      removeScreen(difficultySelectScreen);
-      charSelectScreen();
+      difficultySelectScreen.remove();
+      charSelectScreenBGM();
     }, 2500);
   }
+}
+
+
+
+
+
+
+// https://stackoverflow.com/questions/17333777/uncaught-reference-error-bufferloader-is-not-defined
+function BufferLoader(context, urlList, callback) {
+  this.context = context;
+  this.urlList = urlList;
+  this.onload = callback;
+  this.bufferList = new Array();
+  this.loadCount = 0;
+}
+BufferLoader.prototype.loadBuffer = function(url, index) {
+  // Load buffer asynchronously
+  var request = new XMLHttpRequest();
+  request.open("GET", url, true);
+  request.responseType = "arraybuffer";
+
+  var loader = this;
+
+  request.onload = function() {
+    // Asynchronously decode the audio file data in request.response
+    loader.context.decodeAudioData(
+      request.response,
+      function(buffer) {
+        if (!buffer) {
+          alert('error decoding file data: ' + url);
+          return;
+        }
+        loader.bufferList[index] = buffer;
+        if (++loader.loadCount == loader.urlList.length)
+          loader.onload(loader.bufferList);
+      },
+      function(error) {
+        console.error('decodeAudioData error', error);
+      }
+    );
+  }
+
+  request.onerror = function() {
+    alert('BufferLoader: XHR error');
+  }
+
+  request.send();
+}
+
+BufferLoader.prototype.load = function() {
+  for (var i = 0; i < this.urlList.length; ++i)
+  this.loadBuffer(this.urlList[i], i);
 }
