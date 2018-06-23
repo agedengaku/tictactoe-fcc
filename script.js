@@ -9,6 +9,8 @@ const titleScreen = document.getElementById("title-screen");
 const titleScreenVideo = document.getElementById("title-screen-video");
 const charSelectScreen = document.getElementById("char-select-screen");
 const mapImageFile = document.getElementById("map-image-file");
+const vsScreen = document.getElementById("vs-screen");
+const vsScreenImage = document.getElementById("vs-screen-image");
 
 const xScore = document.getElementById("x-score");
 const oScore = document.getElementById("o-score");
@@ -431,11 +433,16 @@ function charSelect() {
       }
     }, 1000);
     setTimeout(function(){
-    charSelectScreen.remove();
-    audioMain.stop();
-    vsScreenBGM.play();
+      if (human.char === "X") {
+        vsScreenImage.src="guile-vs-screen.jpg";
+      }
+      charSelectScreen.remove();
+      audioMain.stop();
+      vsScreenBGM.play();
     }, 4000);
-    
+    setTimeout(function(){
+      vsScreen.remove();
+    },9000);
   }
 }
 
