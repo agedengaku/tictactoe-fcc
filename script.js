@@ -11,6 +11,7 @@ const charSelectScreen = document.getElementById("char-select-screen");
 const mapImageFile = document.getElementById("map-image-file");
 const vsScreen = document.getElementById("vs-screen");
 const vsScreenImage = document.getElementById("vs-screen-image");
+const ryuStageImage = document.getElementById("ryu-stage");
 
 const xScore = document.getElementById("x-score");
 const oScore = document.getElementById("o-score");
@@ -207,8 +208,14 @@ function moveLogic(squareId, char){
   if (currentGameState.turnsTaken > 4) {
     result = checkForWinner(char);
     if (result) {
-      setTimeout(reset("round"), 2000);
-      return false;
+      if (human.wins == 2) {
+        endGame(human.char);
+      } else if (computerAI.wins == 2) {
+        endGame(computerAI.char);
+      } else {
+        setTimeout(reset("round"), 2000);
+        return false;
+      }
     } else {
       if (currentGameState.turnsTaken === 9) {
         alert("Draw");
@@ -235,7 +242,17 @@ function winScore(char) {
   if (char === human.char){
     alert(char + " Human wins!");
     human.wins++;
-    human.scoreHolder.innerHTML = human.wins;
+    console.log(human.wins);
+    // human.scoreHolder.innerHTML = human.wins;
+    if (human.wins == 1 && computerAI.wins == 0 && char == "O") {
+      ryuStageImage.src = "ryu-stage-O-1win-0win.jpg";
+    } else if (human.wins == 1 && computerAI.wins == 1 && char == "O") {
+      ryuStageImage.src = "ryu-stage-O-1win-1win.jpg";
+    } else if (human.wins == 2 && computer.AI.wins == 0 && char == "O") {
+      ryuStageImage.src = "ryu-stage-O-2win-0win.jpg";
+    } else if (human.wins == 2 && cmoputerAI.wins == 1 && char == "O") {
+       ryuStageImage.src = "ryu-stage-O-2win-1win.jpg";     
+    }
   } else {
     alert(char + " Computer wins!")
     computerAI.wins++;
@@ -423,11 +440,12 @@ function charSelect() {
     human = new Player(this.id);
     if (this.id === "O") { 
       computerAI = new Computer("X");
-      mapImageFile.src="ryu-selected-flag.jpg";
+      mapImageFile.src= "ryu-selected-flag.jpg";
     } else {
       computerAI = new Computer("O");
-      mapImageFile.src="guile-selected-flag.jpg";
-      vsScreenImage.src="guile-vs-screen.jpg";
+      mapImageFile.src= "guile-selected-flag.jpg";
+      vsScreenImage.src= "guile-vs-screen.jpg";
+      ryuStageImage.src = "ryu-stage-X-full-health.jpg";
     }
     computerAI.difficulty = selectedDifficulty;
     // for(var i = 0; i < playerSelect.length; i++) {
@@ -471,7 +489,26 @@ function difficultyModeSelect() {
   }
 }
 
-
+function endGame(char) {
+  if (char == human.wins) {
+    if (char == "O") {
+      //change image
+    } else {
+      //change image
+    }
+  } else {
+    if (char == "O") {
+      //change image
+    } else {
+      //change image
+    }
+  }
+  //remove main screen
+  setTimeout(function(){
+    window.location.reload();
+  }, 5000);
+  //timeout to refresh
+}
 
 
 
