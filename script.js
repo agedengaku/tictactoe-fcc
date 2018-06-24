@@ -30,6 +30,7 @@ let openSquares = ["0", "1", "2", "3", "4", "5", "6", "7", "8"];
 let selectedDifficulty;
 let titleScreenOn = true;
 let selectScreenOn = true;
+let gameover = false;
 
 let clickToStartAudio = new Audio("click-to-start.mp3");
 let charSelectedAudio = new Audio("char-selected.mp3");
@@ -179,11 +180,11 @@ function humanMove(){
     var squareId = this.id;
     if (openSquares.indexOf(squareId) !== -1){
       noWinner = moveLogic(squareId, human.char);
-      if (noWinner) {
+      if (noWinner && gameover === false) {
           computerAI.turnActive = true;
           human.turnActive = false;
           computerTurnId = setTimeout(computerAI.move, 2000);
-      }
+      } 
     }
   } else {
     console.log("Something is wrong");
@@ -205,34 +206,40 @@ function moveLogic(squareId, char){
   // document.getElementById(squareId).innerHTML = char;
   document.getElementById(squareId).appendChild(charImg);
   currentGameState.turnsTaken++;
-  if (currentGameState.turnsTaken > 4) {
+
+if (currentGameState.turnsTaken > 4) {
     result = checkForWinner(char);
     if (result) {
-      if (human.wins == 2) {
-        endGame(human.char);
-      } else if (computerAI.wins == 2) {
-        endGame(computerAI.char);
-      } else {
-        setTimeout(reset("round"), 2000);
+        //prevents human move
+        computerAI.turnActive = true;
+        setTimeout(function(){
+          reset("round")
+        }, 2000);
         return false;
-      }
     } else {
       if (currentGameState.turnsTaken === 9) {
         alert("Draw");
-        setTimeout(reset("round"), 2000);
+        //prevents human move
+        computerAI.turnActive = true;
+        setTimeout(function(){
+          reset("round")
+        }, 2000);
         return false;
       } else {
         return true;
       }
     }
   }
-  return true;
+  if (result !== true) {
+    return true;  
+  }
+  
 }
 
 function checkForWinner(char) {
     if (winCombination(currentGameState.boardState, char)) {
-      winScore(char);
-      return true;
+      let result = winScore(char);
+      return result;
     } else {
       return false;
     }
@@ -240,7 +247,10 @@ function checkForWinner(char) {
 
 function winScore(char) {
   if (char === human.char){
-    alert(char + " Human wins!");
+    setTimeout(function(){
+      console.log(char + " Human wins!");
+    }, 1000);
+    
     human.wins++;
     console.log(human.wins);
     // human.scoreHolder.innerHTML = human.wins;
@@ -248,8 +258,10 @@ function winScore(char) {
       ryuStageImage.src = "ryu-stage-O-1win-0win.jpg";
     } else if (human.wins == 1 && computerAI.wins == 1 && char == "O") {
       ryuStageImage.src = "ryu-stage-O-1win-1win.jpg";
-    } else if (human.wins == 2 && computer.AI.wins == 0 && char == "O") {
+    } else if (human.wins == 2 && computerAI.wins == 0 && char == "O") {
       ryuStageImage.src = "ryu-stage-O-2win-0win.jpg";
+      endGame(human.char);
+      gameover = true;
     } else if (human.wins == 2 && cmoputerAI.wins == 1 && char == "O") {
        ryuStageImage.src = "ryu-stage-O-2win-1win.jpg";     
     }
@@ -258,6 +270,7 @@ function winScore(char) {
     computerAI.wins++;
     computerAI.scoreHolder.innerHTML = computerAI.wins;
   }
+  return true;
 }
 
 function GameState() {
@@ -414,20 +427,22 @@ function removeFromOpen (squareId) {
 
 function reset(str) {
   //turns off computer's move in case it was already started
-  for(var i = 0; i < boardSquares.length; i++) {
-    boardSquares[i].innerHTML = '';
+  if (!gameover) {
+    for(var i = 0; i < boardSquares.length; i++) {
+      boardSquares[i].innerHTML = '';
+    }
+    currentGameState = {};
+    if (str === "round") {
+      human.turnActive = false;
+      computerAI.turnActive = false;
+    } else {
+      gameStarted = false;
+      document.body.insertBefore(charSelectScreen, document.body.childNodes[0]);
+      document.body.insertBefore(titleScreen, document.body.childNodes[0]);
+    }
+    openSquares = ["0", "1", "2", "3", "4", "5", "6", "7", "8"];
+    init();
   }
-  currentGameState = {};
-  if (str === "round") {
-    human.turnActive = false;
-    computerAI.turnActive = false;
-  } else {
-    gameStarted = false;
-    document.body.insertBefore(charSelectScreen, document.body.childNodes[0]);
-    document.body.insertBefore(titleScreen, document.body.childNodes[0]);
-  }
-  openSquares = ["0", "1", "2", "3", "4", "5", "6", "7", "8"];
-  init();
 }
 
 function charSelect() {
@@ -492,7 +507,7 @@ function difficultyModeSelect() {
 function endGame(char) {
   if (char == human.wins) {
     if (char == "O") {
-      //change image
+      alert("END GAME");
     } else {
       //change image
     }
