@@ -101,6 +101,7 @@ function removeScreen(element) {
 }
 
 function charSelectScreenBGM() {
+  // https://www.html5rocks.com/en/tutorials/webaudio/intro/
   window.onload = initSound;
   window.onload = initSound();
   var context;
@@ -190,10 +191,18 @@ function humanMove(){
 }
 
 function moveLogic(squareId, char){
+  var charImg = document.createElement("img");
+  charImg.classList.add("char-css");
+  if (char === "O") {
+    charImg.src = "O.gif";
+  } else {
+    charImg.src = "X.gif";
+  }
   var result;
   removeFromOpen(squareId);
   currentGameState.boardState[squareId] = char;
-  document.getElementById(squareId).innerHTML = char;
+  // document.getElementById(squareId).innerHTML = char;
+  document.getElementById(squareId).appendChild(charImg);
   currentGameState.turnsTaken++;
   if (currentGameState.turnsTaken > 4) {
     result = checkForWinner(char);
@@ -418,6 +427,7 @@ function charSelect() {
     } else {
       computerAI = new Computer("O");
       mapImageFile.src="guile-selected-flag.jpg";
+      vsScreenImage.src="guile-vs-screen.jpg";
     }
     computerAI.difficulty = selectedDifficulty;
     // for(var i = 0; i < playerSelect.length; i++) {
@@ -433,9 +443,9 @@ function charSelect() {
       }
     }, 1000);
     setTimeout(function(){
-      if (human.char === "X") {
-        vsScreenImage.src="guile-vs-screen.jpg";
-      }
+      // if (human.char === "X") {
+      //   vsScreenImage.src="guile-vs-screen.jpg";
+      // }
       charSelectScreen.remove();
       audioMain.stop();
       vsScreenBGM.play();

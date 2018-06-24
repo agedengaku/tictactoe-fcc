@@ -2,9 +2,6 @@ body {
 	margin: 0;
 	padding: 0;
 	position: relative;
-	background: url("ryu-stage.jpg");
-	background-size: cover;
-	background-repeat: none;
 }
 #play-button-screen {
 	background-color: black;
@@ -80,8 +77,13 @@ body {
     z-index: 500;
 }
 #map-image img{
-	height: auto;
-	max-width: 100vw;
+/*	height: auto;
+	max-width: 100vw;*/
+		height: 100vh;
+	width: auto;
+	display: block;
+    margin-left: auto;
+    margin-right: auto;	
 }
 #player-icons {
 	position: absolute;
@@ -98,33 +100,58 @@ body {
 .player-select{ float: left; }
 #vs-screen {
 	height: 100vh;
+	width: 100vw;
 	background-color: black;
 	z-index: 400;
 	position: fixed;
 }
 #vs-screen-image {
 	height: 100vh;
+	width: auto;
+	display: block;
+    margin-left: auto;
+    margin-right: auto;
+}
+#main-screen { 
+	background-color: black; 
+	height: 100vh;
 	width: 100vw;
 }
+#ryu-stage {
+	height: 100vh;
+	width: 100vw;
+	display: block;
+    margin-left: auto;
+    margin-right: auto;	
+}
+
+.char-css {
+	position: absolute;
+	top: 50%;
+    left: 50%;
+    transform: translateX(-50%) translateY(-50%);
+}
+
 .board {
 	z-index: 300;
     position: fixed;
     top: 50%;
     left: 50%;
-    transform: translateX(-50%) translateY(-50%);
+    transform: translateX(-50%);
 }
 .board-row {
 	/*height: 52px;*/
 }
 .board-square {
 	float: left;
-	border: 1px solid black;
+	border: 3px solid black;
 	line-height: 50px;
-	width: 50px;
-	height: 50px;
+	width: 80px;
+	height: 80px;
 	display: inline-block;
 	text-align: center;
 	overflow: hidden;
+	position: relative;
 }
 .row-1 {
 	clear: both;
