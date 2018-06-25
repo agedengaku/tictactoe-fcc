@@ -31,6 +31,7 @@ let selectedDifficulty;
 let titleScreenOn = true;
 let selectScreenOn = true;
 let gameover = false;
+let rounds = 0;
 
 let clickToStartAudio = new Audio("click-to-start.mp3");
 let charSelectedAudio = new Audio("char-selected.mp3");
@@ -41,6 +42,7 @@ var audioMain = null;
 init();
 // resetBtn.onclick = reset;
 function init() {
+  rounds++;
   currentGameState = new GameState();  
   if (gameStarted === false) {
     human = {};
@@ -210,12 +212,18 @@ function moveLogic(squareId, char){
 if (currentGameState.turnsTaken > 4) {
     result = checkForWinner(char);
     if (result) {
-        //prevents human move
-        computerAI.turnActive = true;
-        setTimeout(function(){
-          reset("round")
-        }, 2000);
-        return false;
+
+        if(rounds !== 5) {
+          //prevents human move
+          computerAI.turnActive = true;
+          setTimeout(function(){
+            reset("round")
+          }, 2000);
+          return false;
+        } else {
+          endGame(human.wins, computerAI.wins);
+        }
+
     } else {
       if (currentGameState.turnsTaken === 9) {
         alert("Draw");
@@ -254,21 +262,60 @@ function winScore(char) {
     human.wins++;
     console.log(human.wins);
     // human.scoreHolder.innerHTML = human.wins;
-    if (human.wins == 1 && computerAI.wins == 0 && char == "O") {
-      ryuStageImage.src = "ryu-stage-O-1win-0win.jpg";
-    } else if (human.wins == 1 && computerAI.wins == 1 && char == "O") {
-      ryuStageImage.src = "ryu-stage-O-1win-1win.jpg";
-    } else if (human.wins == 2 && computerAI.wins == 0 && char == "O") {
-      ryuStageImage.src = "ryu-stage-O-2win-0win.jpg";
-      endGame(human.char);
-      gameover = true;
-    } else if (human.wins == 2 && cmoputerAI.wins == 1 && char == "O") {
-       ryuStageImage.src = "ryu-stage-O-2win-1win.jpg";     
+    if (char == "O") {
+      if (human.wins == 1 && computerAI.wins == 0) { ryuStageImage.src = "ryu-stage-O-1win-0win.jpg"; } 
+      else if (human.wins == 1 && computerAI.wins == 1) { ryuStageImage.src = "ryu-stage-O-1win-1win.jpg"; } 
+      else if (human.wins == 2 && computerAI.wins == 0) {
+        ryuStageImage.src = "ryu-stage-O-2win-0win.jpg";
+        endGame(human.char);
+        gameover = true;
+      } else if (human.wins == 2 && computerAI.wins == 1) {
+         ryuStageImage.src = "ryu-stage-O-2win-1win.jpg";     
+         endGame(human.char);
+         gameover = true;
+      }
+    } else {
+      if (human.wins == 1 && computerAI.wins == 0) { ryuStageImage.src = "ryu-stage-X-1win-0win.jpg"; } 
+      else if (human.wins == 1 && computerAI.wins == 1) { ryuStageImage.src = "ryu-stage-X-1win-1win.jpg"; } 
+      else if (human.wins == 2 && computerAI.wins == 0) {
+        ryuStageImage.src = "ryu-stage-X-2win-0win.jpg";
+        endGame(human.char);
+        gameover = true;
+      } else if (human.wins == 2 && computerAI.wins == 1) {
+         ryuStageImage.src = "ryu-stage-X-2win-1win.jpg";     
+         endGame(human.char);
+         gameover = true;
+      }  
     }
+    
   } else {
-    alert(char + " Computer wins!")
     computerAI.wins++;
-    computerAI.scoreHolder.innerHTML = computerAI.wins;
+    // computerAI.scoreHolder.innerHTML = computerAI.wins;
+    if (char == "X") {
+      if (human.wins == 0 && computerAI.wins == 1) { ryuStageImage.src = "ryu-stage-O-0win-1win.jpg"; } 
+      else if (human.wins == 1 && computerAI.wins == 1) { ryuStageImage.src = "ryu-stage-O-1win-1win.jpg"; } 
+      else if (human.wins == 0 && computerAI.wins == 2) {
+        ryuStageImage.src = "ryu-stage-O-0win-2win.jpg";
+        endGame(computerAI.char);
+        gameover = true;
+      } else if (human.wins == 1 && computerAI.wins == 2) {
+         ryuStageImage.src = "ryu-stage-O-1win-2win.jpg";     
+         endGame(computerAI.char);
+         gameover = true;
+      }
+    } else {
+      if (human.wins == 0 && computerAI.wins == 1) { ryuStageImage.src = "ryu-stage-X-0win-1win.jpg"; } 
+      else if (human.wins == 1 && computerAI.wins == 1) { ryuStageImage.src = "ryu-stage-X-1win-1win.jpg"; } 
+      else if (human.wins == 0 && computerAI.wins == 2) {
+        ryuStageImage.src = "ryu-stage-X-0win-2win.jpg";
+        endGame(computerAI.char);
+        gameover = true;
+      } else if (human.wins == 1 && computerAI.wins == 2) {
+         ryuStageImage.src = "ryu-stage-X-1win-2win.jpg";     
+         endGame(computerAI.char);
+         gameover = true;
+      }      
+    }
   }
   return true;
 }
@@ -504,20 +551,32 @@ function difficultyModeSelect() {
   }
 }
 
-function endGame(char) {
-  if (char == human.wins) {
-    if (char == "O") {
-      alert("END GAME");
+function endGame(char, char2) {
+  if (char2) {
+    if (char > char2) {
+      //human wins
+    } else if (char < char2) {
+      //computer wins
     } else {
-      //change image
+      //draw
     }
   } else {
-    if (char == "O") {
-      //change image
+    if (char == human.wins) {
+      if (char == "O") {
+        alert("END GAME");
+        //Ryu win Guile lose image
+      } else {
+        //Guile win Ryu lose image
+      }
     } else {
-      //change image
+      if (char == "O") {
+        //Guile lose Ryu win image
+      } else {
+        //Ryu lose Guile win image
+      }
     }
   }
+
   //remove main screen
   setTimeout(function(){
     window.location.reload();
