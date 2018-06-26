@@ -125,6 +125,14 @@ body {
     margin-right: auto;	
 }
 
+#round-image {
+	zoom: 2;
+	position: absolute;
+	top: 30%;
+	left: 50%;
+	transform: translateX(-50%) translateY(-50%);	
+}
+
 .char-css {
 	position: absolute;
 	top: 50%;

@@ -12,9 +12,23 @@ const mapImageFile = document.getElementById("map-image-file");
 const vsScreen = document.getElementById("vs-screen");
 const vsScreenImage = document.getElementById("vs-screen-image");
 const ryuStageImage = document.getElementById("ryu-stage");
+const endScreenImage = document.getElementById("end-screen-image");
+const roundImage = document.getElementById("round-image");
 
-const xScore = document.getElementById("x-score");
-const oScore = document.getElementById("o-score");
+const clickToStartAudio = new Audio("click-to-start.mp3");
+const charSelectedAudio = new Audio("char-selected.mp3");
+const vsScreenBGM = new Audio("vs-screen-bgm.mp3");
+const airplaneAudio = new Audio("airplane-audio.mp3");
+var audioMain = null;
+
+const round1Audio = new Audio("round1.mp3");
+// const round2Audio = new Audio("round2.mp3");
+// const round3Audio = new Audio("round3.mp3");
+// const round4Audio = new Audio("round4.mp3");
+// const round5Audio = new Audio("round5.mp3");
+
+// const xScore = document.getElementById("x-score");
+// const oScore = document.getElementById("o-score");
 // const resetBtn = document.getElementById("reset");
 const playButton = document.getElementById('play-button');
 const playButtonScreen = document.getElementById('play-button-screen');
@@ -32,12 +46,6 @@ let titleScreenOn = true;
 let selectScreenOn = true;
 let gameover = false;
 let rounds = 0;
-
-let clickToStartAudio = new Audio("click-to-start.mp3");
-let charSelectedAudio = new Audio("char-selected.mp3");
-let vsScreenBGM = new Audio("vs-screen-bgm.mp3");
-let airplaneAudio = new Audio("airplane-audio.mp3");
-var audioMain = null;
 
 init();
 // resetBtn.onclick = reset;
@@ -346,9 +354,9 @@ function Player(char) {
   this.char = char;
   this.wins = 0;
   if (char === "X") {
-    this.scoreHolder = xScore;
+    // this.scoreHolder = xScore;
   } else {
-    this.scoreHolder = oScore;
+    // this.scoreHolder = oScore;
   }
   this.turnActive = false;
 }
@@ -357,6 +365,7 @@ function Computer(char) {
   Player.call(this, char);
   var $that = this;  
   this.difficulty;
+  this.turnActive = true;
   this.move = function(){
     if ($that.difficulty === "easy") {
       $that.easyAI();
@@ -375,6 +384,7 @@ function Computer(char) {
       noWinner = moveLogic(squareId, $that.char);
       if (noWinner) {
         computerAI.turnActive = false;
+        // computerAI.turnActive = true;
       }
     }
   }
@@ -481,14 +491,17 @@ function reset(str) {
     currentGameState = {};
     if (str === "round") {
       human.turnActive = false;
-      computerAI.turnActive = false;
+      // computerAI.turnActive = false;
+      openSquares = ["0", "1", "2", "3", "4", "5", "6", "7", "8"];
+      init();
+      roundMedia();
     } else {
-      gameStarted = false;
-      document.body.insertBefore(charSelectScreen, document.body.childNodes[0]);
-      document.body.insertBefore(titleScreen, document.body.childNodes[0]);
+      // gameStarted = false;
+      // document.body.insertBefore(charSelectScreen, document.body.childNodes[0]);
+      // document.body.insertBefore(titleScreen, document.body.childNodes[0]);
     }
-    openSquares = ["0", "1", "2", "3", "4", "5", "6", "7", "8"];
-    init();
+    // openSquares = ["0", "1", "2", "3", "4", "5", "6", "7", "8"];
+    // init();
   }
 }
 
@@ -502,6 +515,7 @@ function charSelect() {
     human = new Player(this.id);
     if (this.id === "O") { 
       computerAI = new Computer("X");
+      console.log("charSelect: "+computerAI.turnActive);
       mapImageFile.src= "ryu-selected-flag.jpg";
     } else {
       computerAI = new Computer("O");
@@ -532,6 +546,7 @@ function charSelect() {
     }, 4000);
     setTimeout(function(){
       vsScreen.remove();
+      roundMedia();
     },9000);
   }
 }
@@ -551,7 +566,31 @@ function difficultyModeSelect() {
   }
 }
 
+function roundMedia() {
+  setTimeout(function(){
+    switch(rounds) {
+        case 1: 
+          roundImage.src = "round1.gif";
+          round1Audio.play();
+        // case 2: roundImage.src = "round2.gif";
+        // case 3: roundImage.src = "round3.gif";
+        // case 4: roundImage.src = "round4.gif";
+        // case 5: roundImage.src = "round5.gif";
+    }
+    setTimeout(function(){
+      computerAI.turnActive = false;
+      roundImage.remove();
+    }, 3000);
+  }, 1000);
+  
+  //AFTER MEDIA PLAY
+  
+  //play audio file
+  //CASE
+}
+
 function endGame(char, char2) {
+  //if char2 exists, then 5 rounds have passed
   if (char2) {
     if (char > char2) {
       //human wins
@@ -562,16 +601,20 @@ function endGame(char, char2) {
     }
   } else {
     if (char == human.wins) {
-      if (char == "O") {
+      if (char == "X") {
         alert("END GAME");
+        // endScreenImage.src = "guile-1p-win-ryu-2p-lose";
         //Ryu win Guile lose image
       } else {
         //Guile win Ryu lose image
+        //NOT NECESSARY, IMAGE ALREADY LOADED
       }
     } else {
       if (char == "O") {
+        // endScreenImage.src = "ryu-1p-lose-guile-2p-win";
         //Guile lose Ryu win image
       } else {
+        // endScreenImage.src = "guile-1p-lose-ryu-2p-win";
         //Ryu lose Guile win image
       }
     }
@@ -583,9 +626,6 @@ function endGame(char, char2) {
   }, 5000);
   //timeout to refresh
 }
-
-
-
 
 // https://stackoverflow.com/questions/17333777/uncaught-reference-error-bufferloader-is-not-defined
 function BufferLoader(context, urlList, callback) {
