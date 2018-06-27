@@ -112,6 +112,14 @@ body {
     margin-left: auto;
     margin-right: auto;
 }
+#black-out {
+	background-color: black;
+	opacity: 0;
+	height: 100vh;
+	width: 100vw;
+	position: fixed;
+	z-index: 300;
+}
 #main-screen { 
 	background-color: black; 
 	height: 100vh;

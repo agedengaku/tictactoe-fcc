@@ -22,7 +22,7 @@ const airplaneAudio = new Audio("airplane-audio.mp3");
 var audioMain = null;
 
 const round1Audio = new Audio("round1.mp3");
-// const round2Audio = new Audio("round2.mp3");
+const round2Audio = new Audio("round2.mp3");
 // const round3Audio = new Audio("round3.mp3");
 // const round4Audio = new Audio("round4.mp3");
 // const round5Audio = new Audio("round5.mp3");
@@ -572,14 +572,15 @@ function roundMedia() {
         case 1: 
           roundImage.src = "round1.gif";
           round1Audio.play();
-        // case 2: roundImage.src = "round2.gif";
-        // case 3: roundImage.src = "round3.gif";
-        // case 4: roundImage.src = "round4.gif";
-        // case 5: roundImage.src = "round5.gif";
+          break;
+        case 2: 
+          roundImage.src = "round2.gif";
+          round2Audio.play();
+          break;
     }
     setTimeout(function(){
       computerAI.turnActive = false;
-      roundImage.remove();
+      roundImage.src = "";
     }, 3000);
   }, 1000);
   
