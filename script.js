@@ -14,6 +14,7 @@ const vsScreenImage = document.getElementById("vs-screen-image");
 const ryuStageImage = document.getElementById("ryu-stage");
 const endScreenImage = document.getElementById("end-screen-image");
 const roundImage = document.getElementById("round-image");
+const blackOut = document.getElementById("blackout");
 
 const clickToStartAudio = new Audio("click-to-start.mp3");
 const charSelectedAudio = new Audio("char-selected.mp3");
@@ -23,8 +24,8 @@ var audioMain = null;
 
 const round1Audio = new Audio("round1.mp3");
 const round2Audio = new Audio("round2.mp3");
-// const round3Audio = new Audio("round3.mp3");
-// const round4Audio = new Audio("round4.mp3");
+const round3Audio = new Audio("round3.mp3");
+const round4Audio = new Audio("round4.mp3");
 // const round5Audio = new Audio("round5.mp3");
 
 // const xScore = document.getElementById("x-score");
@@ -82,6 +83,8 @@ function playVid() {
   playButtonScreen.remove();
 }
 
+titleScreenVideo.addEventListener("click", titleScreenClicked);
+
 function titleScreenClicked(){
   clickToStartAudio.play();
   vid.pause();
@@ -91,8 +94,6 @@ function titleScreenClicked(){
   titleScreenOn = false;
   titleScreenVideo.removeEventListener("click", titleScreenClicked);
 }
-
-  titleScreenVideo.addEventListener("click", titleScreenClicked);
 
 function modeHoverAudio() {
   let sound = new Audio("mode-hover.mp3");
@@ -234,7 +235,7 @@ if (currentGameState.turnsTaken > 4) {
 
     } else {
       if (currentGameState.turnsTaken === 9) {
-        alert("Draw");
+        console.log("Draw");
         //prevents human move
         computerAI.turnActive = true;
         setTimeout(function(){
@@ -485,6 +486,10 @@ function removeFromOpen (squareId) {
 function reset(str) {
   //turns off computer's move in case it was already started
   if (!gameover) {
+    blackOut.classList.add("fade-in-and-out");
+    setTimeout(function(){
+    blackOut.classList.remove("fade-in-and-out");
+    },2000);
     for(var i = 0; i < boardSquares.length; i++) {
       boardSquares[i].innerHTML = '';
     }
@@ -567,6 +572,7 @@ function difficultyModeSelect() {
 }
 
 function roundMedia() {
+  // blackOut.classList.add("fade-in-and-out");
   setTimeout(function(){
     switch(rounds) {
         case 1: 
@@ -576,6 +582,14 @@ function roundMedia() {
         case 2: 
           roundImage.src = "round2.gif";
           round2Audio.play();
+          break;        
+        case 3: 
+          roundImage.src = "round3.gif";
+          round3Audio.play();
+          break;        
+        case 4: 
+          roundImage.src = "round4.gif";
+          round4Audio.play();
           break;
     }
     setTimeout(function(){
