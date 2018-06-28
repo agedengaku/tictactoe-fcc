@@ -1,4 +1,10 @@
+html {
+    overflow: hidden;
+    height: 100%;
+}
 body {
+    height: 100%;
+    overflow: auto;
 	margin: 0;
 	padding: 0;
 	position: relative;
@@ -233,13 +239,20 @@ body {
 	top: 40%;
 	left: 20%;
 }
+#player-2-char {
+	position: fixed;
+	top: 40%;
+	left: 75%;
+}
 .idle-1p {
 	background-image: url("ryu-idle-1p.gif");
 }
-
+.idle-2p {
+	background-image: url("guile-idle-2p.gif");
+}
 .size {
   	width: 150px;
 	height: 150px;
-	zoom: 5;
+	transform: scale(5);
 	-moz-transform: scale(5);
 }
