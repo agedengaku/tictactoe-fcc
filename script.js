@@ -26,7 +26,7 @@ const round1Audio = new Audio("round1.mp3");
 const round2Audio = new Audio("round2.mp3");
 const round3Audio = new Audio("round3.mp3");
 const round4Audio = new Audio("round4.mp3");
-// const round5Audio = new Audio("round5.mp3");
+const round5Audio = new Audio("round5.mp3");
 
 // const xScore = document.getElementById("x-score");
 // const oScore = document.getElementById("o-score");
@@ -115,12 +115,12 @@ function removeScreen(element) {
 
 function charSelectScreenBGM() {
   // https://www.html5rocks.com/en/tutorials/webaudio/intro/
-  window.onload = initSound;
-  window.onload = initSound();
+  // window.onload = initSound;
+  window.onload = initCharSelectBGM();
   var context;
   var bufferLoader;
 
-  function initSound() {
+  function initCharSelectBGM() {
     // Fix up prefixing
     window.AudioContext = window.AudioContext || window.webkitAudioContext;
     context = new AudioContext();
@@ -230,19 +230,27 @@ if (currentGameState.turnsTaken > 4) {
           }, 2000);
           return false;
         } else {
+          console.log("Rounds is 5 someone won last round");
+          gameover = true;
           endGame(human.wins, computerAI.wins);
         }
 
     } else {
       if (currentGameState.turnsTaken === 9) {
-        console.log("Draw");
-        //prevents human move
-        computerAI.turnActive = true;
-        setTimeout(function(){
-          reset("round")
-        }, 2000);
-        return false;
-      } else {
+        if (rounds !== 5) {
+          console.log("Draw");
+          //prevents human move
+          computerAI.turnActive = true;
+          setTimeout(function(){
+            reset("round")
+          }, 2000);
+          return false;
+        } else {
+          console.log("Rounds is 5 no one won last round");
+          gameover = true;
+          endGame(human.wins, computerAI.wins);
+        }
+      }  else {
         return true;
       }
     }
@@ -590,6 +598,10 @@ function roundMedia() {
         case 4: 
           roundImage.src = "round4.gif";
           round4Audio.play();
+          break;        
+        case 5: 
+          roundImage.src = "round5.gif";
+          round5Audio.play();
           break;
     }
     setTimeout(function(){
@@ -609,10 +621,13 @@ function endGame(char, char2) {
   if (char2) {
     if (char > char2) {
       //human wins
+      console.log(char + "wins");
     } else if (char < char2) {
       //computer wins
+      console.log(char2 + "wins");
     } else {
       //draw
+      console.log("draw");
     }
   } else {
     if (char == human.wins) {
@@ -635,11 +650,10 @@ function endGame(char, char2) {
     }
   }
 
-  //remove main screen
   setTimeout(function(){
     window.location.reload();
   }, 5000);
-  //timeout to refresh
+
 }
 
 // https://stackoverflow.com/questions/17333777/uncaught-reference-error-bufferloader-is-not-defined
