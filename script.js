@@ -258,7 +258,6 @@ if (currentGameState.turnsTaken > 4) {
   if (result !== true) {
     return true;  
   }
-  
 }
 
 function checkForWinner(char) {
