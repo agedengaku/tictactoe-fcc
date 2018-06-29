@@ -244,15 +244,85 @@ body {
 	top: 40%;
 	left: 75%;
 }
-.idle-1p {
-	background-image: url("ryu-idle-1p.gif");
+.ryu-idle-1p {
+	background: url("ryu-idle-1p.gif");
 }
-.idle-2p {
-	background-image: url("guile-idle-2p.gif");
+.guile-idle-2p {
+	background: url("guile-idle-2p.gif");
 }
 .size {
   	width: 150px;
 	height: 150px;
 	transform: scale(5);
 	-moz-transform: scale(5);
+}
+.ryu-punch-1p1{
+  background: url("ryu-map-1p.gif") 0 0;
+}
+.ryu-punch-1p2{
+  background: url("ryu-map-1p.gif") -151px 0;
+}
+.ryu-punch-1p3{
+  background: url("ryu-map-1p.gif") -302px 0;
+}
+.ryu-punch-1p4{
+  background: url("ryu-map-1p.gif") -453px 0;
+}
+.ryu-punch-1p5{
+  background: url("ryu-map-1p.gif") -604px 0;
+}
+
+.ryu-punch2-1p1{
+  background: url("ryu-map-1p.gif") 0 -151px;
+}
+.ryu-punch2-1p2{
+  background: url("ryu-map-1p.gif") -151px -151px;
+}
+.ryu-punch2-1p3{
+  background: url("ryu-map-1p.gif") -302px -151px;
+}
+.ryu-punch2-1p4{
+  background: url("ryu-map-1p.gif") -453px -151px;
+}
+.ryu-punch2-1p5{
+  background: url("ryu-map-1p.gif") -604px -151px;
+}
+
+.ryu-kick-1p1{
+  background: url("ryu-map-1p.gif") 0 -302px;
+}
+.ryu-kick-1p2{
+  background: url("ryu-map-1p.gif") -151px -302px;
+}
+.ryu-kick-1p3{
+  background: url("ryu-map-1p.gif") -302px -302px;
+}
+.ryu-kick-1p4{
+  background: url("ryu-map-1p.gif") -453px -302px;
+}
+.ryu-kick-1p5{
+  background: url("ryu-map-1p.gif") -604px -302px;
+}
+
+.ryu-hit-1p1{
+  background: url("ryu-map-1p.gif") 0 -453px;
+}
+.ryu-hit-1p2{
+  background: url("ryu-map-1p.gif") -151px -453px;
+}
+.ryu-hit-1p3{
+  background: url("ryu-map-1p.gif") -302px -453px;
+}
+.ryu-hit-1p4{
+  background: url("ryu-map-1p.gif") -453px -453px;
+}
+
+.guile-hit-2p1{
+  background: url("guile-map-2p.gif") 0 -604px;
+}
+.guile-hit-2p2{
+  background: url("guile-map-2p.gif") -151px -604px;
+}
+.guile-hit-2p3{
+  background: url("guile-map-2p.gif") -302px -604px;
 }

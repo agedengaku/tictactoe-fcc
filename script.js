@@ -15,6 +15,8 @@ const ryuStageImage = document.getElementById("ryu-stage");
 const endScreenImage = document.getElementById("end-screen-image");
 const roundImage = document.getElementById("round-image");
 const blackOut = document.getElementById("blackout");
+const player1Char = document.getElementById("player-1-char");
+const player2Char = document.getElementById("player-2-char");
 
 const clickToStartAudio = new Audio("click-to-start.mp3");
 const charSelectedAudio = new Audio("char-selected.mp3");
@@ -47,6 +49,9 @@ let titleScreenOn = true;
 let selectScreenOn = true;
 let gameover = false;
 let rounds = 0;
+
+let lastFrameName;
+let frameCount = 1;
 
 init();
 // resetBtn.onclick = reset;
@@ -192,9 +197,18 @@ function humanMove(){
     if (openSquares.indexOf(squareId) !== -1){
       noWinner = moveLogic(squareId, human.char);
       if (noWinner && gameover === false) {
+          ////// Attack animation
+          //Human Attack
+          setupAndRunAnimation(player1Char, true);
+          // setupAndRunAnimation(player1Char, true);
+          //Computer Hit
+          setTimeout(function(){
+            setupAndRunAnimation(player2Char, false);
+          }, 300);
+          //////
           computerAI.turnActive = true;
           human.turnActive = false;
-          computerTurnId = setTimeout(computerAI.move, 2000);
+          computerTurnId = setTimeout(computerAI.move, 3000);
       } 
     }
   } else {
@@ -202,6 +216,180 @@ function humanMove(){
     console.log("turnActive: "+computerAI.turnActive+" difficulty: "+computerAI.difficulty);
   }
 }
+
+function setupAndRunAnimation(player, attack) {
+  let frameName;
+  let gifLength;
+  let val = getRandomNum(3);
+
+  if (attack) {
+    //if 1p
+    if (player === player1Char) {
+      //If human is Ryu
+      if (human.char === "O") {
+        if (val == 0) {
+          frameName = "ryu-punch-1p";
+          gifLength = 5; 
+        } else if (val == 1) {
+          frameName = "ryu-punch2-1p";
+          gifLength = 5; 
+        } else {
+          frameName = "ryu-kick-1p";
+          gifLength = 5; 
+        }        
+      } else {
+        //if human is Guile
+         if (val == 0) {
+          frameName = "guile-punch-1p";
+          gifLength = 5; 
+        } else if (val == 1) {
+          frameName = "guile-kick-1p";
+          gifLength = 8; 
+        } else {
+          frameName = "guile-kick2-1p";
+          gifLength = 5; 
+        }        
+      }
+
+    } else {
+      //if 2p
+    } 
+  } else {
+    //if hit
+    if (player === player1Char) {
+      //human is ryu
+      if (human.char === "O") {
+        frameName = "ryu-hit-1p";
+        gifLength = 4;        
+      } else {
+        //if human is guile
+        frameName = "guile-hit-1p";
+        gifLength = 3;  
+      }
+    } else {
+      //if computer is ryu
+      if (computerAI.char === "O") {
+        frameName = "ryu-hit-2p";
+        gifLength = 4;
+      } else {
+        //if computer is guile
+        frameName = "guile-hit-2p";
+        gifLength = 3;
+      }
+    }
+  }
+
+  if (player === player1Char) {
+
+      let player1AnimationObj = new runAnimationObject(player, frameName, gifLength, 100);
+      player1AnimationObj.runAnimation();
+
+  }  
+
+  if (player === player2Char) {
+
+      let player2AnimationObj = new runAnimationObject(player, frameName, gifLength, 200);
+      player2AnimationObj.runAnimation();
+
+  }
+
+} 
+
+function runAnimationObject(player, frameName, gifLength, intervalTime) {
+    var $that = this;
+    this.idle;
+    this.player = player;
+    this.frameName = frameName;
+    this.gifLength = gifLength;
+    this.lastFrameName;
+    this.frameCount = 1;
+    this.intervalTime = intervalTime;
+
+    // this.intervalID = intervalID;
+
+    this.runAnimation = function() {
+
+      let intervalID = setInterval(function(){
+        if ($that.player == player1Char) {
+        if (human.char == "O") { $that.idle = "ryu-idle-1p"; }
+        else { $that.idle = "guile-idle-1p"; }
+      } else {
+        if (computerAI.char =="O") { $that.idle = "ryu-idle-2p"; }
+        else { $that.idle = "guile-idle-2p"; }
+      }
+      // console.log(idle);
+      
+      if ($that.player.classList.contains($that.idle)){
+
+        $that.player.classList.remove($that.idle);
+        $that.lastFrameName = $that.frameName + $that.frameCount;
+        $that.player.classList.add($that.lastFrameName);
+
+      } else if ($that.frameCount <= $that.gifLength) {
+
+        $that.player.classList.remove($that.lastFrameName);
+        $that.lastFrameName = $that.lastFrameName.slice(0, -1) + $that.frameCount;
+        $that.player.classList.add($that.lastFrameName);
+        $that.frameCount++;
+
+      } else {
+
+        $that.player.classList.remove($that.lastFrameName);
+        $that.player.classList.add($that.idle);
+        $that.frameCount = 1;
+        clearInterval(intervalID);
+        
+      }
+
+      }, $that.intervalTime);
+      
+
+  }  
+
+}
+
+// function runAnimation(player, frameName, gifLength, intervalID) {
+
+//     let idle;
+//     let lastFrameName;
+
+//     if (player == player1Char) {
+//       if (human.char == "O") { idle = "ryu-idle-1p"; }
+//       else { idle = "guile-idle-1p"; }
+//     } else {
+//       if (computerAI.char =="O") { idle = "ryu-idle-2p"; }
+//       else { idle = "guile-idle-2p"; }
+//     }
+//     // console.log(idle);
+    
+//     if (player.classList.contains(idle)){
+
+//       player.classList.remove(idle);
+//       lastFrameName = frameName + frameCount;
+//       player.classList.add(lastFrameName);
+
+//     } else if (frameCount <= gifLength) {
+
+//       player.classList.remove(lastFrameName);
+//       lastFrameName = lastFrameName.slice(0, -1) + frameCount;
+//       player.classList.add(lastFrameName);
+//       frameCount++;
+
+//     } else {
+
+//       player.classList.remove(lastFrameName);
+//       player.classList.add(idle);
+//       frameCount = 1;
+//       clearInterval(intervalID);
+      
+//     }
+
+// }
+
+
+
+
+
 
 function moveLogic(squareId, char){
   var charImg = document.createElement("img");
@@ -239,6 +427,12 @@ if (currentGameState.turnsTaken > 4) {
       if (currentGameState.turnsTaken === 9) {
         if (rounds !== 5) {
           console.log("Draw");
+          if (char === human.char) {
+            runAttack(player1Char);
+          } else {
+            runAttack(player2Char);
+          }
+            
           //prevents human move
           computerAI.turnActive = true;
           setTimeout(function(){
