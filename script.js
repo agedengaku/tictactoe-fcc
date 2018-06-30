@@ -17,6 +17,8 @@ const roundImage = document.getElementById("round-image");
 const blackOut = document.getElementById("blackout");
 const player1Char = document.getElementById("player-1-char");
 const player2Char = document.getElementById("player-2-char");
+const player1CharImg = document.getElementById("player-1-char-img");
+const player2CharImg = document.getElementById("player-2-char-img");
 
 const clickToStartAudio = new Audio("click-to-start.mp3");
 const charSelectedAudio = new Audio("char-selected.mp3");
@@ -38,7 +40,6 @@ const playButtonScreen = document.getElementById('play-button-screen');
 const vid = document.getElementById('title-screen-video');
 // const clickToStart = document.getElementById('click-to-start');
 
-let computerTurnId;
 let gameStarted = false;
 let currentGameState = {};
 let human = {};
@@ -208,7 +209,7 @@ function humanMove(){
           //////
           computerAI.turnActive = true;
           human.turnActive = false;
-          computerTurnId = setTimeout(computerAI.move, 3000);
+          setTimeout(computerAI.move, 3000);
       } 
     }
   } else {
@@ -446,9 +447,25 @@ if (currentGameState.turnsTaken > 4) {
         if(rounds !== 5) {
           //prevents human move
           computerAI.turnActive = true;
+          //finishing move
+          player1Char.classList.remove("ryu-idle-1p");
+          player1CharImg.src = "ryu-shoryuken-1p.gif";
+          //winnning stance
           setTimeout(function(){
-            reset("round")
-          }, 2000);
+            player1CharImg.src = "ryu-win1-1p.gif";
+            setTimeout(function(){
+              player1CharImg.src = "ryu-win2-1p.gif";
+            },200);
+          },3800);
+          //opponent KO
+          setTimeout(function(){
+            player2Char.classList.remove("guile-idle-2p");
+            player2CharImg.src = "guile-KO-2p.gif";
+          },300);
+          //reset rounds
+          setTimeout(function(){
+            reset("round");
+          }, 10000);
           return false;
         } else {
           console.log("Rounds is 5 someone won last round");
@@ -631,7 +648,10 @@ function Computer(char) {
           setupAndRunAnimation(player1Char, false);
         }, 300);
 
-        computerAI.turnActive = false;
+        setTimeout(function(){
+          computerAI.turnActive = false;
+        },2000);
+
         // computerAI.turnActive = true;
       }
     }
@@ -659,7 +679,9 @@ function Computer(char) {
         setTimeout(function(){
           setupAndRunAnimation(player1Char, false);
         }, 300);
-        computerAI.turnActive = false;
+        setTimeout(function(){
+          computerAI.turnActive = false;
+        },2000);
     }
   }
 }
@@ -740,7 +762,13 @@ function reset(str) {
   if (!gameover) {
     blackOut.classList.add("fade-in-and-out");
     setTimeout(function(){
-    blackOut.classList.remove("fade-in-and-out");
+        player1CharImg.src = "";
+        player2CharImg.src = "";
+        player1Char.classList.add("ryu-idle-1p");
+        player2Char.classList.add("guile-idle-2p");
+      },1000);
+    setTimeout(function(){
+      blackOut.classList.remove("fade-in-and-out");
     },2000);
     for(var i = 0; i < boardSquares.length; i++) {
       boardSquares[i].innerHTML = '';
