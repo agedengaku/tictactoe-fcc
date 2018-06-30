@@ -445,23 +445,26 @@ if (currentGameState.turnsTaken > 4) {
     if (result) {
 
         if(rounds !== 5) {
+
+          roundWinAnimation(char);
+
           //prevents human move
           computerAI.turnActive = true;
           //finishing move
-          player1Char.classList.remove("ryu-idle-1p");
-          player1CharImg.src = "ryu-shoryuken-1p.gif";
-          //winnning stance
-          setTimeout(function(){
-            player1CharImg.src = "ryu-win1-1p.gif";
-            setTimeout(function(){
-              player1CharImg.src = "ryu-win2-1p.gif";
-            },200);
-          },3800);
-          //opponent KO
-          setTimeout(function(){
-            player2Char.classList.remove("guile-idle-2p");
-            player2CharImg.src = "guile-KO-2p.gif";
-          },300);
+          // player1Char.classList.remove("ryu-idle-1p");
+          // player1CharImg.src = "ryu-shoryuken-1p.gif";
+          // //winnning stance
+          // setTimeout(function(){
+          //   player1CharImg.src = "ryu-win1-1p.gif";
+          //   setTimeout(function(){
+          //     player1CharImg.src = "ryu-win2-1p.gif";
+          //   },200);
+          // },3800);
+          // //opponent KO
+          // setTimeout(function(){
+          //   player2Char.classList.remove("guile-idle-2p");
+          //   player2CharImg.src = "guile-KO-2p.gif";
+          // },300);
           //reset rounds
           setTimeout(function(){
             reset("round");
@@ -508,6 +511,89 @@ if (currentGameState.turnsTaken > 4) {
   if (result !== true) {
     return true;  
   }
+}
+
+function roundWinAnimation(char) {
+
+  let player, playerImg, opponent, opponentImg, idleGif, winAttackGif, opponentIdleGif, KOgif, guileWinStance;
+
+  if (human.char === char) {
+      
+      player = player1Char;
+      playerImg = player1CharImg;
+      opponent = player2Char;
+      opponentImg = player2CharImg;
+
+    if (char === "O") {
+
+      idleGif = "ryu-idle-1p";
+      winAttackGif = "ryu-shoryuken-1p.gif"
+      opponentIdleGif = "guile-idle-2p";
+      KOgif = "guile-KO-2p.gif";
+
+
+      
+
+      // player1Char.classList.remove("ryu-idle-1p");
+      // player1CharImg.src = "ryu-shoryuken-1p.gif";
+      // //winnning stance
+      // setTimeout(function(){
+      //   player1CharImg.src = "ryu-win1-1p.gif";
+      //   setTimeout(function(){
+      //     player1CharImg.src = "ryu-win2-1p.gif";
+      //   },200);
+      // },3800);
+      // //opponent KO
+      // setTimeout(function(){
+      //   player2Char.classList.remove("guile-idle-2p");
+      //   player2CharImg.src = "guile-KO-2p.gif";
+      // },300);      
+    } else {
+
+    }
+  } else {
+    if (char === "O") {
+
+    } else {
+      player2Char.classList.remove("guile-idle-1p");
+      player2CharImg.src = "guile-flash-kick-1p.gif";
+      //winnning stance
+      setTimeout(function(){
+        player2CharImg.src = "guile-win1-1p.gif";
+        setTimeout(function(){
+          player2CharImg.src = "guile-win2-1p.gif";
+        },200);
+      },3800);
+      //opponent KO
+      setTimeout(function(){
+        player1Char.classList.remove("ryu-idle-2p");
+        player1CharImg.src = "ryu-KO-2p.gif";
+      },300);  
+    }
+  }
+
+  //win attack
+  player.classList.remove(idleGif);
+  playerImg.src = winAttackGif;
+
+  //winnning stance for ryu
+  if (idleGif === "ryu-idle-1p" || idleGif === "ryu-idle-2p") {
+   setTimeout(function(){
+      playerImg.src = "ryu-win1-1p.gif";
+      setTimeout(function(){
+        playerImg.src = "ryu-win2-1p.gif";
+      },200);
+    },3800); 
+  //winning stance for guile
+  } else {
+    setTimeout(function(){ player.src = guileWinStance; },3800); 
+  }
+  //opponent KO
+  setTimeout(function(){
+    opponent.classList.remove(opponentIdleGif);
+    opponentImg.src = KOgif;
+  },300);      
+
 }
 
 function checkForWinner(char) {
