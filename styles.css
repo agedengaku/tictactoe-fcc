@@ -242,7 +242,7 @@ body {
 #player-2-char {
 	position: fixed;
 	top: 40%;
-	left: 75%;
+	left: 72.5%;
 }
 .ryu-idle-1p {
 	background: url("ryu-idle-1p.gif");
@@ -315,6 +315,63 @@ body {
 }
 .ryu-hit-1p4{
   background: url("ryu-map-1p.gif") -453px -453px;
+}
+
+.guile-punch-2p1{
+	background: url("guile-map-2p.gif") 0 0;
+}
+.guile-punch-2p2{
+	background: url("guile-map-2p.gif") -151px 0;
+}
+.guile-punch-2p3{
+	background: url("guile-map-2p.gif") -302px 0;
+}
+.guile-punch-2p4{
+	background: url("guile-map-2p.gif") -453px 0;
+}
+.guile-punch-2p5{
+	background: url("guile-map-2p.gif") -604px 0;
+}
+
+.guile-kick-2p1{
+	background: url("guile-map-2p.gif") 0 -151px;
+}
+.guile-kick-2p2{
+	background: url("guile-map-2p.gif") -151px -151px;
+}
+.guile-kick-2p3{
+	background: url("guile-map-2p.gif") -302px -151px;
+}
+.guile-kick-2p4{
+	background: url("guile-map-2p.gif") -453px -151px;
+}
+.guile-kick-2p5{
+	background: url("guile-map-2p.gif") -604px -151px;
+}
+.guile-kick-2p6{
+	background: url("guile-map-2p.gif") 0 -302px;
+}
+.guile-kick-2p7{
+	background: url("guile-map-2p.gif") -151px -302px;
+}
+.guile-kick-2p8{
+	background: url("guile-map-2p.gif") -302px -302px;
+}
+
+.guile-kick2-2p1{
+	background: url("guile-map-2p.gif") 0 -453px;
+}
+.guile-kick2-2p2{
+	background: url("guile-map-2p.gif") -151px -453px;
+}
+.guile-kick2-2p3{
+	background: url("guile-map-2p.gif") -302px -453px;
+}
+.guile-kick2-2p4{
+	background: url("guile-map-2p.gif") -453px -453px;
+}
+.guile-kick2-2p5{
+	background: url("guile-map-2p.gif") -604px -453px;
 }
 
 .guile-hit-2p1{

@@ -252,6 +252,35 @@ function setupAndRunAnimation(player, attack) {
       }
 
     } else {
+      if (computerAI.char === "O") {
+        if (val == 0) {
+          frameName = "ryu-punch-2p";
+          gifLength = 5; 
+        } else if (val == 1) {
+          frameName = "ryu-punch2-2p";
+          gifLength = 5; 
+        } else {
+          frameName = "ryu-kick-2p";
+          gifLength = 5; 
+        }        
+      } else {
+        //if human is Guile
+         if (val == 0) {
+          frameName = "guile-punch-2p";
+          gifLength = 5; 
+        } else if (val == 1) {
+          frameName = "guile-kick-2p";
+          gifLength = 8; 
+        } else {
+          frameName = "guile-kick2-2p";
+          gifLength = 5; 
+        }        
+      }
+
+
+
+
+
       //if 2p
     } 
   } else {
@@ -281,21 +310,21 @@ function setupAndRunAnimation(player, attack) {
 
   if (player === player1Char) {
 
-      let player1AnimationObj = new runAnimationObject(player, frameName, gifLength, 100);
+      let player1AnimationObj = new runAnimationObject(player, frameName, gifLength, attack);
       player1AnimationObj.runAnimation();
 
   }  
 
   if (player === player2Char) {
 
-      let player2AnimationObj = new runAnimationObject(player, frameName, gifLength, 200);
+      let player2AnimationObj = new runAnimationObject(player, frameName, gifLength, attack);
       player2AnimationObj.runAnimation();
 
   }
 
 } 
 
-function runAnimationObject(player, frameName, gifLength, intervalTime) {
+function runAnimationObject(player, frameName, gifLength, attack) {
     var $that = this;
     this.idle;
     this.player = player;
@@ -303,7 +332,12 @@ function runAnimationObject(player, frameName, gifLength, intervalTime) {
     this.gifLength = gifLength;
     this.lastFrameName;
     this.frameCount = 1;
-    this.intervalTime = intervalTime;
+    if (attack === true) {
+      this.intervalTime = 100;  
+    } else {
+      this.intervalTime = 200;
+    }
+    
 
     // this.intervalID = intervalID;
 
@@ -311,35 +345,34 @@ function runAnimationObject(player, frameName, gifLength, intervalTime) {
 
       let intervalID = setInterval(function(){
         if ($that.player == player1Char) {
-        if (human.char == "O") { $that.idle = "ryu-idle-1p"; }
-        else { $that.idle = "guile-idle-1p"; }
-      } else {
-        if (computerAI.char =="O") { $that.idle = "ryu-idle-2p"; }
-        else { $that.idle = "guile-idle-2p"; }
-      }
-      // console.log(idle);
-      
-      if ($that.player.classList.contains($that.idle)){
+          if (human.char == "O") { $that.idle = "ryu-idle-1p"; }
+          else { $that.idle = "guile-idle-1p"; }
+        } else {
+          if (computerAI.char =="O") { $that.idle = "ryu-idle-2p"; }
+          else { $that.idle = "guile-idle-2p"; }
+        }
 
-        $that.player.classList.remove($that.idle);
-        $that.lastFrameName = $that.frameName + $that.frameCount;
-        $that.player.classList.add($that.lastFrameName);
+        if ($that.player.classList.contains($that.idle)){
 
-      } else if ($that.frameCount <= $that.gifLength) {
+          $that.player.classList.remove($that.idle);
+          $that.lastFrameName = $that.frameName + $that.frameCount;
+          $that.player.classList.add($that.lastFrameName);
 
-        $that.player.classList.remove($that.lastFrameName);
-        $that.lastFrameName = $that.lastFrameName.slice(0, -1) + $that.frameCount;
-        $that.player.classList.add($that.lastFrameName);
-        $that.frameCount++;
+        } else if ($that.frameCount <= $that.gifLength) {
 
-      } else {
+          $that.player.classList.remove($that.lastFrameName);
+          $that.lastFrameName = $that.lastFrameName.slice(0, -1) + $that.frameCount;
+          $that.player.classList.add($that.lastFrameName);
+          $that.frameCount++;
 
-        $that.player.classList.remove($that.lastFrameName);
-        $that.player.classList.add($that.idle);
-        $that.frameCount = 1;
-        clearInterval(intervalID);
-        
-      }
+        } else {
+
+          $that.player.classList.remove($that.lastFrameName);
+          $that.player.classList.add($that.idle);
+          $that.frameCount = 1;
+          clearInterval(intervalID);
+          
+        }
 
       }, $that.intervalTime);
       
@@ -428,16 +461,22 @@ if (currentGameState.turnsTaken > 4) {
         if (rounds !== 5) {
           console.log("Draw");
           if (char === human.char) {
-            runAttack(player1Char);
+            setupAndRunAnimation(player1Char, true);
+            setTimeout(function(){
+              setupAndRunAnimation(player2Char, false);
+            }, 300);
           } else {
-            runAttack(player2Char);
+            setupAndRunAnimation(player2Char, true);
+            setTimeout(function(){
+              setupAndRunAnimation(player1Char, false);
+            }, 300);
           }
             
           //prevents human move
           computerAI.turnActive = true;
           setTimeout(function(){
             reset("round")
-          }, 2000);
+          }, 5000);
           return false;
         } else {
           console.log("Rounds is 5 no one won last round");
@@ -585,6 +624,13 @@ function Computer(char) {
       var squareId = openSquares[squareNum];
       noWinner = moveLogic(squareId, $that.char);
       if (noWinner) {
+
+        setupAndRunAnimation(player2Char, true);
+
+        setTimeout(function(){
+          setupAndRunAnimation(player1Char, false);
+        }, 300);
+
         computerAI.turnActive = false;
         // computerAI.turnActive = true;
       }
@@ -608,6 +654,11 @@ function Computer(char) {
     // noWinner = moveLogic(squareId, $that.char);
     noWinner = moveLogic(squareId, this.char);
     if (noWinner) {
+        setupAndRunAnimation(player2Char, true);
+
+        setTimeout(function(){
+          setupAndRunAnimation(player1Char, false);
+        }, 300);
         computerAI.turnActive = false;
     }
   }
