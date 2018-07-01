@@ -463,24 +463,24 @@ if (currentGameState.turnsTaken > 4) {
     } else {
       if (currentGameState.turnsTaken === 9) {
 
+        console.log("Draw");
+        if (char === human.char) {
+          setupAndRunAnimation(player1Char, true);
+          setTimeout(function(){
+            setupAndRunAnimation(player2Char, false);
+          }, 300);
+        } else {
+          setupAndRunAnimation(player2Char, true);
+          setTimeout(function(){
+            setupAndRunAnimation(player1Char, false);
+          }, 300);
+        }
+        drawImage();
+
         if (rounds !== 5) {
-          console.log("Draw");
-          if (char === human.char) {
-            setupAndRunAnimation(player1Char, true);
-            setTimeout(function(){
-              setupAndRunAnimation(player2Char, false);
-            }, 300);
-          } else {
-            setupAndRunAnimation(player2Char, true);
-            setTimeout(function(){
-              setupAndRunAnimation(player1Char, false);
-            }, 300);
-          }
           //prevents human move
           computerAI.turnActive = true;
           //draw frame
-          drawImage();
-
           setTimeout(function(){
             reset("round");
           }, 5000);
@@ -516,6 +516,10 @@ function drawImage() {
       player2CharImg.src = "ryu-draw-2p.gif"; 
     },3000);     
   }
+  setTimeout(function(){
+    roundImage.src = "draw.gif";
+  },3500);
+
 }
 
 function roundWinAnimation(char) {
@@ -584,7 +588,7 @@ function roundWinAnimation(char) {
 
   //winnning stance for ryu
   if (idleGif === "ryu-idle-1p" || idleGif === "ryu-idle-2p") {
-    KOinterval = 400;
+    KOinterval = 300;
    setTimeout(function(){
       playerImg.src = "ryu-win1-1p.gif";
       setTimeout(function(){
@@ -873,6 +877,7 @@ function reset(str) {
     setTimeout(function(){
         player1CharImg.src = "";
         player2CharImg.src = "";
+        roundImage.src = "";
         player1Char.classList.add("ryu-idle-1p");
         player2Char.classList.add("guile-idle-2p");
       },1000);
