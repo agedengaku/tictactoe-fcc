@@ -26,6 +26,9 @@ const vsScreenBGM = new Audio("vs-screen-bgm.mp3");
 const airplaneAudio = new Audio("airplane-audio.mp3");
 const youWin = new Audio("you-win.mp3");
 const youLose = new Audio("you-lose.mp3");
+const attackAudio = new Audio("attack-audio.mp3");
+const hitAudio = new Audio("hit-audio.mp3");
+const shoryukenAudio = new Audio("shoryuken-audio.mp3");
 var audioMain = null;
 
 const round1Audio = new Audio("round1.mp3");
@@ -203,10 +206,12 @@ function humanMove(){
           ////// Attack animation
           //Human Attack
           setupAndRunAnimation(player1Char, true);
+          attackAudio.play();
           // setupAndRunAnimation(player1Char, true);
           //Computer Hit
           setTimeout(function(){
             setupAndRunAnimation(player2Char, false);
+            hitAudio.play();
           }, 300);
           //////
           computerAI.turnActive = true;
@@ -526,7 +531,7 @@ function drawImage() {
 
 function roundWinAnimation(char) {
 
-  let player, playerImg, opponent, opponentImg, idleGif, winAttackGif, opponentIdleGif, KOgif, guileWinStance, KOinterval, youWinLose, youWinLoseAudio;
+  let player, playerImg, opponent, opponentImg, idleGif, winAttackGif, winAttackAudio, opponentIdleGif, KOgif, guileWinStance, KOinterval, youWinLose, youWinLoseAudio;
 
   if (human.char === char) {
       
@@ -541,6 +546,7 @@ function roundWinAnimation(char) {
 
       idleGif = "ryu-idle-1p";
       winAttackGif = "ryu-shoryuken-1p.gif"
+      winAttackAudio = shoryukenAudio;
       opponentIdleGif = "guile-idle-2p";
       KOgif = "guile-KO-2p.gif";
 
@@ -569,6 +575,7 @@ function roundWinAnimation(char) {
       winAttackGif = "guile-flash-kick-2p.gif";
       opponentIdleGif = "ryu-idle-1p";
       KOgif = "ryu-KO-1p.gif";
+
       guileWinStance = "guile-win-2p.gif";
 
       // player2Char.classList.remove("guile-idle-1p");
@@ -591,6 +598,7 @@ function roundWinAnimation(char) {
   //win attack
   player.classList.remove(idleGif);
   playerImg.src = winAttackGif;
+  winAttackAudio.play();
 
   //winnning stance for ryu
   if (idleGif === "ryu-idle-1p" || idleGif === "ryu-idle-2p") {
@@ -603,20 +611,32 @@ function roundWinAnimation(char) {
     },3800); 
   //winning stance for guile
   } else {
-    KOinterval = 800;
+    KOinterval = 400;
     setTimeout(function(){ playerImg.src = guileWinStance; },3800); 
   }
   //opponent KO
   setTimeout(function(){
     opponent.classList.remove(opponentIdleGif);
     opponentImg.src = KOgif;
+    hitAudio.play();
+    setTimeout(function(){
+      playFallAudio();
+    },1500);    
+    setTimeout(function(){
+      playFallAudio();
+    },2300);
   }, KOinterval);   
 
   setTimeout(function(){ 
     roundImage.src = youWinLose;
     youWinLoseAudio.play();
-    roundImage.classList.add("you-win-lose"); 
+    // roundImage.classList.add("you-win-lose"); 
   },3800);   
+
+  function playFallAudio() {
+    let sound = new Audio("fall-audio.mp3");
+    sound.play();
+  }
 
 }
 
@@ -768,9 +788,11 @@ function Computer(char) {
       if (noWinner) {
 
         setupAndRunAnimation(player2Char, true);
+        attackAudio.play();
 
         setTimeout(function(){
           setupAndRunAnimation(player1Char, false);
+          hitAudio.play();
         }, 300);
 
         setTimeout(function(){
@@ -800,9 +822,10 @@ function Computer(char) {
     noWinner = moveLogic(squareId, this.char);
     if (noWinner) {
         setupAndRunAnimation(player2Char, true);
-
+        attackAudio.play();
         setTimeout(function(){
           setupAndRunAnimation(player1Char, false);
+          hitAudio.play();
         }, 300);
         setTimeout(function(){
           computerAI.turnActive = false;
@@ -890,7 +913,7 @@ function reset(str) {
         player1CharImg.src = "";
         player2CharImg.src = "";
         roundImage.src = "";
-        roundImage.classList.remove("you-win-lose"); 
+        // roundImage.classList.remove("you-win-lose"); 
         player1Char.classList.add("ryu-idle-1p");
         player2Char.classList.add("guile-idle-2p");
       },1000);

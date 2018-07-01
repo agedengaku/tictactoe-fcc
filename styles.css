@@ -159,16 +159,12 @@ body {
 }
 
 #round-image {
-	zoom: 2;
+	width: 300px;
+	height: auto;
 	position: absolute;
 	top: 30%;
 	left: 50%;
 	transform: translateX(-50%) translateY(-50%);	
-}
-
-.you-win-lose {
-	width: 150px;
-	height: auto;
 }
 
 .char-css {
@@ -241,12 +237,12 @@ body {
 }
 #player-1-char {
 	position: fixed;
-	top: 40%;
+	bottom: 45%;
 	left: 20%;
 }
 #player-2-char {
 	position: fixed;
-	top: 40%;
+	bottom: 45%;
 	left: 72.5%;
 }
 .ryu-idle-1p {
