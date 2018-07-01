@@ -24,6 +24,8 @@ const clickToStartAudio = new Audio("click-to-start.mp3");
 const charSelectedAudio = new Audio("char-selected.mp3");
 const vsScreenBGM = new Audio("vs-screen-bgm.mp3");
 const airplaneAudio = new Audio("airplane-audio.mp3");
+const youWin = new Audio("you-win.mp3");
+const youLose = new Audio("you-lose.mp3");
 var audioMain = null;
 
 const round1Audio = new Audio("round1.mp3");
@@ -524,7 +526,7 @@ function drawImage() {
 
 function roundWinAnimation(char) {
 
-  let player, playerImg, opponent, opponentImg, idleGif, winAttackGif, opponentIdleGif, KOgif, guileWinStance, KOinterval;
+  let player, playerImg, opponent, opponentImg, idleGif, winAttackGif, opponentIdleGif, KOgif, guileWinStance, KOinterval, youWinLose, youWinLoseAudio;
 
   if (human.char === char) {
       
@@ -532,6 +534,8 @@ function roundWinAnimation(char) {
       playerImg = player1CharImg;
       opponent = player2Char;
       opponentImg = player2CharImg;
+      youWinLose = "you-win.gif";      
+      youWinLoseAudio = youWin;      
 
     if (char === "O") {
 
@@ -549,6 +553,8 @@ function roundWinAnimation(char) {
     playerImg = player2CharImg;
     opponent = player1Char;
     opponentImg = player1CharImg;
+    youWinLose = "you-lose.gif";   
+    youWinLoseAudio = youLose;      
 
     if (char === "O") {
 
@@ -604,7 +610,13 @@ function roundWinAnimation(char) {
   setTimeout(function(){
     opponent.classList.remove(opponentIdleGif);
     opponentImg.src = KOgif;
-  }, KOinterval);      
+  }, KOinterval);   
+
+  setTimeout(function(){ 
+    roundImage.src = youWinLose;
+    youWinLoseAudio.play();
+    roundImage.classList.add("you-win-lose"); 
+  },3800);   
 
 }
 
@@ -878,6 +890,7 @@ function reset(str) {
         player1CharImg.src = "";
         player2CharImg.src = "";
         roundImage.src = "";
+        roundImage.classList.remove("you-win-lose"); 
         player1Char.classList.add("ryu-idle-1p");
         player2Char.classList.add("guile-idle-2p");
       },1000);
@@ -893,7 +906,8 @@ function reset(str) {
       // computerAI.turnActive = false;
       openSquares = ["0", "1", "2", "3", "4", "5", "6", "7", "8"];
       init();
-      roundMedia();
+      setTimeout(function(){ roundMedia(); },1000)
+
     } else {
       // gameStarted = false;
       // document.body.insertBefore(charSelectScreen, document.body.childNodes[0]);
@@ -993,7 +1007,7 @@ function roundMedia() {
     setTimeout(function(){
       computerAI.turnActive = false;
       roundImage.src = "";
-    }, 3000);
+    }, 4000);
   }, 1000);
   
   //AFTER MEDIA PLAY
