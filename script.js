@@ -266,7 +266,7 @@ function humanMove(){
           //////
           computerAI.turnActive = true;
           human.turnActive = false;
-          setTimeout(computerAI.move, 3000);
+          setTimeout(computerAI.move, 2500);
       } 
     }
   } else {
@@ -523,13 +523,17 @@ if (currentGameState.turnsTaken > 4) {
         console.log("Draw");
         if (char === human.char) {
           setupAndRunAnimation(player1Char, true);
+          attackAudio.play();
           setTimeout(function(){
             setupAndRunAnimation(player2Char, false);
+            hitAudio.play();
           }, 300);
         } else {
           setupAndRunAnimation(player2Char, true);
+          attackAudio.play();
           setTimeout(function(){
             setupAndRunAnimation(player1Char, false);
+            hitAudio.play();
           }, 300);
         }
         drawImage();
@@ -855,7 +859,7 @@ function Computer(char) {
 
         setTimeout(function(){
           computerAI.turnActive = false;
-        },2000);
+        },1600);
 
         // computerAI.turnActive = true;
       }
@@ -887,7 +891,7 @@ function Computer(char) {
         }, 300);
         setTimeout(function(){
           computerAI.turnActive = false;
-        },2000);
+        },1600);
     }
   }
 }
@@ -988,8 +992,8 @@ function reset(str) {
       // computerAI.turnActive = false;
       openSquares = ["0", "1", "2", "3", "4", "5", "6", "7", "8"];
       init();
-      stageBGM();
       setTimeout(function(){ 
+        stageBGM();
         roundMedia(); 
       },1000)
 
@@ -1013,7 +1017,7 @@ function charSelect() {
     human = new Player(this.id);
     if (this.id === "O") { 
       computerAI = new Computer("X");
-      console.log("charSelect: "+computerAI.turnActive);
+      // console.log("charSelect: "+ computerAI.turnActive);
       mapImageFile.src= "ryu-selected-flag.jpg";
     } else {
       computerAI = new Computer("O");
@@ -1093,7 +1097,7 @@ function roundMedia() {
     setTimeout(function(){
       computerAI.turnActive = false;
       roundImage.src = "";
-    }, 4000);
+    }, 3000);
   }, 1000);
   
   //AFTER MEDIA PLAY
