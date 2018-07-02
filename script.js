@@ -29,7 +29,10 @@ const youLose = new Audio("you-lose.mp3");
 const attackAudio = new Audio("attack-audio.mp3");
 const hitAudio = new Audio("hit-audio.mp3");
 const shoryukenAudio = new Audio("shoryuken-audio.mp3");
+const KOscream = new Audio("KO-scream.mp3");
 var audioMain = null;
+var stageMain = null;
+var context, gainNode;
 
 const round1Audio = new Audio("round1.mp3");
 const round2Audio = new Audio("round2.mp3");
@@ -161,6 +164,8 @@ function charSelectScreenBGM() {
     audioMain.loop = true;  
   }
 
+
+
     // //this is the webaudio loooooppppppp
     // //enter url in the next line
     // var url  = 'char-select-main2.mp3';
@@ -193,6 +198,51 @@ function charSelectScreenBGM() {
     // request.send();
 }
 
+function stageBGM() {
+  // https://www.html5rocks.com/en/tutorials/webaudio/intro/
+  // window.onload = initSound;
+  window.onload = initStageBGM();
+  context;
+  var bufferLoader;
+
+  function initStageBGM() {
+    // Fix up prefixing
+    window.AudioContext = window.AudioContext || window.webkitAudioContext;
+    context = new AudioContext();
+
+    bufferLoader = new BufferLoader(
+      context,
+      [
+        'ryu-theme-intro.ogg',
+        'ryu-theme-main.ogg',
+      ],
+      finishedLoading
+      );
+    bufferLoader.load();
+  }
+
+  function finishedLoading(bufferList) {
+    // Create two sources and play them both together.
+    var source1 = context.createBufferSource();
+    stageMain = context.createBufferSource();
+
+    source1.buffer = bufferList[0];
+    stageMain.buffer = bufferList[1];
+
+    gainNode = context.createGain();
+    gainNode.gain.setValueAtTime(1, context.currentTime);
+  
+    stageMain.connect(gainNode);
+
+    source1.connect(context.destination);
+    gainNode.connect(context.destination);
+
+    source1.start(0);
+    stageMain.start(4.25);
+    stageMain.loop = true; 
+
+  }
+}
 
 function humanMove(){
   //computerAI.turnActive is set to false to prevent player from clicking a square before computer makes a move
@@ -574,6 +624,7 @@ function roundWinAnimation(char) {
       idleGif = "guile-idle-2p";
       winAttackGif = "guile-flash-kick-2p.gif";
       opponentIdleGif = "ryu-idle-1p";
+      winAttackAudio = attackAudio;
       KOgif = "ryu-KO-1p.gif";
 
       guileWinStance = "guile-win-2p.gif";
@@ -605,6 +656,7 @@ function roundWinAnimation(char) {
     KOinterval = 300;
    setTimeout(function(){
       playerImg.src = "ryu-win1-1p.gif";
+      gainNode.gain.linearRampToValueAtTime(0, context.currentTime + 4);
       setTimeout(function(){
         playerImg.src = "ryu-win2-1p.gif";
       },200);
@@ -612,13 +664,19 @@ function roundWinAnimation(char) {
   //winning stance for guile
   } else {
     KOinterval = 400;
-    setTimeout(function(){ playerImg.src = guileWinStance; },3800); 
+    setTimeout(function(){ 
+      playerImg.src = guileWinStance; 
+      gainNode.gain.linearRampToValueAtTime(0, context.currentTime + 4);
+    },3800); 
   }
   //opponent KO
   setTimeout(function(){
     opponent.classList.remove(opponentIdleGif);
     opponentImg.src = KOgif;
     hitAudio.play();
+    setTimeout(function(){
+      KOscream.play();
+    },1000);
     setTimeout(function(){
       playFallAudio();
     },1500);    
@@ -909,6 +967,7 @@ function reset(str) {
   //turns off computer's move in case it was already started
   if (!gameover) {
     blackOut.classList.add("fade-in-and-out");
+    stageMain.stop();
     setTimeout(function(){
         player1CharImg.src = "";
         player2CharImg.src = "";
@@ -929,7 +988,10 @@ function reset(str) {
       // computerAI.turnActive = false;
       openSquares = ["0", "1", "2", "3", "4", "5", "6", "7", "8"];
       init();
-      setTimeout(function(){ roundMedia(); },1000)
+      stageBGM();
+      setTimeout(function(){ 
+        roundMedia(); 
+      },1000)
 
     } else {
       // gameStarted = false;
@@ -982,6 +1044,7 @@ function charSelect() {
     }, 4000);
     setTimeout(function(){
       vsScreen.remove();
+      stageBGM();
       roundMedia();
     },9000);
   }
