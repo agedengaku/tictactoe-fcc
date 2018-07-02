@@ -40,7 +40,7 @@ body {
 #difficulty-select-screen {
 	background-color: black;
 	z-index: 750;
-	position: relative;
+	position: fixed;
 	height: 100vh; 
 }
 #title-screen-partial img{
@@ -151,7 +151,8 @@ body {
 	}
 }
 #ryu-stage {
-	height: 100vh;
+
+	height: auto;
 	width: 100vw;
 	display: block;
     margin-left: auto;
@@ -237,12 +238,12 @@ body {
 }
 #player-1-char {
 	position: fixed;
-	bottom: 45%;
+	top: 45%;
 	left: 20%;
 }
 #player-2-char {
 	position: fixed;
-	bottom: 45%;
+	top: 45%;
 	left: 72.5%;
 }
 .ryu-idle-1p {
