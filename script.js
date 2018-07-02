@@ -11,6 +11,7 @@ const charSelectScreen = document.getElementById("char-select-screen");
 const mapImageFile = document.getElementById("map-image-file");
 const vsScreen = document.getElementById("vs-screen");
 const vsScreenImage = document.getElementById("vs-screen-image");
+const mainScreen = document.getElementById("main-screen");
 const ryuStageImage = document.getElementById("ryu-stage");
 const endScreenImage = document.getElementById("end-screen-image");
 const roundImage = document.getElementById("round-image");
@@ -30,6 +31,7 @@ const attackAudio = new Audio("attack-audio.mp3");
 const hitAudio = new Audio("hit-audio.mp3");
 const shoryukenAudio = new Audio("shoryuken-audio.mp3");
 const KOscream = new Audio("KO-scream.mp3");
+const endGameAudio = new Audio("end-game.mp3");
 var audioMain = null;
 var stageMain = null;
 var context, gainNode;
@@ -123,9 +125,9 @@ function charHover() {
   }
 }
 
-function removeScreen(element) {
-  element.remove();
-}
+// function removeScreen(element) {
+//   element.remove();
+// }
 
 function charSelectScreenBGM() {
   // https://www.html5rocks.com/en/tutorials/webaudio/intro/
@@ -514,7 +516,9 @@ if (currentGameState.turnsTaken > 4) {
         } else {
           console.log("Rounds is 5 someone won last round");
           gameover = true;
-          endGame(human.wins, computerAI.wins);
+          setTimeout(function(){
+            endGame(human.wins, computerAI.wins);
+          });
         }
 
     } else {
@@ -740,12 +744,15 @@ function winScore(char) {
       else if (human.wins == 1 && computerAI.wins == 1) { ryuStageImage.src = "ryu-stage-O-1win-1win.jpg"; } 
       else if (human.wins == 2 && computerAI.wins == 0) {
         ryuStageImage.src = "ryu-stage-O-2win-0win.jpg";
-        endGame(human.char);
         gameover = true;
+        setTimeout(function(){
+          endGame(human.char);
+        },8000);
       } else if (human.wins == 2 && computerAI.wins == 1) {
          ryuStageImage.src = "ryu-stage-O-2win-1win.jpg";     
-         endGame(human.char);
-         gameover = true;
+        setTimeout(function(){
+          endGame(human.char);
+        },8000);
       }
     } else {
       if (human.wins == 1 && computerAI.wins == 0) { ryuStageImage.src = "ryu-stage-X-1win-0win.jpg"; } 
@@ -1120,12 +1127,14 @@ function endGame(char, char2) {
       console.log("draw");
     }
   } else {
-    if (char == human.wins) {
+    if (char == human.char) {
       if (char == "X") {
         alert("END GAME");
         // endScreenImage.src = "guile-1p-win-ryu-2p-lose";
         //Ryu win Guile lose image
       } else {
+        mainScreen.remove();
+        endGameAudio.play();
         //Guile win Ryu lose image
         //NOT NECESSARY, IMAGE ALREADY LOADED
       }
@@ -1142,7 +1151,7 @@ function endGame(char, char2) {
 
   setTimeout(function(){
     window.location.reload();
-  }, 5000);
+  }, 8000);
 
 }
 
