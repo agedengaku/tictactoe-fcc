@@ -221,19 +221,21 @@ function humanMove(){
     var noWinner;
     var squareId = this.id;
     if (openSquares.indexOf(squareId) !== -1){
+
+    
+
       noWinner = moveLogic(squareId, human.char);
       if (noWinner && gameover === false) {
-          ////// Attack animation
-          //Human Attack
-          setupAndRunAnimation(human.char, player1Char, true);
-          attackAudio.play();
-          // setupAndRunAnimation(player1Char, true);
-          //Computer Hit
-          setTimeout(function(){
-            setupAndRunAnimation(computerAI.char, player2Char, false);
-            hitAudio.play();
-          }, 300);
-          //////
+
+        attackHitMedia(human.char, player1Char, computerAI.char, player2Char);
+
+          // setupAndRunAnimation(human.char, player1Char, true);
+          // attackAudio.play();
+          // setTimeout(function(){
+          //   setupAndRunAnimation(computerAI.char, player2Char, false);
+          //   hitAudio.play();
+          // }, 300);
+
           computerAI.turnActive = true;
           human.turnActive = false;
           setTimeout(computerAI.move, 2500);
@@ -243,6 +245,15 @@ function humanMove(){
     console.log("Something is wrong");
     console.log("turnActive: "+computerAI.turnActive+" difficulty: "+computerAI.difficulty);
   }
+}
+
+function attackHitMedia(char1, char1Element, char2, char2Element) {
+  setupAndRunAnimation(char1, char1Element, true);
+  attackAudio.play();
+  setTimeout(function(){
+    setupAndRunAnimation(char2, char2Element, false);
+    hitAudio.play();
+  }, 300);
 }
 
 function setupAndRunAnimation(char, playerSide, attack) {
@@ -397,34 +408,22 @@ if (currentGameState.turnsTaken > 4) {
 
     } else {
       if (currentGameState.turnsTaken === 9) {
-        let elementAttack;
-        let elementHit;
+        let char1, char2, elementAttack, elementHit;
         if (char === human.char) {
-          elementAttack = playerChar1;
-          elementHit = playerChar2;
-          // setupAndRunAnimation(char, player1Char, true);
-          // attackAudio.play();
-          // setTimeout(function(){
-          //   setupAndRunAnimation(char, player2Char, false);
-          //   hitAudio.play();
-          // }, 300);
+          elementAttack = player1Char;
+          elementHit = player2Char;
         } else {
-          elementAttack = playerChar2;
-          elementHit = playerChar1;
-          // setupAndRunAnimation(char, player2Char, true);
-          // attackAudio.play();
-          // setTimeout(function(){
-          //   setupAndRunAnimation(char, player1Char, false);
-          //   hitAudio.play();
-          // }, 300);
-
+          elementAttack = player2Char1;
+          elementHit = player1Char;
         }
-        setupAndRunAnimation(char, elementAttack, true);
-          attackAudio.play();
-          setTimeout(function(){
-            setupAndRunAnimation(char, elementHit, false);
-            hitAudio.play();
-          }, 300);
+        if (char === "O") {
+          char1 = "O"; 
+          char2 = "X"; 
+        } else { 
+          char1 = "X";
+          char2 = "O";
+        }
+        attackHitMedia(char1, elementAttack, char2, elementHit);
         drawImage();
 
         if (rounds !== 5) {
@@ -433,7 +432,7 @@ if (currentGameState.turnsTaken > 4) {
           //draw frame
           setTimeout(function(){
             reset("round");
-          }, 5000);
+          }, 6000);
           return false;
         } else {
           console.log("Rounds is 5 no one won last round");
@@ -451,6 +450,7 @@ if (currentGameState.turnsTaken > 4) {
 }
 
 function drawImage() {
+  gainNode.gain.linearRampToValueAtTime(0, context.currentTime + 4);
   if (human.char = "O")  {
     setTimeout(function(){              
       player1Char.classList.remove("ryu-idle");
@@ -477,92 +477,38 @@ function roundWinAnimation(char) {
   let player, playerImg, opponent, opponentImg, idleGif, winAttackGif, winAttackAudio, opponentIdleGif, KOgif, guileWinStance, KOinterval, youWinLose, youWinLoseAudio;
 
   if (char === "O") {
-
     idleGif = "ryu-idle";
     winAttackGif = "ryu-shoryuken.gif"
     winAttackAudio = shoryukenAudio;
     opponentIdleGif = "guile-idle";
     KOgif = "guile-KO.gif";
-
   } else {
-
       idleGif = "guile-idle";
       winAttackGif = "guile-flash-kick.gif";
       opponentIdleGif = "ryu-idle";
       winAttackAudio = attackAudio;
       KOgif = "ryu-KO.gif";
       guileWinStance = "guile-win.gif";
-
   }
-
-  if (human.char === char) {
-      
+  if (human.char === char) { 
       player = player1Char;
       playerImg = player1CharImg;
       opponent = player2Char;
       opponentImg = player2CharImg;
       youWinLose = "you-win.gif";      
       youWinLoseAudio = youWin;      
-
-    // if (char === "O") {
-
-    //   idleGif = "ryu-idle";
-    //   winAttackGif = "ryu-shoryuken.gif"
-    //   winAttackAudio = shoryukenAudio;
-    //   opponentIdleGif = "guile-idle";
-    //   KOgif = "guile-KO.gif";
-
-    // } else {
-
-    // }
   } else {
-
     player = player2Char;
     playerImg = player2CharImg;
     opponent = player1Char;
     opponentImg = player1CharImg;
     youWinLose = "you-lose.gif";   
     youWinLoseAudio = youLose;      
-
-    // if (char === "O") {
-
-    //   idleGif = "ryu-idle";
-    //   winAttackGif = "ryu-shoryuken.gif"
-    //   opponentIdleGif = "guile-idle";
-    //   KOgif = "guile-KO.gif";
-
-    // } else {
-
-      // idleGif = "guile-idle";
-      // winAttackGif = "guile-flash-kick.gif";
-      // opponentIdleGif = "ryu-idle";
-      // winAttackAudio = attackAudio;
-      // KOgif = "ryu-KO.gif";
-
-      // guileWinStance = "guile-win.gif";
-
-      // player2Char.classList.remove("guile-idle-1p");
-      // player2CharImg.src = "guile-flash-kick-1p.gif";
-      // //winnning stance
-      // setTimeout(function(){
-      //   player2CharImg.src = "guile-win1-1p.gif";
-      //   setTimeout(function(){
-      //     player2CharImg.src = "guile-win2-1p.gif";
-      //   },200);
-      // },3800);
-      // //opponent KO
-      // setTimeout(function(){
-      //   player1Char.classList.remove("ryu-idle-2p");
-      //   player1CharImg.src = "ryu-KO-2p.gif";
-      // },300);  
-    // }
   }
-
   //win attack
   player.classList.remove(idleGif);
   playerImg.src = winAttackGif;
   winAttackAudio.play();
-
   //winnning stance for ryu
   if (idleGif === "ryu-idle") {
     KOinterval = 300;
@@ -586,21 +532,13 @@ function roundWinAnimation(char) {
     opponent.classList.remove(opponentIdleGif);
     opponentImg.src = KOgif;
     hitAudio.play();
-    setTimeout(function(){
-      KOscream.play();
-    },1000);
-    setTimeout(function(){
-      playFallAudio();
-    },1500);    
-    setTimeout(function(){
-      playFallAudio();
-    },2300);
+    setTimeout(function(){ KOscream.play(); },1000);
+    setTimeout(function(){ playFallAudio(); },1500);    
+    setTimeout(function(){ playFallAudio(); },2300);
   }, KOinterval);   
-
   setTimeout(function(){ 
     roundImage.src = youWinLose;
     youWinLoseAudio.play();
-    // roundImage.classList.add("you-win-lose"); 
   },3800);   
 
   function playFallAudio() {
@@ -620,14 +558,8 @@ function checkForWinner(char) {
 }    
 
 function winScore(char) {
-  if (char === human.char){
-    setTimeout(function(){
-      console.log(char + " Human wins!");
-    }, 1000);
-    
+  if (char === human.char){    
     human.wins++;
-    console.log(human.wins);
-    // human.scoreHolder.innerHTML = human.wins;
     if (char == "O") {
       if (human.wins == 1 && computerAI.wins == 0) { ryuStageImage.src = "ryu-stage-O-1win-0win.jpg"; } 
       else if (human.wins == 1 && computerAI.wins == 1) { ryuStageImage.src = "ryu-stage-O-1win-1win.jpg"; } 
@@ -648,8 +580,8 @@ function winScore(char) {
         ryuStageImage.src = "ryu-stage-X-2win-0win.jpg";
         gameover = true;
         endGame(human.char);
-
-      } else if (human.wins == 2 && computerAI.wins == 1) {
+      } 
+      else if (human.wins == 2 && computerAI.wins == 1) {
         ryuStageImage.src = "ryu-stage-X-2win-1win.jpg";     
         gameover = true;
         endGame(human.char);
@@ -658,7 +590,6 @@ function winScore(char) {
     
   } else {
     computerAI.wins++;
-    // computerAI.scoreHolder.innerHTML = computerAI.wins;
     if (char == "X") {
       if (human.wins == 0 && computerAI.wins == 1) { ryuStageImage.src = "ryu-stage-O-0win-1win.jpg"; } 
       else if (human.wins == 1 && computerAI.wins == 1) { ryuStageImage.src = "ryu-stage-O-1win-1win.jpg"; } 
@@ -666,7 +597,6 @@ function winScore(char) {
         ryuStageImage.src = "ryu-stage-O-0win-2win.jpg";
         gameover = true;        
         endGame(computerAI.char);
-
       } else if (human.wins == 1 && computerAI.wins == 2) {
          ryuStageImage.src = "ryu-stage-O-1win-2win.jpg";     
          gameover = true;
@@ -718,71 +648,57 @@ function Player(char) {
 }
 
 function Computer(char) {
-  Player.call(this, char);
-  var $that = this;  
+  Player.call(this, char); 
   this.difficulty;
   this.turnActive = true;
-  this.move = function(){
-    if ($that.difficulty === "easy") {
-      $that.easyAI();
-    } else if ($that.difficulty === "normal") {
-      $that.normalAI();
-    } else {
-      $that.hardAI();
-    }
+  this.move = () => {
+    if (this.difficulty === "easy") { this.easyAI(); } 
+    else if (this.difficulty === "normal") { this.normalAI(); } 
+    else { this.hardAI(); }
   }
-  this.easyAI = function(){
+  this.easyAI = () => {
     var noWinner;
     //select random num from 0 to 8 incluside (dependent on number of squares)
     if(openSquares.length !== 0) {
       var squareNum = getRandomNum(openSquares.length);
       var squareId = openSquares[squareNum];
-      noWinner = moveLogic(squareId, $that.char);
+      noWinner = moveLogic(squareId, this.char);
       if (noWinner) {
-
-        setupAndRunAnimation($that.char, player2Char, true);
-        attackAudio.play();
-
-        setTimeout(function(){
-          setupAndRunAnimation(human.char, player1Char, false);
-          hitAudio.play();
-        }, 300);
-
-        setTimeout(function(){
-          computerAI.turnActive = false;
-        },1600);
-
-        // computerAI.turnActive = true;
+        attackHitMedia(this.char, player2Char, human.char, player1Char);
+        // setupAndRunAnimation(this.char, player2Char, true);
+        // attackAudio.play();
+        // setTimeout(function(){
+        //   setupAndRunAnimation(human.char, player1Char, false);
+        //   hitAudio.play();
+        // }, 300);
+        setTimeout(function(){ computerAI.turnActive = false; },1600);
       }
     }
   }
   //normal mode selects randomly selects easy or hard mode on each move
-  this.normalAI = function(){
+  this.normalAI = () => {
     var modeSelector = getRandomNum(2);
     if (modeSelector === 0) {
-      $that.easyAI();
+      this.easyAI();
     } else {
-      $that.hardAI();
+      this.hardAI();
     }
   }
   //hard mode uses minimax function to ensure human never wins
-  // this.hardAI = function(){
   this.hardAI = () => {
     var noWinner;
     var result = minimax(currentGameState.boardState, computerAI.char).index;
     var squareId = currentGameState.boardState[result];
-    // noWinner = moveLogic(squareId, $that.char);
     noWinner = moveLogic(squareId, this.char);
     if (noWinner) {
-        setupAndRunAnimation($that.char, player2Char, true);
-        attackAudio.play();
-        setTimeout(function(){
-          setupAndRunAnimation(human.char, player1Char, false);
-          hitAudio.play();
-        }, 300);
-        setTimeout(function(){
-          computerAI.turnActive = false;
-        },1600);
+        attackHitMedia(this.char, player2Char, human.char, player1Char);
+        // setupAndRunAnimation(this.char, player2Char, true);
+        // attackAudio.play();
+        // setTimeout(function(){
+        //   setupAndRunAnimation(human.char, player1Char, false);
+        //   hitAudio.play();
+        // }, 300);
+        setTimeout(function(){ computerAI.turnActive = false; },1600);
     }
   }
 }
