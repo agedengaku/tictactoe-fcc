@@ -166,38 +166,6 @@ function charSelectScreenBGM() {
     audioMain.loop = true;  
   }
 
-
-
-    // //this is the webaudio loooooppppppp
-    // //enter url in the next line
-    // var url  = 'char-select-main2.mp3';
-    // /* --- set up web audio --- */
-    // //create the context
-    // var context = new AudioContext();
-    // //...and the source
-    // audioMain = context.createBufferSource();
-    // //connect it to the destination so you can hear it.
-    // audioMain.connect(context.destination);
-
-    // /* --- load buffer ---  */
-    // var request = new XMLHttpRequest();
-    // //open the request
-    // request.open('GET', url, true); 
-    // //webaudio paramaters
-    // request.responseType = 'arraybuffer';
-    // //Once the request has completed... do this
-    // request.onload = function() {
-    //     context.decodeAudioData(request.response, function(response) {
-    //         /* --- play the sound AFTER the buffer loaded --- */
-    //         //set the buffer to the response we just received.
-    //         audioMain.buffer = response;
-    //         //start(0) should play asap.
-    //         audioMain.start(0);
-    //         audioMain.loop = true;
-    //     }, function () { console.error('The request failed.'); } );
-    // }
-    // //Now that the request has been defined, actually make the request. (send it)
-    // request.send();
 }
 
 function stageBGM() {
@@ -257,12 +225,12 @@ function humanMove(){
       if (noWinner && gameover === false) {
           ////// Attack animation
           //Human Attack
-          setupAndRunAnimation(player1Char, true);
+          setupAndRunAnimation(human.char, player1Char, true);
           attackAudio.play();
           // setupAndRunAnimation(player1Char, true);
           //Computer Hit
           setTimeout(function(){
-            setupAndRunAnimation(player2Char, false);
+            setupAndRunAnimation(computerAI.char, player2Char, false);
             hitAudio.play();
           }, 300);
           //////
@@ -277,107 +245,61 @@ function humanMove(){
   }
 }
 
-function setupAndRunAnimation(player, attack) {
+function setupAndRunAnimation(char, playerSide, attack) {
   let frameName;
   let gifLength;
   let val = getRandomNum(3);
 
   if (attack) {
-    //if 1p
-    if (player === player1Char) {
-      //If human is Ryu
-      if (human.char === "O") {
+      //if ryu
+      if (char === "O") {
         if (val == 0) {
-          frameName = "ryu-punch-1p";
+          frameName = "ryu-punch-frame";
           gifLength = 5; 
         } else if (val == 1) {
-          frameName = "ryu-punch2-1p";
+          frameName = "ryu-punch2-frame";
           gifLength = 5; 
         } else {
-          frameName = "ryu-kick-1p";
+          frameName = "ryu-kick-frame";
           gifLength = 5; 
         }        
       } else {
-        //if human is Guile
+        //if guile
          if (val == 0) {
-          frameName = "guile-punch-1p";
+          frameName = "guile-punch-frame";
           gifLength = 5; 
         } else if (val == 1) {
-          frameName = "guile-kick-1p";
+          frameName = "guile-kick-frame";
           gifLength = 8; 
         } else {
-          frameName = "guile-kick2-1p";
+          frameName = "guile-kick2-frame";
           gifLength = 5; 
         }        
       }
 
-    } else {
-      if (computerAI.char === "O") {
-        if (val == 0) {
-          frameName = "ryu-punch-2p";
-          gifLength = 5; 
-        } else if (val == 1) {
-          frameName = "ryu-punch2-2p";
-          gifLength = 5; 
-        } else {
-          frameName = "ryu-kick-2p";
-          gifLength = 5; 
-        }        
-      } else {
-        //if human is Guile
-         if (val == 0) {
-          frameName = "guile-punch-2p";
-          gifLength = 5; 
-        } else if (val == 1) {
-          frameName = "guile-kick-2p";
-          gifLength = 8; 
-        } else {
-          frameName = "guile-kick2-2p";
-          gifLength = 5; 
-        }        
-      }
-
-
-
-
-
-      //if 2p
-    } 
   } else {
     //if hit
-    if (player === player1Char) {
-      //human is ryu
-      if (human.char === "O") {
-        frameName = "ryu-hit-1p";
+    if (char === "O") {
+      //if ryu
+        frameName = "ryu-hit-frame";
         gifLength = 4;        
       } else {
-        //if human is guile
-        frameName = "guile-hit-1p";
+        //if guile
+        frameName = "guile-hit-frame";
         gifLength = 3;  
       }
-    } else {
-      //if computer is ryu
-      if (computerAI.char === "O") {
-        frameName = "ryu-hit-2p";
-        gifLength = 4;
-      } else {
-        //if computer is guile
-        frameName = "guile-hit-2p";
-        gifLength = 3;
-      }
-    }
   }
 
-  if (player === player1Char) {
+  if (playerSide === player1Char) {
 
-      let player1AnimationObj = new runAnimationObject(player, frameName, gifLength, attack);
+      let player1AnimationObj = new runAnimationObject(playerSide, frameName, gifLength, attack);
       player1AnimationObj.runAnimation();
 
   }  
 
-  if (player === player2Char) {
+  if (playerSide === player2Char) {
 
-      let player2AnimationObj = new runAnimationObject(player, frameName, gifLength, attack);
+      let player2AnimationObj = new runAnimationObject(playerSide, frameName, gifLength, attack);
       player2AnimationObj.runAnimation();
 
   }
@@ -397,19 +319,16 @@ function runAnimationObject(player, frameName, gifLength, attack) {
     } else {
       this.intervalTime = 200;
     }
-    
-
-    // this.intervalID = intervalID;
 
     this.runAnimation = function() {
 
       let intervalID = setInterval(function(){
         if ($that.player == player1Char) {
-          if (human.char == "O") { $that.idle = "ryu-idle-1p"; }
-          else { $that.idle = "guile-idle-1p"; }
+          if (human.char == "O") { $that.idle = "ryu-idle"; }
+          else { $that.idle = "guile-idle"; }
         } else {
-          if (computerAI.char =="O") { $that.idle = "ryu-idle-2p"; }
-          else { $that.idle = "guile-idle-2p"; }
+          if (computerAI.char =="O") { $that.idle = "ryu-idle"; }
+          else { $that.idle = "guile-idle"; }
         }
 
         if ($that.player.classList.contains($that.idle)){
@@ -417,14 +336,14 @@ function runAnimationObject(player, frameName, gifLength, attack) {
           $that.player.classList.remove($that.idle);
           $that.lastFrameName = $that.frameName + $that.frameCount;
           $that.player.classList.add($that.lastFrameName);
-
+          console.log($that.lastFrameName);
         } else if ($that.frameCount <= $that.gifLength) {
 
           $that.player.classList.remove($that.lastFrameName);
           $that.lastFrameName = $that.lastFrameName.slice(0, -1) + $that.frameCount;
           $that.player.classList.add($that.lastFrameName);
           $that.frameCount++;
-
+          console.log($that.lastFrameName);
         } else {
 
           $that.player.classList.remove($that.lastFrameName);
@@ -856,11 +775,11 @@ function Computer(char) {
       noWinner = moveLogic(squareId, $that.char);
       if (noWinner) {
 
-        setupAndRunAnimation(player2Char, true);
+        setupAndRunAnimation($that.char, player2Char, true);
         attackAudio.play();
 
         setTimeout(function(){
-          setupAndRunAnimation(player1Char, false);
+          setupAndRunAnimation(human.char, player1Char, false);
           hitAudio.play();
         }, 300);
 
@@ -890,10 +809,10 @@ function Computer(char) {
     // noWinner = moveLogic(squareId, $that.char);
     noWinner = moveLogic(squareId, this.char);
     if (noWinner) {
-        setupAndRunAnimation(player2Char, true);
+        setupAndRunAnimation($that.char, player2Char, true);
         attackAudio.play();
         setTimeout(function(){
-          setupAndRunAnimation(player1Char, false);
+          setupAndRunAnimation(human.char, player1Char, false);
           hitAudio.play();
         }, 300);
         setTimeout(function(){
