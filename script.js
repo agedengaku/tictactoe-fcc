@@ -354,54 +354,10 @@ function runAnimationObject(player, frameName, gifLength, attack) {
         }
 
       }, $that.intervalTime);
-      
 
   }  
 
 }
-
-// function runAnimation(player, frameName, gifLength, intervalID) {
-
-//     let idle;
-//     let lastFrameName;
-
-//     if (player == player1Char) {
-//       if (human.char == "O") { idle = "ryu-idle-1p"; }
-//       else { idle = "guile-idle-1p"; }
-//     } else {
-//       if (computerAI.char =="O") { idle = "ryu-idle-2p"; }
-//       else { idle = "guile-idle-2p"; }
-//     }
-//     // console.log(idle);
-    
-//     if (player.classList.contains(idle)){
-
-//       player.classList.remove(idle);
-//       lastFrameName = frameName + frameCount;
-//       player.classList.add(lastFrameName);
-
-//     } else if (frameCount <= gifLength) {
-
-//       player.classList.remove(lastFrameName);
-//       lastFrameName = lastFrameName.slice(0, -1) + frameCount;
-//       player.classList.add(lastFrameName);
-//       frameCount++;
-
-//     } else {
-
-//       player.classList.remove(lastFrameName);
-//       player.classList.add(idle);
-//       frameCount = 1;
-//       clearInterval(intervalID);
-      
-//     }
-
-// }
-
-
-
-
-
 
 function moveLogic(squareId, char){
   var charImg = document.createElement("img");
@@ -414,7 +370,6 @@ function moveLogic(squareId, char){
   var result;
   removeFromOpen(squareId);
   currentGameState.boardState[squareId] = char;
-  // document.getElementById(squareId).innerHTML = char;
   document.getElementById(squareId).appendChild(charImg);
   currentGameState.turnsTaken++;
 
@@ -442,23 +397,34 @@ if (currentGameState.turnsTaken > 4) {
 
     } else {
       if (currentGameState.turnsTaken === 9) {
-
-        console.log("Draw");
+        let elementAttack;
+        let elementHit;
         if (char === human.char) {
-          setupAndRunAnimation(player1Char, true);
-          attackAudio.play();
-          setTimeout(function(){
-            setupAndRunAnimation(player2Char, false);
-            hitAudio.play();
-          }, 300);
+          elementAttack = playerChar1;
+          elementHit = playerChar2;
+          // setupAndRunAnimation(char, player1Char, true);
+          // attackAudio.play();
+          // setTimeout(function(){
+          //   setupAndRunAnimation(char, player2Char, false);
+          //   hitAudio.play();
+          // }, 300);
         } else {
-          setupAndRunAnimation(player2Char, true);
+          elementAttack = playerChar2;
+          elementHit = playerChar1;
+          // setupAndRunAnimation(char, player2Char, true);
+          // attackAudio.play();
+          // setTimeout(function(){
+          //   setupAndRunAnimation(char, player1Char, false);
+          //   hitAudio.play();
+          // }, 300);
+
+        }
+        setupAndRunAnimation(char, elementAttack, true);
           attackAudio.play();
           setTimeout(function(){
-            setupAndRunAnimation(player1Char, false);
+            setupAndRunAnimation(char, elementHit, false);
             hitAudio.play();
           }, 300);
-        }
         drawImage();
 
         if (rounds !== 5) {
@@ -487,17 +453,17 @@ if (currentGameState.turnsTaken > 4) {
 function drawImage() {
   if (human.char = "O")  {
     setTimeout(function(){              
-      player1Char.classList.remove("ryu-idle-1p");
-      player2Char.classList.remove("guile-idle-2p");
-      player1CharImg.src = "ryu-draw-1p.gif";
-      player2CharImg.src ="guile-draw-2p.gif"; 
+      player1Char.classList.remove("ryu-idle");
+      player2Char.classList.remove("guile-idle");
+      player1CharImg.src = "ryu-draw.gif";
+      player2CharImg.src ="guile-draw.gif"; 
     },3000);      
   } else {
     setTimeout(function(){              
-      player1Char.classList.remove("guile-idle-1p");
-      player2Char.classList.remove("ryu-idle-2p");
-      player1CharImg.src = "guile-draw-1p.gif";
-      player2CharImg.src = "ryu-draw-2p.gif"; 
+      player1Char.classList.remove("guile-idle");
+      player2Char.classList.remove("ryu-idle");
+      player1CharImg.src = "guile-draw.gif";
+      player2CharImg.src = "ryu-draw.gif"; 
     },3000);     
   }
   setTimeout(function(){
@@ -510,6 +476,25 @@ function roundWinAnimation(char) {
 
   let player, playerImg, opponent, opponentImg, idleGif, winAttackGif, winAttackAudio, opponentIdleGif, KOgif, guileWinStance, KOinterval, youWinLose, youWinLoseAudio;
 
+  if (char === "O") {
+
+    idleGif = "ryu-idle";
+    winAttackGif = "ryu-shoryuken.gif"
+    winAttackAudio = shoryukenAudio;
+    opponentIdleGif = "guile-idle";
+    KOgif = "guile-KO.gif";
+
+  } else {
+
+      idleGif = "guile-idle";
+      winAttackGif = "guile-flash-kick.gif";
+      opponentIdleGif = "ryu-idle";
+      winAttackAudio = attackAudio;
+      KOgif = "ryu-KO.gif";
+      guileWinStance = "guile-win.gif";
+
+  }
+
   if (human.char === char) {
       
       player = player1Char;
@@ -519,17 +504,17 @@ function roundWinAnimation(char) {
       youWinLose = "you-win.gif";      
       youWinLoseAudio = youWin;      
 
-    if (char === "O") {
+    // if (char === "O") {
 
-      idleGif = "ryu-idle";
-      winAttackGif = "ryu-shoryuken-1p.gif"
-      winAttackAudio = shoryukenAudio;
-      opponentIdleGif = "guile-idle-2p";
-      KOgif = "guile-KO-2p.gif";
+    //   idleGif = "ryu-idle";
+    //   winAttackGif = "ryu-shoryuken.gif"
+    //   winAttackAudio = shoryukenAudio;
+    //   opponentIdleGif = "guile-idle";
+    //   KOgif = "guile-KO.gif";
 
-    } else {
+    // } else {
 
-    }
+    // }
   } else {
 
     player = player2Char;
@@ -539,22 +524,22 @@ function roundWinAnimation(char) {
     youWinLose = "you-lose.gif";   
     youWinLoseAudio = youLose;      
 
-    if (char === "O") {
+    // if (char === "O") {
 
-      idleGif = "ryu-idle-2p";
-      winAttackGif = "ryu-shoryuken-2p.gif"
-      opponentIdleGif = "guile-idle-1p";
-      KOgif = "guile-KO-1p.gif";
+    //   idleGif = "ryu-idle";
+    //   winAttackGif = "ryu-shoryuken.gif"
+    //   opponentIdleGif = "guile-idle";
+    //   KOgif = "guile-KO.gif";
 
-    } else {
+    // } else {
 
-      idleGif = "guile-idle-2p";
-      winAttackGif = "guile-flash-kick-2p.gif";
-      opponentIdleGif = "ryu-idle-1p";
-      winAttackAudio = attackAudio;
-      KOgif = "ryu-KO-1p.gif";
+      // idleGif = "guile-idle";
+      // winAttackGif = "guile-flash-kick.gif";
+      // opponentIdleGif = "ryu-idle";
+      // winAttackAudio = attackAudio;
+      // KOgif = "ryu-KO.gif";
 
-      guileWinStance = "guile-win-2p.gif";
+      // guileWinStance = "guile-win.gif";
 
       // player2Char.classList.remove("guile-idle-1p");
       // player2CharImg.src = "guile-flash-kick-1p.gif";
@@ -570,7 +555,7 @@ function roundWinAnimation(char) {
       //   player1Char.classList.remove("ryu-idle-2p");
       //   player1CharImg.src = "ryu-KO-2p.gif";
       // },300);  
-    }
+    // }
   }
 
   //win attack
@@ -582,10 +567,10 @@ function roundWinAnimation(char) {
   if (idleGif === "ryu-idle") {
     KOinterval = 300;
    setTimeout(function(){
-      playerImg.src = "ryu-win1-1p.gif";
+      playerImg.src = "ryu-win1.gif";
       gainNode.gain.linearRampToValueAtTime(0, context.currentTime + 4);
       setTimeout(function(){
-        playerImg.src = "ryu-win2-1p.gif";
+        playerImg.src = "ryu-win2.gif";
       },200);
     },3800); 
   //winning stance for guile
@@ -625,21 +610,6 @@ function roundWinAnimation(char) {
 
 }
 
-      // player1Char.classList.remove("ryu-idle-1p");
-      // player1CharImg.src = "ryu-shoryuken-1p.gif";
-      // //winnning stance
-      // setTimeout(function(){
-      //   player1CharImg.src = "ryu-win1-1p.gif";
-      //   setTimeout(function(){
-      //     player1CharImg.src = "ryu-win2-1p.gif";
-      //   },200);
-      // },3800);
-      // //opponent KO
-      // setTimeout(function(){
-      //   player2Char.classList.remove("guile-idle-2p");
-      //   player2CharImg.src = "guile-KO-2p.gif";
-      // },300);      
-
 function checkForWinner(char) {
     if (winCombination(currentGameState.boardState, char)) {
       let result = winScore(char);
@@ -664,26 +634,25 @@ function winScore(char) {
       else if (human.wins == 2 && computerAI.wins == 0) {
         ryuStageImage.src = "ryu-stage-O-2win-0win.jpg";
         gameover = true;
-
-          endGame(human.char);
-
-      } else if (human.wins == 2 && computerAI.wins == 1) {
-         ryuStageImage.src = "ryu-stage-O-2win-1win.jpg";     
-
-          endGame(human.char);
-
+        endGame(human.char);
+      } 
+      else if (human.wins == 2 && computerAI.wins == 1) {
+        ryuStageImage.src = "ryu-stage-O-2win-1win.jpg";    
+        gameover = true;      
+        endGame(human.char);
       }
     } else {
       if (human.wins == 1 && computerAI.wins == 0) { ryuStageImage.src = "ryu-stage-X-1win-0win.jpg"; } 
       else if (human.wins == 1 && computerAI.wins == 1) { ryuStageImage.src = "ryu-stage-X-1win-1win.jpg"; } 
       else if (human.wins == 2 && computerAI.wins == 0) {
         ryuStageImage.src = "ryu-stage-X-2win-0win.jpg";
-        endGame(human.char);
         gameover = true;
+        endGame(human.char);
+
       } else if (human.wins == 2 && computerAI.wins == 1) {
-         ryuStageImage.src = "ryu-stage-X-2win-1win.jpg";     
-         endGame(human.char);
-         gameover = true;
+        ryuStageImage.src = "ryu-stage-X-2win-1win.jpg";     
+        gameover = true;
+        endGame(human.char);
       }  
     }
     
@@ -695,24 +664,25 @@ function winScore(char) {
       else if (human.wins == 1 && computerAI.wins == 1) { ryuStageImage.src = "ryu-stage-O-1win-1win.jpg"; } 
       else if (human.wins == 0 && computerAI.wins == 2) {
         ryuStageImage.src = "ryu-stage-O-0win-2win.jpg";
+        gameover = true;        
         endGame(computerAI.char);
-        gameover = true;
+
       } else if (human.wins == 1 && computerAI.wins == 2) {
          ryuStageImage.src = "ryu-stage-O-1win-2win.jpg";     
-         endGame(computerAI.char);
          gameover = true;
+         endGame(computerAI.char);
       }
     } else {
       if (human.wins == 0 && computerAI.wins == 1) { ryuStageImage.src = "ryu-stage-X-0win-1win.jpg"; } 
       else if (human.wins == 1 && computerAI.wins == 1) { ryuStageImage.src = "ryu-stage-X-1win-1win.jpg"; } 
       else if (human.wins == 0 && computerAI.wins == 2) {
         ryuStageImage.src = "ryu-stage-X-0win-2win.jpg";
-        endGame(computerAI.char);
         gameover = true;
+        endGame(computerAI.char);
       } else if (human.wins == 1 && computerAI.wins == 2) {
          ryuStageImage.src = "ryu-stage-X-1win-2win.jpg";     
-         endGame(computerAI.char);
          gameover = true;
+         endGame(computerAI.char);
       }      
     }
   }
@@ -744,11 +714,6 @@ function winCombination (board, char) {
 function Player(char) {
   this.char = char;
   this.wins = 0;
-  if (char === "X") {
-    // this.scoreHolder = xScore;
-  } else {
-    // this.scoreHolder = oScore;
-  }
   this.turnActive = false;
 }
 
@@ -954,16 +919,13 @@ function charSelect() {
       mapImageFile.src= "guile-selected-flag.jpg";
       vsScreenImage.src= "guile-vs-screen.jpg";
       ryuStageImage.src = "ryu-stage-X.jpg";
-      player1Char.classList.remove("ryu-idle", "ryu-1p");
-      player2Char.classList.remove("guile-idle", "guile-2p");
-      player1Char.classList.add("guile-idle", "guile-1p");
-      player2Char.classList.add("ryu-idle", "ryu-2p");
+      player1Char.classList.remove("ryu-idle");
+      player1Char.classList.add("guile-idle");      
+      player2Char.classList.remove("guile-idle");
+      player2Char.classList.add("ryu-idle");
 
     }
     computerAI.difficulty = selectedDifficulty;
-    // for(var i = 0; i < playerSelect.length; i++) {
-    //   playerSelect[i].removeEventListener("click", charSelect);
-    // }
     selectScreenOn = false;
     setTimeout(function(){
       airplaneAudio.play();
@@ -974,9 +936,6 @@ function charSelect() {
       }
     }, 1000);
     setTimeout(function(){
-      // if (human.char === "X") {
-      //   vsScreenImage.src="guile-vs-screen.jpg";
-      // }
       charSelectScreen.remove();
       audioMain.stop();
       vsScreenBGM.play();
@@ -1005,7 +964,7 @@ function difficultyModeSelect() {
 }
 
 function roundMedia() {
-  // blackOut.classList.add("fade-in-and-out");
+
   setTimeout(function(){
     switch(rounds) {
         case 1: 
