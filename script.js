@@ -240,7 +240,7 @@ function stageBGM() {
     gainNode.connect(context.destination);
 
     source1.start(0);
-    stageMain.start(4.25);
+    stageMain.start(4.27);
     stageMain.loop = true; 
 
   }
@@ -602,7 +602,7 @@ function roundWinAnimation(char) {
 
     if (char === "O") {
 
-      idleGif = "ryu-idle-1p";
+      idleGif = "ryu-idle";
       winAttackGif = "ryu-shoryuken-1p.gif"
       winAttackAudio = shoryukenAudio;
       opponentIdleGif = "guile-idle-2p";
@@ -660,7 +660,7 @@ function roundWinAnimation(char) {
   winAttackAudio.play();
 
   //winnning stance for ryu
-  if (idleGif === "ryu-idle-1p" || idleGif === "ryu-idle-2p") {
+  if (idleGif === "ryu-idle") {
     KOinterval = 300;
    setTimeout(function(){
       playerImg.src = "ryu-win1-1p.gif";
@@ -745,14 +745,14 @@ function winScore(char) {
       else if (human.wins == 2 && computerAI.wins == 0) {
         ryuStageImage.src = "ryu-stage-O-2win-0win.jpg";
         gameover = true;
-        setTimeout(function(){
+
           endGame(human.char);
-        },8000);
+
       } else if (human.wins == 2 && computerAI.wins == 1) {
          ryuStageImage.src = "ryu-stage-O-2win-1win.jpg";     
-        setTimeout(function(){
+
           endGame(human.char);
-        },8000);
+
       }
     } else {
       if (human.wins == 1 && computerAI.wins == 0) { ryuStageImage.src = "ryu-stage-X-1win-0win.jpg"; } 
@@ -975,7 +975,7 @@ function removeFromOpen (squareId) {
 }
 
 function reset(str) {
-  //turns off computer's move in case it was already started
+
   if (!gameover) {
     blackOut.classList.add("fade-in-and-out");
     stageMain.stop();
@@ -983,9 +983,13 @@ function reset(str) {
         player1CharImg.src = "";
         player2CharImg.src = "";
         roundImage.src = "";
-        // roundImage.classList.remove("you-win-lose"); 
-        player1Char.classList.add("ryu-idle-1p");
-        player2Char.classList.add("guile-idle-2p");
+        if (human.char === "O") {
+          player1Char.classList.add("ryu-idle", "ryu-1p");
+          player2Char.classList.add("guile-idle", "guile-2p");
+        } else {
+          player2Char.classList.add("ryu-idle", "ryu-1p");
+          player1Char.classList.add("guile-idle", "guile-2p");
+        }
       },1000);
     setTimeout(function(){
       blackOut.classList.remove("fade-in-and-out");
@@ -1030,7 +1034,12 @@ function charSelect() {
       computerAI = new Computer("O");
       mapImageFile.src= "guile-selected-flag.jpg";
       vsScreenImage.src= "guile-vs-screen.jpg";
-      ryuStageImage.src = "ryu-stage-X-full-health.jpg";
+      ryuStageImage.src = "ryu-stage-X.jpg";
+      player1Char.classList.remove("ryu-idle", "ryu-1p");
+      player2Char.classList.remove("guile-idle", "guile-2p");
+      player1Char.classList.add("guile-idle", "guile-1p");
+      player2Char.classList.add("ryu-idle", "ryu-2p");
+
     }
     computerAI.difficulty = selectedDifficulty;
     // for(var i = 0; i < playerSelect.length; i++) {
@@ -1115,43 +1124,34 @@ function roundMedia() {
 
 function endGame(char, char2) {
   //if char2 exists, then 5 rounds have passed
-  if (char2) {
-    if (char > char2) {
-      //human wins
-      console.log(char + "wins");
-    } else if (char < char2) {
-      //computer wins
-      console.log(char2 + "wins");
-    } else {
-      //draw
-      console.log("draw");
-    }
-  } else {
-    if (char == human.char) {
-      if (char == "X") {
-        alert("END GAME");
-        // endScreenImage.src = "guile-1p-win-ryu-2p-lose";
-        //Ryu win Guile lose image
+  setTimeout(function(){;
+    if (char2) {
+      if (char > char2) {
+        //human wins
+        console.log(char + "wins");
+      } else if (char < char2) {
+        //computer wins
+        console.log(char2 + "wins");
       } else {
-        mainScreen.remove();
-        endGameAudio.play();
-        //Guile win Ryu lose image
-        //NOT NECESSARY, IMAGE ALREADY LOADED
+        //draw
+        console.log("draw");
       }
     } else {
-      if (char == "O") {
-        // endScreenImage.src = "ryu-1p-lose-guile-2p-win";
-        //Guile lose Ryu win image
+      if (char == human.char) {
+        if (char == "X") { endScreenImage.src ="guile-win-ryu-lose.jpg"; }
       } else {
-        // endScreenImage.src = "guile-1p-lose-ryu-2p-win";
-        //Ryu lose Guile win image
+        if (char == "O") { endScreenImage.src ="guile-lose-ryu-win.jpg"; } 
+        else { endScreenImage.src ="ryu-lose-guile-win.jpg"; }
       }
     }
-  }
-
-  setTimeout(function(){
-    window.location.reload();
-  }, 8000);
+    setTimeout(function(){
+      mainScreen.remove();
+      endGameAudio.play();
+    },500);
+    setTimeout(function(){
+      window.location.reload();
+    }, 8000);
+  },8000)
 
 }
 

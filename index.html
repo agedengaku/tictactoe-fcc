@@ -2,15 +2,16 @@
 <html lang="en">
 <head>
 	<meta charset="UTF-8">
-  <!-- <meta name="viewport" content="width=device-width, initial-scale=1"> -->
+  <meta name="viewport" content="width=device-width, initial-scale=1">
 	<title>Document</title>
 	<link rel="stylesheet" type="text/css" href="styles.css">
-  <link rel="prefetch" href="http://jmotaylor.com/cdn/sf2video-test4.mp4">
+  <!-- <link rel="prefetch" href=""> -->
 </head>
 <body>  
 
 <div id="play-button-screen">
     <div id="play-button">PLAY</div>
+    <p><a href="#">About</a></p>
 </div>
 
 <div id="title-screen">
@@ -58,23 +59,14 @@
       <div id="8" class="board-square"></div>
     </div>
   </div>
-  <div id="player-1-char" class="ryu-idle-1p size"><img id="player-1-char-img" src="" alt=""></div>
-  <div id="player-2-char" class="guile-idle-2p size"><img id="player-2-char-img" src="" alt=""></div>
+  <div id="player-1-char" class="ryu-idle size"><img id="player-1-char-img" src="" alt=""></div>
+  <div id="player-2-char" class="guile-idle flipped size"><img id="player-2-char-img" src="" alt=""></div>
 </div>
 
 <div id="end-screen">
   <img id="end-screen-image" src="ryu-win-guile-lose.jpg" alt="">
 </div>
- <!-- .board -->
 
-<!-- <div class="player-select-row">
-  <div>Number of wins</div>
-  <div class="player-score">X: <span id="x-score"></span></div>
-  <div class="player-score">O: <span id="o-score"></span></div>
-</div> -->
-<!-- <div>
-  <button id="reset">Reset</button>
-</div> -->
 	<script src="script.js"></script>
 </body>
 </html>
