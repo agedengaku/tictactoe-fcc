@@ -2,7 +2,6 @@
 
 const playerSelect = document.getElementsByClassName("player-select");
 const boardSquares = document.getElementsByClassName("board-square");
-
 const difficultyMode = document.getElementsByClassName("difficulty-mode");
 const difficultySelectScreen = document.getElementById("difficulty-select-screen");
 const titleScreen = document.getElementById("title-screen");
@@ -55,7 +54,6 @@ let titleScreenOn = true;
 let selectScreenOn = true;
 let gameover = false;
 let rounds = 0;
-
 let lastFrameName;
 let frameCount = 1;
 
@@ -76,8 +74,6 @@ function init() {
       playerSelect[i].addEventListener("click", charSelect);
       playerSelect[i].addEventListener("mouseenter", charHover);
     }
-    // xScore.innerHTML = '';
-    // oScore.innerHTML = '';
     gameStarted = true;
   }
   //set action to clicking of boxes and setting initial board state
@@ -120,19 +116,13 @@ function charHover() {
   }
 }
 
-// function removeScreen(element) {
-//   element.remove();
-// }
-
 function charSelectScreenBGM() {
-  // https://www.html5rocks.com/en/tutorials/webaudio/intro/
-  // window.onload = initSound;
+  // Taken from https://www.html5rocks.com/en/tutorials/webaudio/intro/
   window.onload = initCharSelectBGM();
   var context;
   var bufferLoader;
 
   function initCharSelectBGM() {
-    // Fix up prefixing
     window.AudioContext = window.AudioContext || window.webkitAudioContext;
     context = new AudioContext();
     bufferLoader = new BufferLoader(
@@ -147,7 +137,6 @@ function charSelectScreenBGM() {
   }
 
   function finishedLoading(bufferList) {
-    // Create two sources and play them both together.
     var source1 = context.createBufferSource();
     audioMain = context.createBufferSource();
     source1.buffer = bufferList[0];
@@ -160,11 +149,10 @@ function charSelectScreenBGM() {
     audioMain.start(3.9);
     audioMain.loop = true;  
   }
-
 }
 
 function stageBGM() {
-  // https://www.html5rocks.com/en/tutorials/webaudio/intro/
+  // Taken https://www.html5rocks.com/en/tutorials/webaudio/intro/
   window.onload = initStageBGM();
   context;
   var bufferLoader;
@@ -202,7 +190,6 @@ function stageBGM() {
     source1.start(0);
     stageMain.start(4.27);
     stageMain.loop = true; 
-
   }
 }
 
@@ -267,7 +254,6 @@ function setupAndRunAnimation(char, playerSide, attack) {
           gifLength = 5; 
         }        
       }
-
   } else {
     //if hit
     if (char === "O") {
@@ -282,19 +268,14 @@ function setupAndRunAnimation(char, playerSide, attack) {
   }
 
   if (playerSide === player1Char) {
-
       let player1AnimationObj = new runAnimationObject(playerSide, frameName, gifLength, attack);
       player1AnimationObj.runAnimation();
-
   }  
 
   if (playerSide === player2Char) {
-
       let player2AnimationObj = new runAnimationObject(playerSide, frameName, gifLength, attack);
       player2AnimationObj.runAnimation();
-
   }
-
 } 
 
 function runAnimationObject(player, frameName, gifLength, attack) {
@@ -312,7 +293,6 @@ function runAnimationObject(player, frameName, gifLength, attack) {
     }
 
     this.runAnimation = function() {
-
       let intervalID = setInterval(function(){
         if ($that.player == player1Char) {
           if (human.char == "O") { $that.idle = "ryu-idle"; }
@@ -323,31 +303,22 @@ function runAnimationObject(player, frameName, gifLength, attack) {
         }
 
         if ($that.player.classList.contains($that.idle)){
-
           $that.player.classList.remove($that.idle);
           $that.lastFrameName = $that.frameName + $that.frameCount;
           $that.player.classList.add($that.lastFrameName);
-          console.log($that.lastFrameName);
         } else if ($that.frameCount <= $that.gifLength) {
-
           $that.player.classList.remove($that.lastFrameName);
           $that.lastFrameName = $that.lastFrameName.slice(0, -1) + $that.frameCount;
           $that.player.classList.add($that.lastFrameName);
           $that.frameCount++;
-          console.log($that.lastFrameName);
         } else {
-
           $that.player.classList.remove($that.lastFrameName);
           $that.player.classList.add($that.idle);
           $that.frameCount = 1;
           clearInterval(intervalID);
-          
         }
-
       }, $that.intervalTime);
-
   }  
-
 }
 
 function moveLogic(squareId, char){
@@ -375,17 +346,15 @@ if (currentGameState.turnsTaken > 4) {
           computerAI.turnActive = true;
           //reset rounds
           setTimeout(function(){
-            reset("round");
+            reset();
           }, 10000);
           return false;
         } else {
-          console.log("Rounds is 5 someone won last round");
           gameover = true;
           setTimeout(function(){
             endGame(human.wins, computerAI.wins);
           });
         }
-
     } else {
       if (currentGameState.turnsTaken === 9) {
         let char1, char2, elementAttack, elementHit;
@@ -409,13 +378,11 @@ if (currentGameState.turnsTaken > 4) {
         if (rounds !== 5) {
           //prevents human move
           computerAI.turnActive = true;
-          //draw frame
           setTimeout(function(){
-            reset("round");
+            reset();
           }, 6000);
           return false;
         } else {
-          console.log("Rounds is 5 no one won last round");
           gameover = true;
           endGame(human.wins, computerAI.wins);
         }
@@ -449,7 +416,6 @@ function drawImage() {
   setTimeout(function(){
     roundImage.src = "draw.gif";
   },3500);
-
 }
 
 function roundWinAnimation(char) {
@@ -525,7 +491,6 @@ function roundWinAnimation(char) {
     let sound = new Audio("fall-audio.mp3");
     sound.play();
   }
-
 }
 
 function checkForWinner(char) {
@@ -567,7 +532,6 @@ function winScore(char) {
         endGame(human.char);
       }  
     }
-    
   } else {
     computerAI.wins++;
     if (char == "X") {
@@ -645,12 +609,6 @@ function Computer(char) {
       noWinner = moveLogic(squareId, this.char);
       if (noWinner) {
         attackHitMedia(this.char, player2Char, human.char, player1Char);
-        // setupAndRunAnimation(this.char, player2Char, true);
-        // attackAudio.play();
-        // setTimeout(function(){
-        //   setupAndRunAnimation(human.char, player1Char, false);
-        //   hitAudio.play();
-        // }, 300);
         setTimeout(function(){ computerAI.turnActive = false; },1600);
       }
     }
@@ -672,12 +630,6 @@ function Computer(char) {
     noWinner = moveLogic(squareId, this.char);
     if (noWinner) {
         attackHitMedia(this.char, player2Char, human.char, player1Char);
-        // setupAndRunAnimation(this.char, player2Char, true);
-        // attackAudio.play();
-        // setTimeout(function(){
-        //   setupAndRunAnimation(human.char, player1Char, false);
-        //   hitAudio.play();
-        // }, 300);
         setTimeout(function(){ computerAI.turnActive = false; },1600);
     }
   }
@@ -701,6 +653,7 @@ function minimax(reboard, player) {
   }
 
   var moves = [];
+
   for (var i = 0; i < array.length; i++) {
     var move = {};
     move.index = reboard[array[i]];
@@ -754,8 +707,7 @@ function removeFromOpen (squareId) {
     }
 }
 
-function reset(str) {
-
+function reset() {
   if (!gameover) {
     blackOut.classList.add("fade-in-and-out");
     stageMain.stop();
@@ -778,7 +730,7 @@ function reset(str) {
       boardSquares[i].innerHTML = '';
     }
     currentGameState = {};
-    if (str === "round") {
+    // if (str === "round") {
       human.turnActive = false;
       // computerAI.turnActive = false;
       openSquares = ["0", "1", "2", "3", "4", "5", "6", "7", "8"];
@@ -788,13 +740,8 @@ function reset(str) {
         roundMedia(); 
       },1000)
 
-    } else {
-      // gameStarted = false;
-      // document.body.insertBefore(charSelectScreen, document.body.childNodes[0]);
-      // document.body.insertBefore(titleScreen, document.body.childNodes[0]);
-    }
-    // openSquares = ["0", "1", "2", "3", "4", "5", "6", "7", "8"];
-    // init();
+    // } else {
+    // }
   }
 }
 
@@ -808,7 +755,6 @@ function charSelect() {
     human = new Player(this.id);
     if (this.id === "O") { 
       computerAI = new Computer("X");
-      // console.log("charSelect: "+ computerAI.turnActive);
       mapImageFile.src= "ryu-selected-flag.jpg";
     } else {
       computerAI = new Computer("O");
@@ -819,7 +765,6 @@ function charSelect() {
       player1Char.classList.add("guile-idle");      
       player2Char.classList.remove("guile-idle");
       player2Char.classList.add("ryu-idle");
-
     }
     computerAI.difficulty = selectedDifficulty;
     selectScreenOn = false;
@@ -860,7 +805,6 @@ function difficultyModeSelect() {
 }
 
 function roundMedia() {
-
   setTimeout(function(){
     switch(rounds) {
         case 1: 
@@ -889,32 +833,37 @@ function roundMedia() {
       roundImage.src = "";
     }, 3000);
   }, 1000);
-  
-  //AFTER MEDIA PLAY
-  
-  //play audio file
-  //CASE
 }
 
-function endGame(char, char2) {
-  //if char2 exists, then 5 rounds have passed
-  setTimeout(function(){;
-    if (char2) {
-      if (char > char2) {
-        //human wins
-        console.log(char + "wins");
-      } else if (char < char2) {
-        //computer wins
-        console.log(char2 + "wins");
+function endGame(val, val2) {
+
+  setTimeout(function(){ setEndScreen(val, val2); },8000);
+
+  function setEndScreen(val, val2) {
+    if (val2 !== undefined) {
+      if (val > val2) {
+        if (human.char === "O")
+          endScreenImage.src = "ryu-win-guile-lose.jpg";
+        else
+          endScreenImage.src = "guile-win-ryu-lose.jpg";
+      } else if (val < val2) {
+        if (computerAI.char === "O")
+          endScreenImage.src = "guile-lose-ryu-win.jpg";
+        else
+          endScreenImage.src = "ryu-lose-guile-win.jpg";
       } else {
-        //draw
-        console.log("draw");
+        if(human.char ==="O")
+          endScreenImage.src = "ryu-lose-guile-lose.jpg";
+        else {
+          endScreenImage.src = "guile-lose-ryu-lose.jpg";
+        }
       }
     } else {
-      if (char == human.char) {
-        if (char == "X") { endScreenImage.src ="guile-win-ryu-lose.jpg"; }
+            console.log("no val2 entered");
+      if (val == human.char) {
+        if (val == "X") { endScreenImage.src ="guile-win-ryu-lose.jpg"; }
       } else {
-        if (char == "O") { endScreenImage.src ="guile-lose-ryu-win.jpg"; } 
+        if (val == "O") { endScreenImage.src ="guile-lose-ryu-win.jpg"; } 
         else { endScreenImage.src ="ryu-lose-guile-win.jpg"; }
       }
     }
@@ -922,14 +871,12 @@ function endGame(char, char2) {
       mainScreen.remove();
       endGameAudio.play();
     },500);
-    setTimeout(function(){
-      window.location.reload();
-    }, 8000);
-  },8000)
-
+  }
+  setTimeout(function(){
+    window.location.reload();
+  }, 16000);
 }
-
-// https://stackoverflow.com/questions/17333777/uncaught-reference-error-bufferloader-is-not-defined
+// Taken from https://stackoverflow.com/questions/17333777/uncaught-reference-error-bufferloader-is-not-defined
 function BufferLoader(context, urlList, callback) {
   this.context = context;
   this.urlList = urlList;
@@ -938,7 +885,6 @@ function BufferLoader(context, urlList, callback) {
   this.loadCount = 0;
 }
 BufferLoader.prototype.loadBuffer = function(url, index) {
-  // Load buffer asynchronously
   var request = new XMLHttpRequest();
   request.open("GET", url, true);
   request.responseType = "arraybuffer";
@@ -946,7 +892,6 @@ BufferLoader.prototype.loadBuffer = function(url, index) {
   var loader = this;
 
   request.onload = function() {
-    // Asynchronously decode the audio file data in request.response
     loader.context.decodeAudioData(
       request.response,
       function(buffer) {
