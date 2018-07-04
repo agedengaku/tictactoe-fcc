@@ -7,8 +7,11 @@ body {
     overflow: auto;
 	margin: 0;
 	padding: 0;
-	position: relative;
+	/*position: relative;*/
 }
+/*=================================================*/
+/*Play button screen*/
+/*=================================================*/
 #play-button-screen {
 	background-color: black;
     width: 100%;
@@ -33,18 +36,21 @@ body {
 	color: gray;
 	text-decoration: none;
 }
-#title-screen {
-	background-color: black;
+/*=================================================*/
+/*Intro video screen*/
+/*=================================================*/
+#title-screen, #title-screen-video {
     width: 100%;
     height: 100%;
-    position: fixed;
+}
+#title-screen {
+	background-color: black;	
+	position: fixed;
     z-index: 1000;
 }
-#title-screen-video {
-    width: 100%;
-    height: 100%;
-}
-
+/*=================================================*/
+/*Difficulty mode select screen*/
+/*=================================================*/
 #difficulty-select-screen {
 	background-color: black;
 	z-index: 750;
@@ -56,34 +62,20 @@ body {
 	max-width: 100vw;
 	z-index: 900;
 }
-#easy{
-	position: absolute;
-	height: auto;
-	z-index: 900;
-	max-width: 100%;
-    top: 76%;
+.difficulty-mode {
+	position: absolute;	
+	height: auto;	
     left: 50%;
-	transform: translateX(-50%);
-/*    overflow: scroll;*/
-}
-#normal{
-	position: absolute;
-	height: auto;
+	max-width: 100%;    
 	z-index: 900;
-	max-width: 100%;
-    top: 83%;
-    left: 50%;
-	transform: translateX(-50%);
+	transform: translateX(-50%);	
 }
-#hard{
-	position: absolute;
-	height: auto;
-	z-index: 900;
-	max-width: 100%;
-    top: 90%;
-    left: 50%;
-	transform: translateX(-50%);
-}
+#easy{ top: 76%; }
+#normal{ top: 83%; }
+#hard{ top: 90%; }
+/*=================================================*/
+/*Character select screen*/
+/*=================================================*/
 #char-select-screen {
     background-color: #01025e;
     height: 100vh;
@@ -91,18 +83,12 @@ body {
     z-index: 500;
 }
 #map-image img{
-/*	height: auto;
-	max-width: 100vw;*/
 	height: 100vh;
 	width: auto;
-	display: block;
-    margin-left: auto;
-    margin-right: auto;	
 }
 #player-icons {
 	position: absolute;
 	height: auto;
-	z-index: 700;
 	top: 65%;
 	left: 50%;
 	transform: translateX(-50%);
@@ -112,6 +98,9 @@ body {
 	height: auto;
 }
 .player-select{ float: left; }
+/*=================================================*/
+/*VS screen*/
+/*=================================================*/
 #vs-screen {
 	height: 100vh;
 	width: 100vw;
@@ -126,18 +115,18 @@ body {
     margin-left: auto;
     margin-right: auto;
 }
-#main-screen { 
+/*=================================================*/
+/*Main screen*/
+/*=================================================*/
+/*Stage*/
+#main-screen, #blackout { 
 	position: fixed;
 	background-color: black; 
 	height: 100vh;
 	width: 100vw;
 }
 #blackout {
-	background-color: black;
 	opacity: 0;
-	height: 100vh;
-	width: 100vw;
-	position: fixed;
 	z-index: 300;
 }
 .fade-in-and-out {
@@ -145,28 +134,15 @@ body {
 	animation-fill-mode:forwards;
 }
 @keyframes fadeOut {
-	0% {
-		opacity: 0;
-	}
-	25% {
-		opacity: 1;
-	}
-	75% {
-		opacity: 1;
-	}
-	100% {
-		opacity: 0;
-	}
+	0% { opacity: 0; }
+	25% { opacity: 1; }
+	75% { opacity: 1; }
+	100% { opacity: 0; }
 }
 #ryu-stage {
-
 	height: auto;
 	width: 100vw;
-	display: block;
-    margin-left: auto;
-    margin-right: auto;	
 }
-
 #round-image {
 	width: 300px;
 	height: auto;
@@ -175,14 +151,13 @@ body {
 	left: 50%;
 	transform: translateX(-50%) translateY(-50%);	
 }
-
+/*Squares*/
 .char-css {
 	position: absolute;
 	top: 50%;
     left: 50%;
     transform: translateX(-50%) translateY(-50%);
 }
-
 .board {
 	z-index: 300;
     position: fixed;
@@ -191,7 +166,7 @@ body {
     transform: translateX(-50%);
 }
 .board-row {
-	/*height: 52px;*/
+	clear: both;
 }
 .board-square {
 	float: left;
@@ -203,18 +178,6 @@ body {
 	text-align: center;
 	overflow: hidden;
 	position: relative;
-}
-.row-1 {
-	clear: both;
-}
-.row-2 {
-	clear: both;
-}
-.row-3 {
-	clear: both;
-}
-.player-select-row {
-	clear: both;
 }
 .row-1 > :first-child  {
 	border-top: none; 
@@ -244,6 +207,7 @@ body {
 	border-bottom: none; 
 	border-right: none;	
 }
+/*Characters*/
 #player-1-char {
 	position: fixed;
 	top: 45%;
@@ -254,13 +218,24 @@ body {
 	top: 45%;
 	right: 20%;
 }
-
+.size {
+  	width: 150px;
+	height: 150px;
+		 transform: scale(5);
+	-moz-transform: scale(5);
+}
+.flipped {
+		 transform: scaleX(-1) scale(5);
+	-moz-transform: scaleX(-1) scale(5);	
+}
+/*=================================================*/
+/*End screen*/
+/*=================================================*/
 #end-screen {
 	background-color: black;
 	height: 100vh;
 	width: 100vw;
 }
-
 #end-screen-image {
 	height: 100vh;
 	width: auto;
@@ -268,26 +243,14 @@ body {
     margin-left: auto;
     margin-right: auto;		
 }
-
-.size {
-  	width: 150px;
-	height: 150px;
-		 transform: scale(5);
-	-moz-transform: scale(5);
-}
-
-.flipped {
-		 transform: scaleX(-1) scale(5);
-	-moz-transform: scaleX(-1) scale(5);	
-}
-
+/*=================================================*/
+/*Character animation frames*/
+/*=================================================*/
+/*Ryu*/
 .ryu-idle { 
 	background-image: url("ryu-idle.gif");
 }
-.guile-idle {
-	background-image: url("guile-idle.gif");
-}
-
+/*Attack frames*/
 .ryu-punch-frame1 {
   background: url("ryu-map.gif") 0 0;
 }
@@ -335,7 +298,7 @@ body {
 .ryu-kick-frame5{
   background: url("ryu-map.gif") -604px -302px;
 }
-
+/*Hit frames*/
 .ryu-hit-frame1{
   background: url("ryu-map.gif") 0 -453px;
 }
@@ -348,7 +311,11 @@ body {
 .ryu-hit-frame4{
   background: url("ryu-map.gif") -453px -453px;
 }
-
+/*Guile*/
+.guile-idle {
+	background-image: url("guile-idle.gif");
+}
+/*Attack frames*/
 .guile-punch-frame1{
 	background: url("guile-map.gif") 0 0;
 }
@@ -405,7 +372,7 @@ body {
 .guile-kick2-frame5{
 	background: url("guile-map.gif") -604px -453px;
 }
-
+/*Hit frames*/
 .guile-hit-frame1{
   background: url("guile-map.gif") 0 -604px;
 }

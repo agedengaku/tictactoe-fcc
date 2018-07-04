@@ -20,6 +20,9 @@ const player1Char = document.getElementById("player-1-char");
 const player2Char = document.getElementById("player-2-char");
 const player1CharImg = document.getElementById("player-1-char-img");
 const player2CharImg = document.getElementById("player-2-char-img");
+const playButton = document.getElementById('play-button');
+const playButtonScreen = document.getElementById('play-button-screen');
+const vid = document.getElementById('title-screen-video');
 
 const clickToStartAudio = new Audio("click-to-start.mp3");
 const charSelectedAudio = new Audio("char-selected.mp3");
@@ -41,14 +44,6 @@ const round2Audio = new Audio("round2.mp3");
 const round3Audio = new Audio("round3.mp3");
 const round4Audio = new Audio("round4.mp3");
 const round5Audio = new Audio("round5.mp3");
-
-// const xScore = document.getElementById("x-score");
-// const oScore = document.getElementById("o-score");
-// const resetBtn = document.getElementById("reset");
-const playButton = document.getElementById('play-button');
-const playButtonScreen = document.getElementById('play-button-screen');
-const vid = document.getElementById('title-screen-video');
-// const clickToStart = document.getElementById('click-to-start');
 
 let gameStarted = false;
 let currentGameState = {};
@@ -170,13 +165,11 @@ function charSelectScreenBGM() {
 
 function stageBGM() {
   // https://www.html5rocks.com/en/tutorials/webaudio/intro/
-  // window.onload = initSound;
   window.onload = initStageBGM();
   context;
   var bufferLoader;
 
   function initStageBGM() {
-    // Fix up prefixing
     window.AudioContext = window.AudioContext || window.webkitAudioContext;
     context = new AudioContext();
 
@@ -192,7 +185,6 @@ function stageBGM() {
   }
 
   function finishedLoading(bufferList) {
-    // Create two sources and play them both together.
     var source1 = context.createBufferSource();
     stageMain = context.createBufferSource();
 
@@ -222,29 +214,17 @@ function humanMove(){
     var squareId = this.id;
     if (openSquares.indexOf(squareId) !== -1){
 
-    
-
       noWinner = moveLogic(squareId, human.char);
       if (noWinner && gameover === false) {
 
         attackHitMedia(human.char, player1Char, computerAI.char, player2Char);
-
-          // setupAndRunAnimation(human.char, player1Char, true);
-          // attackAudio.play();
-          // setTimeout(function(){
-          //   setupAndRunAnimation(computerAI.char, player2Char, false);
-          //   hitAudio.play();
-          // }, 300);
 
           computerAI.turnActive = true;
           human.turnActive = false;
           setTimeout(computerAI.move, 2500);
       } 
     }
-  } else {
-    console.log("Something is wrong");
-    console.log("turnActive: "+computerAI.turnActive+" difficulty: "+computerAI.difficulty);
-  }
+  } 
 }
 
 function attackHitMedia(char1, char1Element, char2, char2Element) {
@@ -413,7 +393,7 @@ if (currentGameState.turnsTaken > 4) {
           elementAttack = player1Char;
           elementHit = player2Char;
         } else {
-          elementAttack = player2Char1;
+          elementAttack = player2Char;
           elementHit = player1Char;
         }
         if (char === "O") {
@@ -451,7 +431,7 @@ if (currentGameState.turnsTaken > 4) {
 
 function drawImage() {
   gainNode.gain.linearRampToValueAtTime(0, context.currentTime + 4);
-  if (human.char = "O")  {
+  if (human.char === "O")  {
     setTimeout(function(){              
       player1Char.classList.remove("ryu-idle");
       player2Char.classList.remove("guile-idle");
