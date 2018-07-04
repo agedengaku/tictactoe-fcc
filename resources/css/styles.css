@@ -248,7 +248,7 @@ body {
 /*=================================================*/
 /*Ryu*/
 .ryu-idle { 
-	background-image: url("../ryu-idle.gif");
+	background-image: url("../../resources/img/animated/ryu-idle.gif");
 }
 /*Attack frames*/
 .ryu-punch-frame1 {
@@ -313,7 +313,7 @@ body {
 }
 /*Guile*/
 .guile-idle {
-	background-image: url("../guile-idle.gif");
+	background-image: url("../../resources/img/animated/guile-idle.gif");
 }
 /*Attack frames*/
 .guile-punch-frame1{
