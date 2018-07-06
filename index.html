@@ -3,46 +3,52 @@
 <head>
 	<meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-	<title>Document</title>
+	<title>Street Fighter II: The TicTacToe Warrior</title>
+  <link href="https://fonts.googleapis.com/css?family=Permanent+Marker" rel="stylesheet">
 	<link rel="stylesheet" type="text/css" href="resources/css/styles.css">
   <link rel="stylesheet" type="text/css" href="resources/css/queries.css">
+  <link rel="manifest" href="resources/js/manifest.json">
   <!-- <link rel="prefetch" href=""> -->
 </head>
 <body>  
 
 <div id="play-button-screen">
-    <div id="play-button">PLAY</div>
-    <p><a href="#">About</a></p>
+    <div id="play-button">
+      <p>Best played in fullscreen / landscape</p>
+      <p>(Probably doesn't work on a lot of resolutions, sorry!)</p>
+      <p><span>Click/tap here to play!</span></p>
+    </div>
+    <p><a href="about.html">ABOUT</a></p>
 </div>
 
 <div id="title-screen">
   <video id="title-screen-video" loop>
-  <source src="sf2ttt-intro.mp4" type="video/mp4">
+  <source src="resources/video/sf2ttt-intro.mp4" type="video/mp4">
     Your browser does not support the video tag.
   </video>
 </div>
 
 <div id="difficulty-select-screen">
-  <div id="title-screen-partial"><img src="difficulty-select-screen.jpg" alt=""></div>
-  <div class="difficulty-mode" id="easy"><img src="easy-text.png" alt=""></div>
-  <div class="difficulty-mode" id="normal"><img src="normal-text.png" alt=""></div>
-  <div class="difficulty-mode" id="hard"><img src="hard-text.png" alt=""></div>
+  <div id="title-screen-partial"><img src="resources/img/screens/difficulty/difficulty-select-screen.jpg" alt=""></div>
+  <div class="difficulty-mode" id="easy"><img src="resources/img/screens/difficulty/easy-text.png" alt=""></div>
+  <div class="difficulty-mode" id="normal"><img src="resources/img/screens/difficulty/normal-text.png" alt=""></div>
+  <div class="difficulty-mode" id="hard"><img src="resources/img/screens/difficulty/hard-text.png" alt=""></div>
 </div>
 
 <div id="char-select-screen">
-  <div id="map-image"><img id="map-image-file" src="ryu-char-select.jpg" alt=""></div>
+  <div id="map-image"><img id="map-image-file" src="resources/img/screens/world-map/ryu-char-select.jpg" alt=""></div>
   <div id="player-icons">
-    <div id="O" class="player-select"><img src="ryu-icon.jpg" alt=""></div>
-    <div id="X" class="player-select"><img src="guile-icon.jpg" alt=""></div>
+    <div id="O" class="player-select"><img src="resources/img/screens/world-map/ryu-icon.jpg" alt=""></div>
+    <div id="X" class="player-select"><img src="resources/img/screens/world-map/guile-icon.jpg" alt=""></div>
   </div>
 </div>
 
-<div id="vs-screen"><img id="vs-screen-image" src="ryu-vs-screen.jpg" alt=""></div>
+<div id="vs-screen"><img id="vs-screen-image" src="resources/img/screens/vs-screen/ryu-vs-screen.jpg" alt=""></div>
 
 <div id="main-screen">
   <div id="blackout"></div>
   <img id="round-image" src="" alt="">
-  <img id="ryu-stage" src="ryu-stage-O.jpg" alt="">
+  <img id="ryu-stage" src="resources/img/screens/ryu-stage/ryu-stage-O.jpg" alt="">
   <div class="board">
     <div class="board-row row-1">
       <div id="0" class="board-square"></div>
@@ -60,14 +66,14 @@
       <div id="8" class="board-square"></div>
     </div>
   </div>
-  <div id="player-1-char" class="ryu-idle size"><img id="player-1-char-img" src="" alt=""></div>
-  <div id="player-2-char" class="guile-idle flipped size"><img id="player-2-char-img" src="" alt=""></div>
+  <div id="player-1-char" class="ryu-idle size position"><img id="player-1-char-img" src="" alt=""></div>
+  <div id="player-2-char" class="guile-idle flipped size position"><img id="player-2-char-img" src="" alt=""></div>
 </div>
 
 <div id="end-screen">
-  <img id="end-screen-image" src="ryu-win-guile-lose.jpg" alt="">
+  <img id="end-screen-image" src="resources/img/screens/end-game/ryu-win-guile-lose.jpg" alt="">
 </div>
 
-	<script src="script.js"></script>
+	<script src="resources/js/script.js"></script>
 </body>
 </html>

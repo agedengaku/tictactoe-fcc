@@ -1,0 +1,5 @@
+{
+	// Taken from  https://stackoverflow.com/questions/14360581/force-landscape-orientation-mode
+    "display":      "standalone",
+    "orientation":  "landscape"
+}

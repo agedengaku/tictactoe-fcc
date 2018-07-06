@@ -1,0 +1,351 @@
+@media
+only screen and (-webkit-min-device-pixel-ratio: 1) 	 and (min-width: 1920px),
+only screen and (   min--moz-device-pixel-ratio: 1) 	 and (min-width: 1920px),
+only screen and (     -o-min-device-pixel-ratio: 1/1) 	 and (min-width: 1920px),
+only screen and (        min-device-pixel-ratio: 1) 	 and (min-width: 1920px),
+only screen and (    -webkit-min-device-pixel-ratio: 1)  and (min-width: 1920px),
+only screen and (       -o-min-device-pixel-ratio: 1/1)  and (min-width: 1920px),
+only screen and (                min-resolution: 1dppx)  and (min-width: 1920px)
+{
+	#player-1-char { left: 24%; }
+	#player-2-char { right: 24%; }
+	.position { top: 37%; }
+	.size { 
+	     -webkit-transform: scale(6); 
+	     	-moz-transform: scale(6);
+	         -ms-transform: scale(6); 
+	             transform: scale(6); 
+	}
+	.flipped {
+	     -webkit-transform: scaleX(-1) scale(6);
+	     	-moz-transform:  scaleX(-1) scale(6);
+	         -ms-transform: scaleX(-1) scale(6);
+	             transform: scaleX(-1) scale(6); 
+	}
+	#easy { top: 82%; }
+	#normal { top: 87%; }
+	#hard { top: 92%; }
+	#ryu-stage {
+		height: 100vh;
+		width: auto;
+		display: block;
+		margin-left: auto;
+		margin-right: auto;
+	}
+}
+
+@media
+only screen and (-webkit-min-device-pixel-ratio: 2) 	 and (max-width: 1440px),
+only screen and (   min--moz-device-pixel-ratio: 2) 	 and (max-width: 1440px),
+only screen and (     -o-min-device-pixel-ratio: 2/1) 	 and (max-width: 1440px),
+only screen and (        min-device-pixel-ratio: 2) 	 and (max-width: 1440px),
+only screen and (     -webkit-min-device-pixel-ratio: 2) and (max-width: 1440px),
+only screen and (        -o-min-device-pixel-ratio: 2/1) and (max-width: 1440px),
+only screen and (                min-resolution: 192dpi) and (max-width: 1440px),
+only screen and (    -webkit-min-device-pixel-ratio: 2)  and (max-width: 1440px),
+only screen and (       -o-min-device-pixel-ratio: 2/1)  and (max-width: 1440px),
+only screen and (                min-resolution: 2dppx)  and (max-width: 1440px)
+{
+	.position { top: 38%; }
+}
+
+@media
+only screen and (-webkit-min-device-pixel-ratio: 1) 	 and (max-width: 1280px),
+only screen and (   min--moz-device-pixel-ratio: 1) 	 and (max-width: 1280px),
+only screen and (     -o-min-device-pixel-ratio: 1/1) 	 and (max-width: 1280px),
+only screen and (        min-device-pixel-ratio: 1) 	 and (max-width: 1280px),
+only screen and (    -webkit-min-device-pixel-ratio: 1)  and (max-width: 1280px),
+only screen and (       -o-min-device-pixel-ratio: 1/1)  and (max-width: 1280px),
+only screen and (                min-resolution: 1dppx)  and (max-width: 1280px)
+{
+	.position { top: 35%; }
+	.size { 
+	     -webkit-transform: scale(3.5); 
+     		-moz-transform: scale(3.5); 
+	         -ms-transform: scale(3.5); 
+	             transform: scale(3.5); 
+
+	}
+	.flipped {
+	     -webkit-transform: scaleX(-1) scale(3.5);
+	        -moz-transform:  scaleX(-1) scale(3.5); 
+	         -ms-transform: scaleX(-1) scale(3.5);
+	             transform: scaleX(-1) scale(3.5); 
+	}
+	#player-1-char { left: 21%; }
+	#player-2-char { right: 21%; }
+	.board {
+		top: 45%;
+	}
+	.difficulty-mode { 
+		left: 48%; 
+		-webkit-transform: scale(0.7) translateX(-50%); 
+		   -moz-transform: scale(0.7) translateX(-50%);
+		    -ms-transform: scale(0.7) translateX(-50%); 
+		        transform: scale(0.7) translateX(-50%);
+
+	}
+	#easy { top: 82%; }
+	#normal { 
+		top: 87%;
+		left: 47%;
+	}
+	#hard { top: 92%; }
+	#round-image {
+	     -webkit-transform: translateX(-50%) translateY(-50%) scale(0.70);
+	        -moz-transform: translateX(-50%) translateY(-50%) scale(0.70);
+	         -ms-transform: translateX(-50%) translateY(-50%) scale(0.70);
+	             transform: translateX(-50%) translateY(-50%) scale(0.70);
+	}
+	#ryu-stage {
+		height: 100vh;
+		width: auto;
+		display: block;
+		margin-left: auto;
+		margin-right: auto;
+	}
+}
+
+@media
+only screen and (-webkit-min-device-pixel-ratio: 2) 	 and (max-width: 1280px),
+only screen and (   min--moz-device-pixel-ratio: 2) 	 and (max-width: 1280px),
+only screen and (     -o-min-device-pixel-ratio: 2/1) 	 and (max-width: 1280px),
+only screen and (        min-device-pixel-ratio: 2) 	 and (max-width: 1280px),
+only screen and (     -webkit-min-device-pixel-ratio: 2) and (max-width: 1280px),
+only screen and (        -o-min-device-pixel-ratio: 2/1) and (max-width: 1280px),
+only screen and (                min-resolution: 192dpi) and (max-width: 1280px),
+only screen and (    -webkit-min-device-pixel-ratio: 2)  and (max-width: 1280px),
+only screen and (       -o-min-device-pixel-ratio: 2/1)  and (max-width: 1280px),
+only screen and (                min-resolution: 2dppx)  and (max-width: 1280px)
+{
+	.position { top: 36%; }
+	.size { 
+	     -webkit-transform: scale(4.5);
+     		-moz-transform: scale(4.5);  
+	         -ms-transform: scale(4.5); 
+	             transform: scale(4.5); 
+	}
+	.flipped {
+	     -webkit-transform: scaleX(-1) scale(4.5);
+     		-moz-transform: scaleX(-1) scale(4.5); 	
+	         -ms-transform: scaleX(-1) scale(4.5);
+	             transform: scaleX(-1) scale(4.5); 
+	}
+}
+
+@media
+only screen and (-webkit-min-device-pixel-ratio: 2) 	 and (max-width: 1024px),
+only screen and (   min--moz-device-pixel-ratio: 2) 	 and (max-width: 1024px),
+only screen and (     -o-min-device-pixel-ratio: 2/1) 	 and (max-width: 1024px),
+only screen and (        min-device-pixel-ratio: 2) 	 and (max-width: 1024px),
+only screen and (     -webkit-min-device-pixel-ratio: 2) and (max-width: 1024px),
+only screen and (        -o-min-device-pixel-ratio: 2/1) and (max-width: 1024px),
+only screen and (                min-resolution: 192dpi) and (max-width: 1024px),
+only screen and (    -webkit-min-device-pixel-ratio: 2)  and (max-width: 1024px),
+only screen and (       -o-min-device-pixel-ratio: 2/1)  and (max-width: 1024px),
+only screen and (                min-resolution: 2dppx)  and (max-width: 1024px)
+{
+	.position { top: 36%; }
+	.size { 
+	     -webkit-transform: scale(3.5); 
+	     	-moz-transform: scale(3.5);
+	         -ms-transform: scale(3.5); 
+	             transform: scale(3.5); 
+	}
+	.flipped {
+	     -webkit-transform: scaleX(-1) scale(3.5);
+	     	-moz-transform: scaleX(-1) scale(3.5);
+	         -ms-transform: scaleX(-1) scale(3.5);
+	             transform: scaleX(-1) scale(3.5); 
+	}
+	.board {
+		top: 45%;
+	     -webkit-transform: translateX(-50%) scale(0.75);
+	     	-moz-transform: translateX(-50%) scale(0.75);
+	         -ms-transform: translateX(-50%) scale(0.75);
+	             transform: translateX(-50%) scale(0.75);
+	}
+	#round-image {
+	     -webkit-transform: translateX(-50%) translateY(-50%) scale(0.70);
+			-moz-transform: translateX(-50%) translateY(-50%) scale(0.70);		     
+	         -ms-transform: translateX(-50%) translateY(-50%) scale(0.70);
+	             transform: translateX(-50%) translateY(-50%) scale(0.70);
+	}
+}
+
+/*iPad Pro 12*/
+@media only screen 
+  and (min-device-width: 1366px) 
+  and (max-device-width: 1366px) 
+  and (orientation: landscape) 
+  and (-webkit-min-device-pixel-ratio: 2) {
+	.position { top: 37%; }		
+	#map-image img{ 
+		height: auto;
+		width: 100vw; 
+	}	
+	#ryu-stage { margin-top: 120px;	}
+	#end-screen-image {
+		height: auto;
+		width: 100vw;
+	}
+	#round-image { top: 35% }	
+}
+
+/* iPhone X */
+@media only screen 
+  and (min-device-width: 375px) 
+  and (max-device-width: 812px) 
+  and (-webkit-min-device-pixel-ratio: 3)
+  and (orientation: landscape) { 
+	.position { top: 29%; }
+	.size { 
+		     -webkit-transform: scale(2); 
+		     	-moz-transform: scale(2);
+		         -ms-transform: scale(2); 
+		             transform: scale(2); 
+	}
+	.flipped {
+		     -webkit-transform: scaleX(-1) scale(2);
+		     	-moz-transform: scaleX(-1) scale(2); 
+		         -ms-transform: scaleX(-1) scale(2);
+		             transform: scaleX(-1) scale(2); 
+	}
+	#player-1-char { left: 20%; }
+	#player-2-char { right: 20%; }
+	.board {
+		top: 35%;
+		left: 34%;
+		-webkit-transform: scale(0.7);
+		   -moz-transform: scale(0.7);
+		    -ms-transform: scale(0.7);
+		        transform: scale(0.7);
+	}
+	.difficulty-mode { 
+		left: 45%; 
+		-webkit-transform: scale(0.7) translateX(-50%);
+		   -moz-transform: scale(0.7) translateX(-50%); 
+		    -ms-transform: scale(0.7) translateX(-50%); 
+		        transform: scale(0.7) translateX(-50%);
+	}
+	#title-screen-partial img{
+		height: 100vh;
+		width: auto;
+		display: block;
+		margin-left: auto;
+		margin-right: auto;
+		z-index: 900;
+	}
+	#easy { top: 72%; }
+	#normal { 
+		top: 80%;
+		left: 43%;
+	}
+	#hard { top: 88%; }
+	#round-image {
+		     -webkit-transform: translateX(-50%) translateY(-50%) scale(0.5);
+		     	-moz-transform: translateX(-50%) translateY(-50%) scale(0.5);
+		         -ms-transform: translateX(-50%) translateY(-50%) scale(0.5);
+		             transform: translateX(-50%) translateY(-50%) scale(0.5);
+	}
+}
+
+/* iPhone 6/7/8 + */
+@media only screen 
+  and (min-device-width: 414px) 
+  and (max-device-width: 736px) 
+  and (-webkit-min-device-pixel-ratio: 3)
+  and (orientation: landscape) { 
+	.position { top: 28%; }
+	.size { 
+		     -webkit-transform: scale(2.5); 
+		     	-moz-transform: scale(2.5);
+		         -ms-transform: scale(2.5); 
+		             transform: scale(2.5); 
+	}
+	.flipped {
+		     -webkit-transform: scaleX(-1) scale(2.5);
+		       -moz-transform:  scaleX(-1) scale(2.5); 
+		         -ms-transform: scaleX(-1) scale(2.5);
+		             transform: scaleX(-1) scale(2.5); 
+	}
+	#player-1-char { left: 15%; }
+	#player-2-char { right: 15%; }
+	.board {
+		top: 35%;
+		left: 31%;
+		-webkit-transform: scale(0.7);
+		   -moz-transform: scale(0.7);
+		    -ms-transform: scale(0.7);
+		        transform: scale(0.7);
+	}
+	.difficulty-mode { 
+		left: 45%; 
+		-webkit-transform: scale(0.7) translateX(-50%); 
+		   -moz-transform: scale(0.7) translateX(-50%);
+		    -ms-transform: scale(0.7) translateX(-50%); 
+		        transform: scale(0.7) translateX(-50%);
+	}
+	#easy { top: 72%; }
+	#normal { 
+		top: 80%;
+		left: 43%;
+	}
+	#hard { top: 88%; }
+	#round-image {
+		     -webkit-transform: translateX(-50%) translateY(-50%) scale(0.7);
+		     	-moz-transform: translateX(-50%) translateY(-50%) scale(0.7);
+		         -ms-transform: translateX(-50%) translateY(-50%) scale(0.7);
+		             transform: translateX(-50%) translateY(-50%) scale(0.7);
+	}
+}
+
+/*iPhone 6/7/8*/
+@media only screen 
+  and (min-device-width: 375px) 
+  and (max-device-width: 667px) 
+  and (-webkit-min-device-pixel-ratio: 2)
+  and (orientation: landscape) { 
+	.position { top: 30%; }
+	.size { 
+		     -webkit-transform: scale(2); 
+			    -moz-transform: scale(2);		     
+		         -ms-transform: scale(2); 
+		             transform: scale(2); 
+	}
+	.flipped {
+		     -webkit-transform: scaleX(-1) scale(2);
+		     	-moz-transform: scaleX(-1) scale(2); 
+		         -ms-transform: scaleX(-1) scale(2);
+		             transform: scaleX(-1) scale(2); 
+	}
+	#player-1-char { left: 15%; }
+	#player-2-char { right: 15%; }
+	.board {
+		top: 35%;
+		left: 31%;
+		-webkit-transform: scale(0.7);
+		   -moz-transform: scale(0.7);
+		    -ms-transform: scale(0.7);
+		        transform: scale(0.7);
+	}
+	.difficulty-mode { 
+		left: 45%; 
+		-webkit-transform: scale(0.7) translateX(-50%); 
+		   -moz-transform: scale(0.7) translateX(-50%);
+		    -ms-transform: scale(0.7) translateX(-50%); 
+		        transform: scale(0.7) translateX(-50%);
+	}
+	#easy { top: 72%; }
+	#normal { 
+		top: 80%;
+		left: 43%;
+	}
+	#hard { top: 88%; }
+	#round-image {
+		     -webkit-transform: translateX(-50%) translateY(-50%) scale(0.7);
+		     	-moz-transform: translateX(-50%) translateY(-50%) scale(0.7);
+		         -ms-transform: translateX(-50%) translateY(-50%) scale(0.7);
+		             transform: translateX(-50%) translateY(-50%) scale(0.7);
+	}
+}

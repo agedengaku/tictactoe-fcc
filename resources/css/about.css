@@ -1,0 +1,16 @@
+body {
+	background-color: black;
+		color: olive;
+}
+
+.code {
+	font-family: 'Source Code Pro', monospace;
+}
+
+.num-color {
+	color: darkgray;
+}
+
+.var-color {
+	color: purple;
+}
