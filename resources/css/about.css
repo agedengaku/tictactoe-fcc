@@ -1,16 +1,12 @@
 body {
-	background-color: black;
-		color: olive;
+	background-color: #161616;
+	color: olive;
 }
-
-.code {
-	font-family: 'Source Code Pro', monospace;
+a { 
+	text-decoration: none; 
+	color: cornflowerblue;
 }
-
-.num-color {
-	color: darkgray;
-}
-
-.var-color {
-	color: purple;
-}
+.code { font-family: 'Source Code Pro', monospace; }
+.var-name { color: whitesmoke; }
+.num-color { color: #333333; }
+.var-color { color: purple; }

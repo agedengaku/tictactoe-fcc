@@ -1,5 +1,6 @@
+(function(){
 "use strict";
-
+// HTML elements
 const playerSelect = document.getElementsByClassName("player-select");
 const boardSquares = document.getElementsByClassName("board-square");
 const difficultyMode = document.getElementsByClassName("difficulty-mode");
@@ -22,14 +23,13 @@ const player2CharImg = document.getElementById("player-2-char-img");
 const playButton = document.getElementById('play-button');
 const playButtonScreen = document.getElementById('play-button-screen');
 const vid = document.getElementById('title-screen-video');
-
+// Music
 const clickToStartAudio = new Audio("resources/audio/sfx/system/click-to-start.mp3");
 const charSelectedAudio = new Audio("resources/audio/sfx/system/char-selected.mp3");
 const airplaneAudio = new Audio("resources/audio/sfx/system/airplane-audio.mp3");
-
 const vsScreenBGM = new Audio("resources/audio/bgm/vs-screen-bgm.mp3");
 const endGameAudio = new Audio("resources/audio/bgm/end-game.mp3");
-
+// Round - Win - Lose
 const round1Audio = new Audio("resources/audio/round/round1.mp3");
 const round2Audio = new Audio("resources/audio/round/round2.mp3");
 const round3Audio = new Audio("resources/audio/round/round3.mp3");
@@ -37,26 +37,27 @@ const round4Audio = new Audio("resources/audio/round/round4.mp3");
 const round5Audio = new Audio("resources/audio/round/round5.mp3");
 const youWin = new Audio("resources/audio/round/you-win.mp3");
 const youLose = new Audio("resources/audio/round/you-lose.mp3");
-
+//SFX
 const attackAudio = new Audio("resources/audio/sfx/character/attack-audio.mp3");
 const hitAudio = new Audio("resources/audio/sfx/character/hit-audio.mp3");
 const shoryukenAudio = new Audio("resources/audio/sfx/character/shoryuken-audio.mp3");
 const KOscream = new Audio("resources/audio/sfx/character/KO-scream.mp3");
-
+//WebAudio
 var audioMain = null;
 var stageMain = null;
 var context, gainNode;
 
 let gameStarted = false;
+let titleScreenOn = true;
+let selectScreenOn = true;
+let gameover = false;
 let currentGameState = {};
 let human = {};
 let computerAI = {};
 let openSquares = ["0", "1", "2", "3", "4", "5", "6", "7", "8"];
 let selectedDifficulty;
-let titleScreenOn = true;
-let selectScreenOn = true;
-let gameover = false;
 let rounds = 0;
+
 let lastFrameName;
 let frameCount = 1;
 
@@ -98,9 +99,7 @@ titleScreenVideo.addEventListener("click", titleScreenClicked);
 function titleScreenClicked(){
   clickToStartAudio.play();
   vid.pause();
-  setTimeout(function(){
-    titleScreen.remove();
-  }, 2500);
+  setTimeout(function(){ titleScreen.remove(); }, 2500);
   titleScreenOn = false;
   titleScreenVideo.removeEventListener("click", titleScreenClicked);
 }
@@ -113,11 +112,10 @@ function modeHoverAudio() {
 function charHover() {
   let sound = new Audio("resources/audio/sfx/system/char-icon-hover.mp3");
   sound.play();  
-  if (this.id === "O") {
+  if (this.id === "O")
     mapImageFile.src="resources/img/screens/world-map/ryu-char-select.jpg";
-  } else {
+  else
     mapImageFile.src="resources/img/screens/world-map/guile-char-select.jpg";
-  }
 }
 
 function charSelectScreenBGM() {
@@ -290,11 +288,10 @@ function runAnimationObject(player, frameName, gifLength, attack) {
     this.gifLength = gifLength;
     this.lastFrameName;
     this.frameCount = 1;
-    if (attack === true) {
+    if (attack === true)
       this.intervalTime = 100;  
-    } else {
+    else
       this.intervalTime = 200;
-    }
 
     this.runAnimation = function() {
       let intervalID = setInterval(function(){
@@ -328,11 +325,10 @@ function runAnimationObject(player, frameName, gifLength, attack) {
 function moveLogic(squareId, char){
   var charImg = document.createElement("img");
   charImg.classList.add("char-css");
-  if (char === "O") {
+  if (char === "O")
     charImg.src = "resources/img/O.gif";
-  } else {
+  else
     charImg.src = "resources/img/X.gif";
-  }
   var result;
   removeFromOpen(squareId);
   currentGameState.boardState[squareId] = char;
@@ -342,7 +338,6 @@ function moveLogic(squareId, char){
 if (currentGameState.turnsTaken > 4) {
     result = checkForWinner(char);
     if (result) {
-
         if(rounds !== 5) {
           //run win and ko animations
           roundWinAnimation(char);
@@ -355,9 +350,7 @@ if (currentGameState.turnsTaken > 4) {
           return false;
         } else {
           gameover = true;
-          setTimeout(function(){
-            endGame(human.wins, computerAI.wins);
-          });
+          setTimeout(function(){ endGame(human.wins, computerAI.wins); });
         }
     } else {
       if (currentGameState.turnsTaken === 9) {
@@ -382,9 +375,7 @@ if (currentGameState.turnsTaken > 4) {
         if (rounds !== 5) {
           //prevents human move
           computerAI.turnActive = true;
-          setTimeout(function(){
-            reset();
-          }, 6000);
+          setTimeout(function(){ reset(); }, 6000);
           return false;
         } else {
           gameover = true;
@@ -417,9 +408,7 @@ function drawImage() {
       player2CharImg.src = "resources/img/animated/ryu/ryu-draw.gif"; 
     },3000);     
   }
-  setTimeout(function(){
-    roundImage.src = "resources/img/animated/round/draw.gif";
-  },3500);
+  setTimeout(function(){ roundImage.src = "resources/img/animated/round/draw.gif"; },3500);
 }
 
 function roundWinAnimation(char) {
@@ -465,9 +454,7 @@ function roundWinAnimation(char) {
    setTimeout(function(){
       playerImg.src = "resources/img/animated/ryu/ryu-win1.gif";
       gainNode.gain.linearRampToValueAtTime(0, context.currentTime + 4);
-      setTimeout(function(){
-        playerImg.src = "resources/img/animated/ryu/ryu-win2.gif";
-      },200);
+      setTimeout(function(){ playerImg.src = "resources/img/animated/ryu/ryu-win2.gif"; },200);
     },3800); 
   //winning stance for guile
   } else {
@@ -645,17 +632,11 @@ function Computer(char) {
 function minimax(reboard, player) {
   var array = availableSquares(reboard);
   if (winCombination(reboard, human.char)) {
-    return {
-      score: -10
-    };
+    return { score: -10 };
   } else if (winCombination(reboard, computerAI.char)) {
-    return {
-      score: 10
-    };
+    return { score: 10 };
   } else if (array.length === 0) {
-    return {
-      score: 0
-    };
+    return { score: 0 };
   }
 
   var moves = [];
@@ -729,25 +710,16 @@ function reset() {
           player1Char.classList.add("guile-idle", "guile-2p");
         }
       },1000);
-    setTimeout(function(){
-      blackOut.classList.remove("fade-in-and-out");
-    },2000);
-    for(var i = 0; i < boardSquares.length; i++) {
-      boardSquares[i].innerHTML = '';
-    }
+    setTimeout(function(){ blackOut.classList.remove("fade-in-and-out"); },2000);
+    for(var i = 0; i < boardSquares.length; i++) { boardSquares[i].innerHTML = ''; }
     currentGameState = {};
-    // if (str === "round") {
-      human.turnActive = false;
-      // computerAI.turnActive = false;
-      openSquares = ["0", "1", "2", "3", "4", "5", "6", "7", "8"];
-      init();
-      setTimeout(function(){ 
-        stageBGM();
-        roundMedia(); 
-      },1000)
-
-    // } else {
-    // }
+    human.turnActive = false;
+    openSquares = ["0", "1", "2", "3", "4", "5", "6", "7", "8"];
+    init();
+    setTimeout(function(){ 
+      stageBGM();
+      roundMedia(); 
+    },1000)
   }
 }
 
@@ -776,11 +748,10 @@ function charSelect() {
     selectScreenOn = false;
     setTimeout(function(){
       airplaneAudio.play();
-      if (human.char === "O") {
+      if (human.char === "O")
         mapImageFile.src="resources/img/screens/world-map/ryu-selected-animated.gif";
-      } else {
+      else 
         mapImageFile.src="resources/img/screens/world-map/guile-selected-animated.gif";
-      }
     }, 1000);
     setTimeout(function(){
       charSelectScreen.remove();
@@ -877,9 +848,7 @@ function endGame(val, val2) {
       endGameAudio.play();
     },500);
   }
-  setTimeout(function(){
-    window.location.reload();
-  }, 16000);
+  setTimeout(function(){ window.location.reload(); }, 16000);
 }
 // Taken from https://stackoverflow.com/questions/17333777/uncaught-reference-error-bufferloader-is-not-defined
 function BufferLoader(context, urlList, callback) {
@@ -927,3 +896,4 @@ BufferLoader.prototype.load = function() {
 }
 
 screen.orientation.lock('landscape');
+})();
