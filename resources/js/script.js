@@ -2,28 +2,27 @@
 "use strict";
 screen.orientation.lock('landscape');
 // HTML elements
-const playerSelect = document.getElementsByClassName("player-select");
-const boardSquares = document.getElementsByClassName("board-square");
-const difficultyMode = document.getElementsByClassName("difficulty-mode");
-const difficultySelectScreen = document.getElementById("difficulty-select-screen");
+const playButtonScreen = document.getElementById('play-button-screen');
+const playButton = document.getElementById('play-button');
 const titleScreen = document.getElementById("title-screen");
 const titleScreenVideo = document.getElementById("title-screen-video");
+const difficultySelectScreen = document.getElementById("difficulty-select-screen");
+const difficultyMode = document.getElementsByClassName("difficulty-mode");
 const charSelectScreen = document.getElementById("char-select-screen");
 const mapImageFile = document.getElementById("map-image-file");
+const playerSelect = document.getElementsByClassName("player-select");
 const vsScreen = document.getElementById("vs-screen");
 const vsScreenImage = document.getElementById("vs-screen-image");
 const mainScreen = document.getElementById("main-screen");
 const ryuStageImage = document.getElementById("ryu-stage");
-const endScreenImage = document.getElementById("end-screen-image");
-const roundImage = document.getElementById("round-image");
 const blackOut = document.getElementById("blackout");
+const roundImage = document.getElementById("round-image");
+const boardSquares = document.getElementsByClassName("board-square");
 const player1Char = document.getElementById("player-1-char");
 const player2Char = document.getElementById("player-2-char");
 const player1CharImg = document.getElementById("player-1-char-img");
 const player2CharImg = document.getElementById("player-2-char-img");
-const playButton = document.getElementById('play-button');
-const playButtonScreen = document.getElementById('play-button-screen');
-const vid = document.getElementById('title-screen-video');
+const endScreenImage = document.getElementById("end-screen-image");
 // Music
 const clickToStartAudio = new Audio("resources/audio/sfx/system/click-to-start.mp3");
 const charSelectedAudio = new Audio("resources/audio/sfx/system/char-selected.mp3");
@@ -44,7 +43,7 @@ const hitAudio = new Audio("resources/audio/sfx/character/hit-audio.mp3");
 const shoryukenAudio = new Audio("resources/audio/sfx/character/shoryuken-audio.mp3");
 const KOscream = new Audio("resources/audio/sfx/character/KO-scream.mp3");
 //WebAudio
-var context, bufferLoader, stageBGMMain, mapBGMMain, gainNode;
+var context, bufferLoader, stageBGMMain, mapBGMMain, bgmMain, gainNode;
 
 let gameStarted = false;
 let titleScreenOn = true;
@@ -92,7 +91,7 @@ function GameState() {
 
 playButton.addEventListener("click", playVid);
 function playVid() {
-  vid.play();
+  titleScreenVideo.play();
   playButton.remove();
   playButtonScreen.remove();
 }
@@ -101,7 +100,7 @@ titleScreenVideo.addEventListener("click", titleScreenClicked);
 
 function titleScreenClicked(){
   clickToStartAudio.play();
-  vid.pause();
+  titleScreenVideo.pause();
   setTimeout(function(){ titleScreen.remove(); }, 2500);
   titleScreenOn = false;
   titleScreenVideo.removeEventListener("click", titleScreenClicked);
@@ -115,14 +114,17 @@ function modeHoverAudio() {
 function difficultyModeSelect() {
   if(titleScreenOn === false) {
     selectedDifficulty = this.id;
+    this.classList.add("selected");
     clickToStartAudio.play()
     for(var i = 0; i < difficultyMode.length; i++) {
       difficultyMode[i].removeEventListener("mouseenter", modeHoverAudio);
       difficultyMode[i].removeEventListener("click", difficultyModeSelect);
+      difficultyMode[i].classList.remove("selection");
     }
     setTimeout(function(){
       difficultySelectScreen.remove();
-      charSelectScreenBGM();
+      // charSelectScreenBGM();
+      webAudioBGM('resources/audio/bgm/char-select-intro.mp3', 'resources/audio/bgm/char-select-main2.mp3', 3.9);
     }, 2500);
   }
 }
@@ -141,9 +143,12 @@ function charSelect() {
   for(var i = 0; i < playerSelect.length; i++) {
     playerSelect[i].removeEventListener("mouseenter", charHover);
     playerSelect[i].removeEventListener("click", charSelect);
+    playerSelect[i].classList.remove("selection");
   }
   if (selectedDifficulty && titleScreenOn === false) {
     human = new Player(this.id);
+    this.classList.add("selected");
+    this.classList.remove("selection");
     if (this.id === "O") { 
       computerAI = new Computer("X");
       mapImageFile.src= "resources/img/screens/world-map/ryu-selected-flag.jpg";
@@ -168,12 +173,14 @@ function charSelect() {
     }, 1000);
     setTimeout(function(){
       charSelectScreen.remove();
-      mapBGMMain.stop();
+      // mapBGMMain.stop();
+      bgmMain.stop();
       vsScreenBGM.play();
     }, 4000);
     setTimeout(function(){
       vsScreen.remove();
-      stageBGM();
+      // stageBGM();
+      webAudioBGM('resources/audio/bgm/ryu-theme-intro.ogg', 'resources/audio/bgm/ryu-theme-main.ogg', 4.27);
       roundMedia();
     },9000);
   }
@@ -310,9 +317,9 @@ function moveLogic(squareId, char){
   var charImg = document.createElement("img");
   charImg.classList.add("char-css");
   if (char === "O")
-    charImg.src = "resources/img/O.gif";
+    charImg.src = "resources/img/screens/ryu-stage/O.gif";
   else
-    charImg.src = "resources/img/X.gif";
+    charImg.src = "resources/img/screens/ryu-stage/X.gif";
   var result;
   removeFromOpen(squareId);
   currentGameState.boardState[squareId] = char;
@@ -328,9 +335,7 @@ if (currentGameState.turnsTaken > 4) {
           //prevents human move
           computerAI.turnActive = true;
           //reset rounds
-          setTimeout(function(){
-            reset();
-          }, 10000);
+          setTimeout(function(){ reset(); }, 10000);
           return false;
         } else {
           gameover = true;
@@ -370,9 +375,7 @@ if (currentGameState.turnsTaken > 4) {
       }
     }
   }
-  if (result !== true) {
-    return true;  
-  }
+  if (result !== true) { return true; }
 }
 
 function drawImage() {
@@ -394,6 +397,93 @@ function drawImage() {
   }
   setTimeout(function(){ roundImage.src = "resources/img/animated/round/draw.gif"; },3500);
 }
+
+function checkForWinner(char) {
+    if (winCombination(currentGameState.boardState, char)) {
+      let result = winScore(char);
+      return result;
+    } else {
+      return false;
+    }
+}   
+
+function winCombination (board, char) {
+  if (
+    (char === board[0] && board[0] === board[1] && board[1] === board[2]) ||
+    (char === board[3] && board[3] === board[4] && board[4] === board[5]) ||
+    (char === board[6] && board[6] === board[7] && board[7] === board[8]) ||
+    (char === board[0] && board[0] === board[3] && board[3] === board[6]) ||
+    (char === board[1] && board[1] === board[4] && board[4] === board[7]) ||
+    (char === board[2] && board[2] === board[5] && board[5] === board[8]) ||
+    (char === board[0] && board[0] === board[4] && board[4] === board[8]) ||
+    (char === board[2] && board[2] === board[4] && board[4] === board[6])       
+    ) {
+      return true;
+    } else {
+      return false;
+    }
+}  
+
+function winScore(char) {
+  if (char === human.char){    
+    human.wins++;
+    if (char == "O") {
+      if (human.wins == 1 && computerAI.wins == 0) { ryuStageImage.src = "resources/img/screens/ryu-stage/ryu-stage-O-1win-0win.jpg"; } 
+      else if (human.wins == 1 && computerAI.wins == 1) { ryuStageImage.src = "resources/img/screens/ryu-stage/ryu-stage-O-1win-1win.jpg"; } 
+      else if (human.wins == 2 && computerAI.wins == 0) {
+        ryuStageImage.src = "resources/img/screens/ryu-stage/ryu-stage-O-2win-0win.jpg";
+        gameover = true;
+        endGame(human.char);
+      } 
+      else if (human.wins == 2 && computerAI.wins == 1) {
+        ryuStageImage.src = "resources/img/screens/ryu-stage/ryu-stage-O-2win-1win.jpg";    
+        gameover = true;      
+        endGame(human.char);
+      }
+    } else {
+      if (human.wins == 1 && computerAI.wins == 0) { ryuStageImage.src = "resources/img/screens/ryu-stage/ryu-stage-X-1win-0win.jpg"; } 
+      else if (human.wins == 1 && computerAI.wins == 1) { ryuStageImage.src = "resources/img/screens/ryu-stage/ryu-stage-X-1win-1win.jpg"; } 
+      else if (human.wins == 2 && computerAI.wins == 0) {
+        ryuStageImage.src = "resources/img/screens/ryu-stage/ryu-stage-X-2win-0win.jpg";
+        gameover = true;
+        endGame(human.char);
+      } 
+      else if (human.wins == 2 && computerAI.wins == 1) {
+        ryuStageImage.src = "resources/img/screens/ryu-stage/ryu-stage-X-2win-1win.jpg";     
+        gameover = true;
+        endGame(human.char);
+      }  
+    }
+  } else {
+    computerAI.wins++;
+    if (char == "X") {
+      if (human.wins == 0 && computerAI.wins == 1) { ryuStageImage.src = "resources/img/screens/ryu-stage/ryu-stage-O-0win-1win.jpg"; } 
+      else if (human.wins == 1 && computerAI.wins == 1) { ryuStageImage.src = "resources/img/screens/ryu-stage/ryu-stage-O-1win-1win.jpg"; } 
+      else if (human.wins == 0 && computerAI.wins == 2) {
+        ryuStageImage.src = "resources/img/screens/ryu-stage/ryu-stage-O-0win-2win.jpg";
+        gameover = true;        
+        endGame(computerAI.char);
+      } else if (human.wins == 1 && computerAI.wins == 2) {
+         ryuStageImage.src = "resources/img/screens/ryu-stage/ryu-stage-O-1win-2win.jpg";     
+         gameover = true;
+         endGame(computerAI.char);
+      }
+    } else {
+      if (human.wins == 0 && computerAI.wins == 1) { ryuStageImage.src = "resources/img/screens/ryu-stage/ryu-stage-X-0win-1win.jpg"; } 
+      else if (human.wins == 1 && computerAI.wins == 1) { ryuStageImage.src = "resources/img/screens/ryu-stage/ryu-stage-X-1win-1win.jpg"; } 
+      else if (human.wins == 0 && computerAI.wins == 2) {
+        ryuStageImage.src = "resources/img/screens/ryu-stage/ryu-stage-X-0win-2win.jpg";
+        gameover = true;
+        endGame(computerAI.char);
+      } else if (human.wins == 1 && computerAI.wins == 2) {
+         ryuStageImage.src = "resources/img/screens/ryu-stage/ryu-stage-X-1win-2win.jpg";     
+         gameover = true;
+         endGame(computerAI.char);
+      }      
+    }
+  }
+  return true;
+} 
 
 function roundWinAnimation(char) {
 
@@ -467,93 +557,6 @@ function roundWinAnimation(char) {
     sound.play();
   }
 }
-
-function checkForWinner(char) {
-    if (winCombination(currentGameState.boardState, char)) {
-      let result = winScore(char);
-      return result;
-    } else {
-      return false;
-    }
-}    
-
-function winScore(char) {
-  if (char === human.char){    
-    human.wins++;
-    if (char == "O") {
-      if (human.wins == 1 && computerAI.wins == 0) { ryuStageImage.src = "resources/img/screens/ryu-stage/ryu-stage-O-1win-0win.jpg"; } 
-      else if (human.wins == 1 && computerAI.wins == 1) { ryuStageImage.src = "resources/img/screens/ryu-stage/ryu-stage-O-1win-1win.jpg"; } 
-      else if (human.wins == 2 && computerAI.wins == 0) {
-        ryuStageImage.src = "resources/img/screens/ryu-stage/ryu-stage-O-2win-0win.jpg";
-        gameover = true;
-        endGame(human.char);
-      } 
-      else if (human.wins == 2 && computerAI.wins == 1) {
-        ryuStageImage.src = "resources/img/screens/ryu-stage/ryu-stage-O-2win-1win.jpg";    
-        gameover = true;      
-        endGame(human.char);
-      }
-    } else {
-      if (human.wins == 1 && computerAI.wins == 0) { ryuStageImage.src = "resources/img/screens/ryu-stage/ryu-stage-X-1win-0win.jpg"; } 
-      else if (human.wins == 1 && computerAI.wins == 1) { ryuStageImage.src = "resources/img/screens/ryu-stage/ryu-stage-X-1win-1win.jpg"; } 
-      else if (human.wins == 2 && computerAI.wins == 0) {
-        ryuStageImage.src = "resources/img/screens/ryu-stage/ryu-stage-X-2win-0win.jpg";
-        gameover = true;
-        endGame(human.char);
-      } 
-      else if (human.wins == 2 && computerAI.wins == 1) {
-        ryuStageImage.src = "resources/img/screens/ryu-stage/ryu-stage-X-2win-1win.jpg";     
-        gameover = true;
-        endGame(human.char);
-      }  
-    }
-  } else {
-    computerAI.wins++;
-    if (char == "X") {
-      if (human.wins == 0 && computerAI.wins == 1) { ryuStageImage.src = "resources/img/screens/ryu-stage/ryu-stage-O-0win-1win.jpg"; } 
-      else if (human.wins == 1 && computerAI.wins == 1) { ryuStageImage.src = "resources/img/screens/ryu-stage/ryu-stage-O-1win-1win.jpg"; } 
-      else if (human.wins == 0 && computerAI.wins == 2) {
-        ryuStageImage.src = "resources/img/screens/ryu-stage/ryu-stage-O-0win-2win.jpg";
-        gameover = true;        
-        endGame(computerAI.char);
-      } else if (human.wins == 1 && computerAI.wins == 2) {
-         ryuStageImage.src = "resources/img/screens/ryu-stage/ryu-stage-O-1win-2win.jpg";     
-         gameover = true;
-         endGame(computerAI.char);
-      }
-    } else {
-      if (human.wins == 0 && computerAI.wins == 1) { ryuStageImage.src = "resources/img/screens/ryu-stage/ryu-stage-X-0win-1win.jpg"; } 
-      else if (human.wins == 1 && computerAI.wins == 1) { ryuStageImage.src = "resources/img/screens/ryu-stage/ryu-stage-X-1win-1win.jpg"; } 
-      else if (human.wins == 0 && computerAI.wins == 2) {
-        ryuStageImage.src = "resources/img/screens/ryu-stage/ryu-stage-X-0win-2win.jpg";
-        gameover = true;
-        endGame(computerAI.char);
-      } else if (human.wins == 1 && computerAI.wins == 2) {
-         ryuStageImage.src = "resources/img/screens/ryu-stage/ryu-stage-X-1win-2win.jpg";     
-         gameover = true;
-         endGame(computerAI.char);
-      }      
-    }
-  }
-  return true;
-}
-
-function winCombination (board, char) {
-  if (
-    (char === board[0] && board[0] === board[1] && board[1] === board[2]) ||
-    (char === board[3] && board[3] === board[4] && board[4] === board[5]) ||
-    (char === board[6] && board[6] === board[7] && board[7] === board[8]) ||
-    (char === board[0] && board[0] === board[3] && board[3] === board[6]) ||
-    (char === board[1] && board[1] === board[4] && board[4] === board[7]) ||
-    (char === board[2] && board[2] === board[5] && board[5] === board[8]) ||
-    (char === board[0] && board[0] === board[4] && board[4] === board[8]) ||
-    (char === board[2] && board[2] === board[4] && board[4] === board[6])       
-    ) {
-      return true;
-    } else {
-      return false;
-    }
-}   
 
 function Player(char) {
   this.char = char;
@@ -707,7 +710,8 @@ function roundMedia() {
 function reset() {
   if (!gameover) {
     blackOut.classList.add("fade-in-and-out");
-    stageBGMMain.stop();
+    // stageBGMMain.stop();
+    bgmMain.stop();
     setTimeout(function(){
         player1CharImg.src = "";
         player2CharImg.src = "";
@@ -727,7 +731,8 @@ function reset() {
     openSquares = ["0", "1", "2", "3", "4", "5", "6", "7", "8"];
     init();
     setTimeout(function(){ 
-      stageBGM();
+      // stageBGM();
+      webAudioBGM('resources/audio/bgm/ryu-theme-intro.ogg', 'resources/audio/bgm/ryu-theme-main.ogg', 4.27);
       roundMedia(); 
     },1000)
   }
@@ -748,10 +753,18 @@ function endGame(val, val2) {
         else
           endScreenImage.src = "resources/img/screens/end-game/ryu-lose-guile-win.jpg";
       } else {
-        if(human.char ==="O")
-          endScreenImage.src = "resources/img/screens/end-game/ryu-lose-guile-lose.jpg";
+        var num = getRandomNum(10);
+        if(human.char ==="O") {
+          if (num < 7) { endScreenImage.src = "resources/img/screens/end-game/ryu-lose-guile-lose.jpg"; }
+          else if (num === 7) { endScreenImage.src = "resources/img/screens/end-game/ryu-lose-guile-lose-1.jpg"; }
+          else if (num === 8) { endScreenImage.src = "resources/img/screens/end-game/ryu-lose-guile-lose-2.jpg"; }
+          else { endScreenImage.src = "resources/img/screens/end-game/ryu-lose-guile-lose-3.jpg"; }
+        }
         else {
-          endScreenImage.src = "resources/img/screens/end-game/guile-lose-ryu-lose.jpg";
+          if (num < 7) { endScreenImage.src = "resources/img/screens/end-game/guile-lose-ryu-lose.jpg"; }
+          else if (num === 7) { endScreenImage.src = "resources/img/screens/end-game/guile-lose-ryu-lose-1.jpg"; }
+          else if (num === 8) { endScreenImage.src = "resources/img/screens/end-game/guile-lose-ryu-lose-2.jpg"; }
+          else { endScreenImage.src = "resources/img/screens/end-game/guile-lose-ryu-lose-3.jpg"; }
         }
       }
     } else {
@@ -770,55 +783,20 @@ function endGame(val, val2) {
   setTimeout(function(){ window.location.reload(); }, 16000);
 }
 
-
-
 //WebAudio functions
-function charSelectScreenBGM() {
-  // Taken from https://www.html5rocks.com/en/tutorials/webaudio/intro/
-  window.onload = initCharSelectBGM();
-
-  function initCharSelectBGM() {
-    window.AudioContext = window.AudioContext || window.webkitAudioContext;
-    context = new AudioContext();
-    bufferLoader = new BufferLoader(
-      context,
-      [
-        'resources/audio/bgm/char-select-intro.mp3',
-        'resources/audio/bgm/char-select-main2.mp3',
-      ],
-      finishedLoading
-      );
-    bufferLoader.load();
-  }
-
-  function finishedLoading(bufferList) {
-    var intro = context.createBufferSource();
-    mapBGMMain = context.createBufferSource();
-    intro.buffer = bufferList[0];
-    mapBGMMain.buffer = bufferList[1];
-
-    intro.connect(context.destination);
-    mapBGMMain.connect(context.destination);
-
-    intro.start(0);
-    mapBGMMain.start(3.9);
-    mapBGMMain.loop = true;  
-  }
-}
-
-function stageBGM() {
+function webAudioBGM(clip1, clip2, time) {
   // Taken https://www.html5rocks.com/en/tutorials/webaudio/intro/
-  window.onload = initStageBGM();
+  window.onload = initBGM();
 
-  function initStageBGM() {
+  function initBGM() {
     window.AudioContext = window.AudioContext || window.webkitAudioContext;
     context = new AudioContext();
 
     bufferLoader = new BufferLoader(
       context,
       [
-        'resources/audio/bgm/ryu-theme-intro.ogg',
-        'resources/audio/bgm/ryu-theme-main.ogg',
+        clip1,
+        clip2,
       ],
       finishedLoading
       );
@@ -826,23 +804,23 @@ function stageBGM() {
   }
 
   function finishedLoading(bufferList) {
-    var intro = context.createBufferSource();
-    stageBGMMain = context.createBufferSource();
+    var bgmIntro = context.createBufferSource();
+    bgmMain = context.createBufferSource();
 
-    intro.buffer = bufferList[0];
-    stageBGMMain.buffer = bufferList[1];
+    bgmIntro.buffer = bufferList[0];
+    bgmMain.buffer = bufferList[1];
 
     gainNode = context.createGain();
     gainNode.gain.setValueAtTime(1, context.currentTime);
   
-    stageBGMMain.connect(gainNode);
+    bgmMain.connect(gainNode);
 
-    intro.connect(context.destination);
+    bgmIntro.connect(context.destination);
     gainNode.connect(context.destination);
 
-    intro.start(0);
-    stageBGMMain.start(4.27);
-    stageBGMMain.loop = true; 
+    bgmIntro.start(0);
+    bgmMain.start(time);
+    bgmMain.loop = true; 
   }
 }
 // Taken from https://stackoverflow.com/questions/17333777/uncaught-reference-error-bufferloader-is-not-defined

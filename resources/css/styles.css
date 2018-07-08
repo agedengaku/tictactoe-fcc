@@ -118,6 +118,35 @@ body {
 	    -ms-transform: translateX(-50%);
 	        transform: translateX(-50%);	
 }
+.selection img:hover{
+    -webkit-filter: brightness(150%);
+    		filter: brightness(150%);
+}
+/* Taken from https://stackoverflow.com/questions/12115247/how-do-you-make-an-image-blink*/
+@keyframes blink {
+    0% {
+    	-webkit-filter: brightness(100%);
+    			filter: brightness(100%);
+    }
+    49% {
+        -webkit-filter: brightness(150%);
+        		filter: brightness(150%);
+    }
+    50% {
+        -webkit-filter: brightness(100%);
+        		filter: brightness(100%);
+    }
+    100% {
+        -webkit-filter: brightness(100%);
+        		filter: brightness(100%);
+    }
+}
+.selected {
+    -webkit-animation: blink .4s;
+    		animation: blink .4s;
+    -webkit-animation-iteration-count: infinite;
+    		animation-iteration-count: infinite;
+}
 #easy{ top: 76%; }
 #normal{ top: 83%; }
 #hard{ top: 90%; }
@@ -250,6 +279,17 @@ body {
 	text-align: center;
 	overflow: hidden;
 	position: relative;
+}
+/* Taken from https://stackoverflow.com/questions/21003535/anyway-to-prevent-the-blue-highlighting-of-elements-in-chrome-when-clicking-quic*/
+.no-select {
+	-webkit-tap-highlight-color: transparent;
+	-webkit-tap-highlight-color: rgba(255, 255, 255, 0);
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    -khtml-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
 }
 .row-1 > :first-child  {
 	border-top: none; 
