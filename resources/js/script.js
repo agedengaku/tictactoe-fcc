@@ -1,5 +1,6 @@
 (function(){
 "use strict";
+screen.orientation.lock('landscape');
 // HTML elements
 const playerSelect = document.getElementsByClassName("player-select");
 const boardSquares = document.getElementsByClassName("board-square");
@@ -43,9 +44,7 @@ const hitAudio = new Audio("resources/audio/sfx/character/hit-audio.mp3");
 const shoryukenAudio = new Audio("resources/audio/sfx/character/shoryuken-audio.mp3");
 const KOscream = new Audio("resources/audio/sfx/character/KO-scream.mp3");
 //WebAudio
-var audioMain = null;
-var stageMain = null;
-var context, gainNode;
+var context, bufferLoader, stageBGMMain, mapBGMMain, gainNode;
 
 let gameStarted = false;
 let titleScreenOn = true;
@@ -62,7 +61,7 @@ let lastFrameName;
 let frameCount = 1;
 
 init();
-// resetBtn.onclick = reset;
+
 function init() {
   rounds++;
   currentGameState = new GameState();  
@@ -80,11 +79,15 @@ function init() {
     }
     gameStarted = true;
   }
-  //set action to clicking of boxes and setting initial board state
   for(var i = 0; i < boardSquares.length; i++) {
     boardSquares[i].onclick = humanMove; 
   }
   human.turnActive = true;
+}
+
+function GameState() {
+  this.turnsTaken = 0;
+  this.boardState = ["0", "1", "2", "3", "4", "5", "6", "7", "8"];
 }
 
 playButton.addEventListener("click", playVid);
@@ -109,6 +112,21 @@ function modeHoverAudio() {
   sound.play();  
 }
 
+function difficultyModeSelect() {
+  if(titleScreenOn === false) {
+    selectedDifficulty = this.id;
+    clickToStartAudio.play()
+    for(var i = 0; i < difficultyMode.length; i++) {
+      difficultyMode[i].removeEventListener("mouseenter", modeHoverAudio);
+      difficultyMode[i].removeEventListener("click", difficultyModeSelect);
+    }
+    setTimeout(function(){
+      difficultySelectScreen.remove();
+      charSelectScreenBGM();
+    }, 2500);
+  }
+}
+
 function charHover() {
   let sound = new Audio("resources/audio/sfx/system/char-icon-hover.mp3");
   sound.play();  
@@ -118,80 +136,46 @@ function charHover() {
     mapImageFile.src="resources/img/screens/world-map/guile-char-select.jpg";
 }
 
-function charSelectScreenBGM() {
-  // Taken from https://www.html5rocks.com/en/tutorials/webaudio/intro/
-  window.onload = initCharSelectBGM();
-  var context;
-  var bufferLoader;
-
-  function initCharSelectBGM() {
-    window.AudioContext = window.AudioContext || window.webkitAudioContext;
-    context = new AudioContext();
-    bufferLoader = new BufferLoader(
-      context,
-      [
-        'resources/audio/bgm/char-select-intro.mp3',
-        'resources/audio/bgm/char-select-main2.mp3',
-      ],
-      finishedLoading
-      );
-    bufferLoader.load();
+function charSelect() {
+  charSelectedAudio.play();
+  for(var i = 0; i < playerSelect.length; i++) {
+    playerSelect[i].removeEventListener("mouseenter", charHover);
+    playerSelect[i].removeEventListener("click", charSelect);
   }
-
-  function finishedLoading(bufferList) {
-    var source1 = context.createBufferSource();
-    audioMain = context.createBufferSource();
-    source1.buffer = bufferList[0];
-    audioMain.buffer = bufferList[1];
-
-    source1.connect(context.destination);
-    audioMain.connect(context.destination);
-
-    source1.start(0);
-    audioMain.start(3.9);
-    audioMain.loop = true;  
-  }
-}
-
-function stageBGM() {
-  // Taken https://www.html5rocks.com/en/tutorials/webaudio/intro/
-  window.onload = initStageBGM();
-  context;
-  var bufferLoader;
-
-  function initStageBGM() {
-    window.AudioContext = window.AudioContext || window.webkitAudioContext;
-    context = new AudioContext();
-
-    bufferLoader = new BufferLoader(
-      context,
-      [
-        'resources/audio/bgm/ryu-theme-intro.ogg',
-        'resources/audio/bgm/ryu-theme-main.ogg',
-      ],
-      finishedLoading
-      );
-    bufferLoader.load();
-  }
-
-  function finishedLoading(bufferList) {
-    var source1 = context.createBufferSource();
-    stageMain = context.createBufferSource();
-
-    source1.buffer = bufferList[0];
-    stageMain.buffer = bufferList[1];
-
-    gainNode = context.createGain();
-    gainNode.gain.setValueAtTime(1, context.currentTime);
-  
-    stageMain.connect(gainNode);
-
-    source1.connect(context.destination);
-    gainNode.connect(context.destination);
-
-    source1.start(0);
-    stageMain.start(4.27);
-    stageMain.loop = true; 
+  if (selectedDifficulty && titleScreenOn === false) {
+    human = new Player(this.id);
+    if (this.id === "O") { 
+      computerAI = new Computer("X");
+      mapImageFile.src= "resources/img/screens/world-map/ryu-selected-flag.jpg";
+    } else {
+      computerAI = new Computer("O");
+      mapImageFile.src= "resources/img/screens/world-map/guile-selected-flag.jpg";
+      vsScreenImage.src= "resources/img/screens/vs-screen/guile-vs-screen.jpg";
+      ryuStageImage.src = "resources/img/screens/ryu-stage/ryu-stage-X.jpg";
+      player1Char.classList.remove("ryu-idle");
+      player1Char.classList.add("guile-idle");      
+      player2Char.classList.remove("guile-idle");
+      player2Char.classList.add("ryu-idle");
+    }
+    computerAI.difficulty = selectedDifficulty;
+    selectScreenOn = false;
+    setTimeout(function(){
+      airplaneAudio.play();
+      if (human.char === "O")
+        mapImageFile.src="resources/img/screens/world-map/ryu-selected-animated.gif";
+      else 
+        mapImageFile.src="resources/img/screens/world-map/guile-selected-animated.gif";
+    }, 1000);
+    setTimeout(function(){
+      charSelectScreen.remove();
+      mapBGMMain.stop();
+      vsScreenBGM.play();
+    }, 4000);
+    setTimeout(function(){
+      vsScreen.remove();
+      stageBGM();
+      roundMedia();
+    },9000);
   }
 }
 
@@ -554,11 +538,6 @@ function winScore(char) {
   return true;
 }
 
-function GameState() {
-  this.turnsTaken = 0;
-  this.boardState = ["0", "1", "2", "3", "4", "5", "6", "7", "8"];
-}
-
 function winCombination (board, char) {
   if (
     (char === board[0] && board[0] === board[1] && board[1] === board[2]) ||
@@ -694,93 +673,6 @@ function removeFromOpen (squareId) {
     }
 }
 
-function reset() {
-  if (!gameover) {
-    blackOut.classList.add("fade-in-and-out");
-    stageMain.stop();
-    setTimeout(function(){
-        player1CharImg.src = "";
-        player2CharImg.src = "";
-        roundImage.src = "";
-        if (human.char === "O") {
-          player1Char.classList.add("ryu-idle", "ryu-1p");
-          player2Char.classList.add("guile-idle", "guile-2p");
-        } else {
-          player2Char.classList.add("ryu-idle", "ryu-1p");
-          player1Char.classList.add("guile-idle", "guile-2p");
-        }
-      },1000);
-    setTimeout(function(){ blackOut.classList.remove("fade-in-and-out"); },2000);
-    for(var i = 0; i < boardSquares.length; i++) { boardSquares[i].innerHTML = ''; }
-    currentGameState = {};
-    human.turnActive = false;
-    openSquares = ["0", "1", "2", "3", "4", "5", "6", "7", "8"];
-    init();
-    setTimeout(function(){ 
-      stageBGM();
-      roundMedia(); 
-    },1000)
-  }
-}
-
-function charSelect() {
-  charSelectedAudio.play();
-  for(var i = 0; i < playerSelect.length; i++) {
-    playerSelect[i].removeEventListener("mouseenter", charHover);
-    playerSelect[i].removeEventListener("click", charSelect);
-  }
-  if (selectedDifficulty && titleScreenOn === false) {
-    human = new Player(this.id);
-    if (this.id === "O") { 
-      computerAI = new Computer("X");
-      mapImageFile.src= "resources/img/screens/world-map/ryu-selected-flag.jpg";
-    } else {
-      computerAI = new Computer("O");
-      mapImageFile.src= "resources/img/screens/world-map/guile-selected-flag.jpg";
-      vsScreenImage.src= "resources/img/screens/vs-screen/guile-vs-screen.jpg";
-      ryuStageImage.src = "resources/img/screens/ryu-stage/ryu-stage-X.jpg";
-      player1Char.classList.remove("ryu-idle");
-      player1Char.classList.add("guile-idle");      
-      player2Char.classList.remove("guile-idle");
-      player2Char.classList.add("ryu-idle");
-    }
-    computerAI.difficulty = selectedDifficulty;
-    selectScreenOn = false;
-    setTimeout(function(){
-      airplaneAudio.play();
-      if (human.char === "O")
-        mapImageFile.src="resources/img/screens/world-map/ryu-selected-animated.gif";
-      else 
-        mapImageFile.src="resources/img/screens/world-map/guile-selected-animated.gif";
-    }, 1000);
-    setTimeout(function(){
-      charSelectScreen.remove();
-      audioMain.stop();
-      vsScreenBGM.play();
-    }, 4000);
-    setTimeout(function(){
-      vsScreen.remove();
-      stageBGM();
-      roundMedia();
-    },9000);
-  }
-}
-
-function difficultyModeSelect() {
-  if(titleScreenOn === false) {
-    selectedDifficulty = this.id;
-    clickToStartAudio.play()
-    for(var i = 0; i < difficultyMode.length; i++) {
-      difficultyMode[i].removeEventListener("mouseenter", modeHoverAudio);
-      difficultyMode[i].removeEventListener("click", difficultyModeSelect);
-    }
-    setTimeout(function(){
-      difficultySelectScreen.remove();
-      charSelectScreenBGM();
-    }, 2500);
-  }
-}
-
 function roundMedia() {
   setTimeout(function(){
     switch(rounds) {
@@ -812,10 +704,37 @@ function roundMedia() {
   }, 1000);
 }
 
+function reset() {
+  if (!gameover) {
+    blackOut.classList.add("fade-in-and-out");
+    stageBGMMain.stop();
+    setTimeout(function(){
+        player1CharImg.src = "";
+        player2CharImg.src = "";
+        roundImage.src = "";
+        if (human.char === "O") {
+          player1Char.classList.add("ryu-idle", "ryu-1p");
+          player2Char.classList.add("guile-idle", "guile-2p");
+        } else {
+          player2Char.classList.add("ryu-idle", "ryu-1p");
+          player1Char.classList.add("guile-idle", "guile-2p");
+        }
+      },1000);
+    setTimeout(function(){ blackOut.classList.remove("fade-in-and-out"); },2000);
+    for(var i = 0; i < boardSquares.length; i++) { boardSquares[i].innerHTML = ''; }
+    currentGameState = {};
+    human.turnActive = false;
+    openSquares = ["0", "1", "2", "3", "4", "5", "6", "7", "8"];
+    init();
+    setTimeout(function(){ 
+      stageBGM();
+      roundMedia(); 
+    },1000)
+  }
+}
+
 function endGame(val, val2) {
-
   setTimeout(function(){ setEndScreen(val, val2); },8000);
-
   function setEndScreen(val, val2) {
     if (val2 !== undefined) {
       if (val > val2) {
@@ -849,6 +768,82 @@ function endGame(val, val2) {
     },500);
   }
   setTimeout(function(){ window.location.reload(); }, 16000);
+}
+
+
+
+//WebAudio functions
+function charSelectScreenBGM() {
+  // Taken from https://www.html5rocks.com/en/tutorials/webaudio/intro/
+  window.onload = initCharSelectBGM();
+
+  function initCharSelectBGM() {
+    window.AudioContext = window.AudioContext || window.webkitAudioContext;
+    context = new AudioContext();
+    bufferLoader = new BufferLoader(
+      context,
+      [
+        'resources/audio/bgm/char-select-intro.mp3',
+        'resources/audio/bgm/char-select-main2.mp3',
+      ],
+      finishedLoading
+      );
+    bufferLoader.load();
+  }
+
+  function finishedLoading(bufferList) {
+    var intro = context.createBufferSource();
+    mapBGMMain = context.createBufferSource();
+    intro.buffer = bufferList[0];
+    mapBGMMain.buffer = bufferList[1];
+
+    intro.connect(context.destination);
+    mapBGMMain.connect(context.destination);
+
+    intro.start(0);
+    mapBGMMain.start(3.9);
+    mapBGMMain.loop = true;  
+  }
+}
+
+function stageBGM() {
+  // Taken https://www.html5rocks.com/en/tutorials/webaudio/intro/
+  window.onload = initStageBGM();
+
+  function initStageBGM() {
+    window.AudioContext = window.AudioContext || window.webkitAudioContext;
+    context = new AudioContext();
+
+    bufferLoader = new BufferLoader(
+      context,
+      [
+        'resources/audio/bgm/ryu-theme-intro.ogg',
+        'resources/audio/bgm/ryu-theme-main.ogg',
+      ],
+      finishedLoading
+      );
+    bufferLoader.load();
+  }
+
+  function finishedLoading(bufferList) {
+    var intro = context.createBufferSource();
+    stageBGMMain = context.createBufferSource();
+
+    intro.buffer = bufferList[0];
+    stageBGMMain.buffer = bufferList[1];
+
+    gainNode = context.createGain();
+    gainNode.gain.setValueAtTime(1, context.currentTime);
+  
+    stageBGMMain.connect(gainNode);
+
+    intro.connect(context.destination);
+    gainNode.connect(context.destination);
+
+    intro.start(0);
+    stageBGMMain.start(4.27);
+    stageBGMMain.loop = true; 
+  }
 }
 // Taken from https://stackoverflow.com/questions/17333777/uncaught-reference-error-bufferloader-is-not-defined
 function BufferLoader(context, urlList, callback) {
@@ -895,5 +890,4 @@ BufferLoader.prototype.load = function() {
   this.loadBuffer(this.urlList[i], i);
 }
 
-screen.orientation.lock('landscape');
 })();
